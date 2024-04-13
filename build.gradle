@@ -18,6 +18,8 @@ repositories {
 
 ext {
 	set('springAiVersion', "0.8.1")
+	set('sqliteJdbcVersion', "3.45.2.0")
+	set('hibernateCDVersion', "6.4.4.Final")
 }
 
 dependencies {
@@ -26,6 +28,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.ai:spring-ai-mistral-ai-spring-boot-starter'
 	implementation 'org.springframework.session:spring-session-core'
+	implementation "org.xerial:sqlite-jdbc:${sqliteJdbcVersion}"
+	implementation "org.hibernate.orm:hibernate-community-dialects:${hibernateCDVersion}"
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
