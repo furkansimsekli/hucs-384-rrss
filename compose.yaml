@@ -1,1 +1,12 @@
 services:
+  rrss:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - rrss-data:/app/data
+    ports:
+      - 8520:8080
+
+volumes:
+  rrss-data:
