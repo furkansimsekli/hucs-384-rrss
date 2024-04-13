@@ -44,3 +44,8 @@ dependencyManagement {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+jar {
+   // the naming convention is weird but we need this setting to have a functioning jar file
+   enabled = false
+}
