@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body class="row-container">
+        <main>
+            <img src="logo.webp" width="48px" style="display: block; margin: 10px auto;"/>
+            <form class="row-container auth-form">
+                <div class="column-container" style="justify-content: space-between;">
+                    <h2>Sign Up</h2>
+                    <a href="/login.html" style="text-decoration: none; color: black;"><h2 style="font-weight: 300;">&#8594 Log In</h2></a>
+                </div>
+                <input name="username" placeholder="Username" type="text"/>
+                <input name="email" placeholder="Mail address" type="email"/>
+                <input name="password" placeholder="Password" type="password"/>
+                <input name="password2" placeholder="Enter password again" type="password"/>
+                <div class="column-container">
+                    <span>
+                        <input name="account_type" value="user" type="radio"/>User
+                    </span>
+                    <span>
+                        <input name="account_type" value="merchant" type="radio">Merchant
+                    </span>
+                </div>
+                <input value="Sign Up" type="submit"/>
+            </form>
+        </main>
+        <footer style="margin: auto auto; margin-bottom: 0; padding-top: 5vh;">
+            (C) FOSSketeers, 2024
+        </footer>
+    </body>
+</html>

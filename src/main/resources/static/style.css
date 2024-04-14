@@ -1,0 +1,138 @@
+/* ============= GLOBAL STYLES ========== */
+
+:root {
+    --primary-color: #34514c;
+}
+
+html {
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    height: 95%;
+
+    accent-color: var(--primary-color);
+}
+
+main {
+    margin-top: 3vw;
+}
+
+.row-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.column-container {
+    display: flex;
+    flex-direction: row;
+}
+
+input[type="text"], input[type="email"], input[type="password"] {
+    height: 30px;
+    padding-left: 7px;
+
+    border: gray 0.5px solid;
+    border-radius: 5px;
+}
+
+input[type="submit"] {
+    color: white;
+    background-color: var(--primary-color);
+    border: var(--primary-color);
+    border-radius: 5px;
+}
+
+.buttonish-link {
+    border: gray 0.5px solid;
+    border-radius: 10px;
+    color: black;
+    text-decoration: none;
+    padding: 10px 15px;
+}
+
+.emoji-icon {
+    color: transparent;
+    text-shadow: 0 0 0 var(--primary-color);
+}
+
+/* ============= NAV BAR ========== */
+
+nav {
+    align-items: center;
+    padding: 5px 5px;
+    padding-bottom: 15px;
+    border-bottom: grey 0.5px solid;
+}
+
+nav * {
+    align-items: center;
+    margin: 0 5px;
+}
+
+@media screen and (max-width: 1000px) {
+    nav h3 {
+        display: none;
+    }
+}
+
+/* ============= MAIN PAGE ========== */
+
+.slideshow {
+    padding: 0 30%;
+    overflow-x: scroll;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    gap: 20px;
+    mask-image: linear-gradient(270deg, rgba(255, 255, 255, 0.0), 10%, rgba(255, 255, 255, 1.0), 90%, rgba(255, 255, 255, 0.0));
+}
+
+.slideshow > * {
+    transform-origin: center center;
+    transform: scale(1);
+    scroll-snap-align: center;
+}
+
+/* ============= AUTH FORM ========== */
+
+.auth-form {
+    width: 60vw;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 2.5vw;
+    padding-right: 2.5vw;
+    padding-bottom: 2vw;
+    padding-top: 3vw;
+
+    border: gray 0.5px solid;
+    border-radius: 5px;
+}
+
+.auth-form > * {
+    margin-top: 0.5vw;
+}
+
+.auth-form > input {
+    height: 36px;
+}
+
+.auth-form input[type="radio"] {
+    height: 12px;
+}
+
+.auth-form span {
+    padding: 2px;
+    padding-right: 4px;
+    margin-right: 1vw;
+
+    border: gray 1px solid;
+    border-radius: 5px;
+    font-size: 12;
+}
+
+.auth-form span:has(input:checked) {
+    border: var(--primary-color) 2px solid;
+}
