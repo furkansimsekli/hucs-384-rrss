@@ -24,13 +24,8 @@ Then run the application with:
 The website should be accessible from `localhost:8080`
 
 ## Build and Run (for production builds)
-Build a JAR file containing all the dependencies:
 
-```sh
-./gradlew build
-```
-
-And then build and run the docker container with:
+Build and run the docker container with:
 
 ```sh
 docker compose up --build
