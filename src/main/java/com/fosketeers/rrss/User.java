@@ -19,6 +19,9 @@ public class User {
     @Column
     private String lastName;
 
+    @Column(unique = true)
+    private String username;
+
     @Column
     private int type;   // 1: Administrator, 2: Merchant, 3: Customer, ¿Moderator?
 
@@ -65,6 +68,14 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public int getType() {
