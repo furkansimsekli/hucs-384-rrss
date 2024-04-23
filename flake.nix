@@ -6,7 +6,7 @@
   outputs = { self, nixpkgs }: let
     forAllSystems = nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" "aarch64-darwin" "x86_64-darwin" ];
   in
-  {
+  rec {
     packages = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
       deps = pkgs.stdenv.mkDerivation {
@@ -75,6 +75,16 @@
         '';
       };
     });
+
+    devShells = forAllSystems (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+      {
+        default = pkgs.mkShell {
+          nativeBuildInputs = packages.${system}.default.nativeBuildInputs ++ [ pkgs.google-java-format ];
+        };
+      }
+    );
 
     checks = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
