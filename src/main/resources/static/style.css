@@ -29,7 +29,7 @@ main {
     flex-direction: row;
 }
 
-input[type="text"], input[type="email"], input[type="password"] {
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="date"] {
     height: 30px;
     padding-left: 7px;
 
@@ -50,6 +50,25 @@ input[type="submit"] {
     color: black;
     text-decoration: none;
     padding: 10px 15px;
+}
+
+.buttonish-checkbox {
+    display: none;
+}
+
+.buttonish-checkbox-label {
+    border: gray 0.5px solid;
+    border-radius: 10px;
+    color: black;
+    padding: 10px 15px;
+}
+
+.buttonish-checkbox:checked ~ .hidden-on-edit {
+    display: none;
+}
+
+.buttonish-checkbox:not(:checked) ~ .shown-on-edit {
+    display: none;
 }
 
 .emoji-icon {
