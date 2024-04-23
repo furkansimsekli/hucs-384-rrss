@@ -75,5 +75,17 @@
         '';
       };
     });
+
+    checks = forAllSystems (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+      rec {
+        default = rrss-java-fmt;
+
+        rrss-java-fmt = pkgs.runCommand "rrss-java-fmt" { src = self; buildInputs = [ pkgs.google-java-format ]; } ''
+          google-java-format --aosp --set-exit-if-changed --dry-run $(find ''${src}/src/ -name '*.java') && touch $out
+        '';
+      }
+    );
   };
 }
