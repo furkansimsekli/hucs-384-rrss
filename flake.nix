@@ -93,7 +93,17 @@
         default = rrss-java-fmt;
 
         rrss-java-fmt = pkgs.runCommand "rrss-java-fmt" { src = self; buildInputs = [ pkgs.google-java-format ]; } ''
-          google-java-format --aosp --set-exit-if-changed --dry-run $(find ''${src}/src/ -name '*.java') && touch $out
+          mkdir -p $out
+          cp -r $src/* $out
+          chmod -R u+w $out
+          JAVA_FILES="$(find $out/src -name '*.java')"
+          if ! google-java-format -a --set-exit-if-changed -n $JAVA_FILES; then
+            google-java-format -a -i $JAVA_FILES
+            for f in $JAVA_FILES; do
+              diff --color=always -u $(sed "s|$out|$src|" <<< "$f") "$f" || true
+            done
+            exit 1
+          fi
         '';
       }
     );
