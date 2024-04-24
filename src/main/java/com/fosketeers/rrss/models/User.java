@@ -1,4 +1,4 @@
-package com.fosketeers.rrss;
+package com.fosketeers.rrss.models;
 
 import jakarta.persistence.*;
 

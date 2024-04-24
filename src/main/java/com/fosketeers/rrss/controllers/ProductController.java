@@ -1,4 +1,4 @@
-package com.fosketeers.rrss;
+package com.fosketeers.rrss.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

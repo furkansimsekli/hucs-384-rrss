@@ -1,5 +1,6 @@
-package com.fosketeers.rrss;
+package com.fosketeers.rrss.repositories;
 
+import com.fosketeers.rrss.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
