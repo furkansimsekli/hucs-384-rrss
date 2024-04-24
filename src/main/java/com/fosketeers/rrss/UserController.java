@@ -53,16 +53,16 @@ public class UserController {
     }
 
     @GetMapping("/signup")
-    public String registerGetHandler(Model model, HttpSession session) {
+    public String signupGetHandler(Model model, HttpSession session) {
         if (session.getAttribute("username") != null) {
             return "redirect:/";
         }
 
-        return "register";
+        return "signup";
     }
 
     @PostMapping("/signup")
-    public String registerPostHandler(
+    public String signupPostHandler(
             @RequestParam String username, @RequestParam String password1) {
         User user = new User();
 
