@@ -14,26 +14,28 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column private String firstName;
+    @Column(length = 64)
+    private String firstName;
 
-    @Column private String lastName;
+    @Column(length = 64)
+    private String lastName;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 16)
     private String username;
 
     @Column private String password;
 
-    @Column private int type; // 1: Administrator, 2: Merchant, 3: Customer, ¿Moderator?
+    @Column private int type; // 1: Administrator, 2: Merchant, 3: Customer, 4: Moderator
 
-    @Column(unique = true)
+    @Column(unique = true, length = 160)
     private String email;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 15)
     private String phoneNumber;
 
     @Column private LocalDate dateOfBirth;
 
-    @Column private String address;
+    @Column(length = 256) private String address;
 
     @Column private String profileImagePath;
 
