@@ -49,7 +49,7 @@ public class UserController {
                 return "redirect:/";
             }
         }
-        return "login";
+        return "redirect:/login";
     }
 
     @GetMapping("/signup")
@@ -70,6 +70,6 @@ public class UserController {
         user.setPassword(encoder.encode(password1));
         userRepository.save(user);
 
-        return "login";
+        return "redirect:/login";
     }
 }
