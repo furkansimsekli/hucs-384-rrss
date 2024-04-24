@@ -1,24 +1,74 @@
 package com.fosketeers.rrss;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
+    private UserRepository userRepository;
+    private Argon2PasswordEncoder encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+
+    @Autowired
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @RequestMapping("/user/{id}")
     public String userProfileHandler(Model model, @PathVariable String id) {
         return "user";
     }
 
-    @RequestMapping("/login")
-    public String loginHandler(Model model) {
+    @GetMapping("/login")
+    public String loginGetHandler(Model model, HttpSession session) {
+        if (session.getAttribute("username") != null) {
+            return "redirect:/";
+        }
+
         return "login";
     }
 
-    @RequestMapping("/signup")
-    public String registerHandler(Model model) {
+    @PostMapping("/login")
+    public String loginPostHandler(@RequestParam String username, @RequestParam String password, HttpSession session) {
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isPresent()) {
+            if (encoder.matches(password, user.get().getPassword())) {
+                session.setAttribute("username", user.get().getUsername());
+                return "redirect:/";
+            }
+        }
+        return "login";
+    }
+
+    @GetMapping("/signup")
+    public String registerGetHandler(Model model, HttpSession session) {
+        if (session.getAttribute("username") != null) {
+            return "redirect:/";
+        }
+
         return "register";
+    }
+
+    @PostMapping("/signup")
+    public String registerPostHandler(@RequestParam String username, @RequestParam String password1) {
+        User user = new User();
+
+        user.setUsername(username);
+        user.setPassword(encoder.encode(password1));
+        userRepository.save(user);
+
+        return "login";
     }
 }
