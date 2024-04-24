@@ -60,8 +60,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String signupPostHandler(
-            @RequestParam String username, @RequestParam String password1) {
+    public String signupPostHandler(@RequestParam String username, @RequestParam String password1) {
         User user = new User();
 
         user.setUsername(username);
