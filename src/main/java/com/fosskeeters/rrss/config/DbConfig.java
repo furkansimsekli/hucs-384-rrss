@@ -1,4 +1,4 @@
-package com.fosketeers.rrss.config;
+package com.fosskeeters.rrss.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

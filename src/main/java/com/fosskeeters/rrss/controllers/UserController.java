@@ -1,7 +1,7 @@
-package com.fosketeers.rrss.controllers;
+package com.fosskeeters.rrss.controllers;
 
-import com.fosketeers.rrss.models.User;
-import com.fosketeers.rrss.repositories.UserRepository;
+import com.fosskeeters.rrss.models.User;
+import com.fosskeeters.rrss.repositories.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Controller;

@@ -1,4 +1,4 @@
-package com.fosketeers.rrss.models;
+package com.fosskeeters.rrss.models;
 
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;

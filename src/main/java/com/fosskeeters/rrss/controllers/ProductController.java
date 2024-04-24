@@ -1,4 +1,4 @@
-package com.fosketeers.rrss.controllers;
+package com.fosskeeters.rrss.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

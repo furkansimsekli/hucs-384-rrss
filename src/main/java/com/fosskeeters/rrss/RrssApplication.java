@@ -1,4 +1,4 @@
-package com.fosketeers.rrss;
+package com.fosskeeters.rrss;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
