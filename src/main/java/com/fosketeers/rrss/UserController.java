@@ -2,7 +2,6 @@ package com.fosketeers.rrss;
 
 import jakarta.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +18,6 @@ public class UserController {
     private UserRepository userRepository;
     private Argon2PasswordEncoder encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
 
-    @Autowired
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -53,17 +51,16 @@ public class UserController {
     }
 
     @GetMapping("/signup")
-    public String registerGetHandler(Model model, HttpSession session) {
+    public String signupGetHandler(Model model, HttpSession session) {
         if (session.getAttribute("username") != null) {
             return "redirect:/";
         }
 
-        return "register";
+        return "signup";
     }
 
     @PostMapping("/signup")
-    public String registerPostHandler(
-            @RequestParam String username, @RequestParam String password1) {
+    public String signupPostHandler(@RequestParam String username, @RequestParam String password1) {
         User user = new User();
 
         user.setUsername(username);

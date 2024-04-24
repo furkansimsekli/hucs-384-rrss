@@ -37,3 +37,4 @@ out/
 
 ### Database file ###
 data/
+*.sqlite
