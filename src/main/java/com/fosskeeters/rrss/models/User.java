@@ -1,6 +1,7 @@
 package com.fosskeeters.rrss.models;
 
 import jakarta.persistence.*;
+
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
@@ -34,7 +35,8 @@ public class User {
 
     @Column private LocalDate dateOfBirth;
 
-    @Column(length = 256) private String address;
+    @Column(length = 256)
+    private String address;
 
     @Column private String profileImagePath;
 

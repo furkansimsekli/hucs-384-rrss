@@ -7,8 +7,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import javax.sql.DataSource;
 import java.util.Objects;
+
+import javax.sql.DataSource;
 
 @Configuration
 @PropertySource("persistence.properties")
