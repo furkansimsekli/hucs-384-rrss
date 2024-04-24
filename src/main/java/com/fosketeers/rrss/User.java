@@ -1,6 +1,7 @@
 package com.fosketeers.rrss;
 
 import jakarta.persistence.*;
+
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
@@ -13,19 +14,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String firstName;
+    @Column private String firstName;
 
-    @Column
-    private String lastName;
+    @Column private String lastName;
 
     @Column(unique = true)
     private String username;
 
     @Column private String password;
 
-    @Column
-    private int type;   // 1: Administrator, 2: Merchant, 3: Customer, ¿Moderator?
+    @Column private int type; // 1: Administrator, 2: Merchant, 3: Customer, ¿Moderator?
 
     @Column(unique = true)
     private String email;
@@ -33,20 +31,15 @@ public class User {
     @Column(unique = true)
     private String phoneNumber;
 
-    @Column
-    private LocalDate dateOfBirth;
+    @Column private LocalDate dateOfBirth;
 
-    @Column
-    private String address;
+    @Column private String address;
 
-    @Column
-    private String profileImagePath;
+    @Column private String profileImagePath;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+    @CreatedDate private LocalDateTime createdAt;
 
-    @Column
-    private String hashedPassword;
+    @Column private String hashedPassword;
 
     public Long getId() {
         return id;

@@ -1,6 +1,6 @@
 package com.fosketeers.rrss;
 
-import java.util.Optional;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
@@ -9,11 +9,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jakarta.servlet.http.HttpSession;
+import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -40,7 +39,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String loginPostHandler(@RequestParam String username, @RequestParam String password, HttpSession session) {
+    public String loginPostHandler(
+            @RequestParam String username, @RequestParam String password, HttpSession session) {
         Optional<User> user = userRepository.findByUsername(username);
 
         if (user.isPresent()) {
@@ -62,7 +62,8 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String registerPostHandler(@RequestParam String username, @RequestParam String password1) {
+    public String registerPostHandler(
+            @RequestParam String username, @RequestParam String password1) {
         User user = new User();
 
         user.setUsername(username);
