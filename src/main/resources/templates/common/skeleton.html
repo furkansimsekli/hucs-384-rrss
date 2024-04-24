@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body class="row-container">
+        <nav class="column-container" style="align-items: center; gap: 20px;">
+            <span class="column-container">
+                <img src="/logo.webp" width="40px"/>
+                <h3>ShopSmart</h3>
+            </span>
+            <input type="text" name="query" placeholder="Search" style="width: 50%; margin: 0 auto;"/>
+            <a class="buttonish-link" th:href="@{/community}"><span class="emoji-icon">&#x1F4AC;</span>Community</a>
+            <a class="buttonish-link" th:href="@{/login}"><span class="emoji-icon">&#x1F464;</span>Login</a>
+        </nav>
+        <main layout:fragment="content">
+            
+        </main>
+        <footer style="margin: auto auto; margin-bottom: 0; padding-top: 5vw;">
+            (C) FOSSketeers, 2024
+        </footer>
+    </body>
+</html>
