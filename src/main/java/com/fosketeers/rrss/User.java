@@ -22,6 +22,8 @@ public class User {
     @Column(unique = true)
     private String username;
 
+    @Column private String password;
+
     @Column
     private int type;   // 1: Administrator, 2: Merchant, 3: Customer, ¿Moderator?
 
@@ -76,6 +78,14 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public int getType() {
