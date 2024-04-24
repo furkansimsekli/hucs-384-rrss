@@ -2,7 +2,6 @@ package com.fosketeers.rrss;
 
 import jakarta.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +18,6 @@ public class UserController {
     private UserRepository userRepository;
     private Argon2PasswordEncoder encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
 
-    @Autowired
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
