@@ -1,4 +1,7 @@
-package com.fosketeers.rrss;
+package com.fosskeeters.rrss.controllers;
+
+import com.fosskeeters.rrss.models.User;
+import com.fosskeeters.rrss.repositories.UserRepository;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -8,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
@@ -22,7 +24,7 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @RequestMapping("/user/{id}")
+    @GetMapping("/user/{id}")
     public String userProfileHandler(Model model, @PathVariable String id) {
         return "user";
     }

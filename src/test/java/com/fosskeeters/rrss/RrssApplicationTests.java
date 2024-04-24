@@ -1,4 +1,4 @@
-package com.fosketeers.rrss;
+package com.fosskeeters.rrss;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
