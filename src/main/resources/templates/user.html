@@ -29,7 +29,7 @@
                 <textarea name="address" rows="4" placeholder="Address" th:text="${user.getAddress()}" />
                 <input type="submit" value="Save" style="padding: 5px;" />
             </form>
-            <img href="" width="64px" height="64px" />
+            <img th:src="${user.getProfileImagePath()}" width="64px" height="64px" />
         </div>
     </main>
 </body>
