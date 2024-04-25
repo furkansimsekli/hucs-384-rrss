@@ -8,15 +8,14 @@ public class Vote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "review_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     private Review review;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @JoinColumn
     private User user;
 
-    private int value;
+    @Column private boolean value;
 
     public Long getId() {
         return id;
@@ -42,11 +41,11 @@ public class Vote {
         this.user = user;
     }
 
-    public int getValue() {
+    public boolean isValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(boolean value) {
         this.value = value;
     }
 }

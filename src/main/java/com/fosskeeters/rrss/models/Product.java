@@ -1,33 +1,37 @@
 package com.fosskeeters.rrss.models;
 
 import jakarta.persistence.*;
+
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
 @Entity
 public class Product {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productID;
+    private Long id;
 
-    @Column private String name;
+    @Column(length = 128)
+    private String name;
 
-    @Column private String description;
+    @Column(length = 4096)
+    private String description;
 
-    @Column private Long merchantID;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "owner_id")
+    private User owner;
 
     @Column private String productImagePath;
 
     @CreatedDate private LocalDateTime createdAt;
 
-    public Long getProductID() {
-        return productID;
+    public Long getId() {
+        return id;
     }
 
-    public void setProductID(Long productID) {
-        this.productID = productID;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -46,12 +50,12 @@ public class Product {
         this.description = description;
     }
 
-    public Long getMerchantID() {
-        return merchantID;
+    public User getOwner() {
+        return owner;
     }
 
-    public void setMerchantID(Long merchantID) {
-        this.merchantID = merchantID;
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     public String getProductImagePath() {

@@ -1,21 +1,23 @@
 package com.fosskeeters.rrss.models;
 
 import jakarta.persistence.*;
+
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
 @Entity
 public class Topic {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long topicID;
 
-    @Column private String title;
+    @Column(length = 64)
+    private String title;
 
-    @Column(name = "creator_id")
-    private Long creatorID;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @JoinColumn
+    private User owner;
 
     @CreatedDate private LocalDateTime createdAt;
 
@@ -35,12 +37,12 @@ public class Topic {
         this.title = title;
     }
 
-    public Long getCreatorId() {
-        return creatorID;
+    public User getOwner() {
+        return owner;
     }
 
-    public void setCreatorId(Long creatorID) {
-        this.creatorID = creatorID;
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     public LocalDateTime getCreatedAt() {
