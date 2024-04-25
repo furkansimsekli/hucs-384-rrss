@@ -42,8 +42,14 @@ public class User {
 
     @CreatedDate private LocalDateTime createdAt;
 
-    public User(String firstName, String lastName, String username, String password, int type, String email,
-                String phoneNumber) {
+    public User(
+            String firstName,
+            String lastName,
+            String username,
+            String password,
+            int type,
+            String email,
+            String phoneNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;

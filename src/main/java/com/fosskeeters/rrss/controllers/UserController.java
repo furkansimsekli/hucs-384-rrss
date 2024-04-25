@@ -64,7 +64,8 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String signupPostHandler(@Valid @ModelAttribute UserDto userDto, BindingResult bindingResult) {
+    public String signupPostHandler(
+            @Valid @ModelAttribute UserDto userDto, BindingResult bindingResult) {
         validateSignup(userDto, bindingResult);
 
         if (bindingResult.hasErrors()) {
@@ -79,25 +80,33 @@ public class UserController {
 
     private void validateSignup(UserDto userDto, BindingResult bindingResult) {
         if (userRepository.existsByUsername(userDto.getUsername())) {
-            bindingResult.addError(new FieldError("userDto", "username", "This username is already taken!"));
+            bindingResult.addError(
+                    new FieldError("userDto", "username", "This username is already taken!"));
         }
 
         if (userRepository.existsByEmail(userDto.getEmail())) {
-            bindingResult.addError(new FieldError("userDto", "email", "This email address is already taken!"));
+            bindingResult.addError(
+                    new FieldError("userDto", "email", "This email address is already taken!"));
         }
 
         if (userRepository.existsByPhoneNumber(userDto.getPhoneNumber())) {
-            bindingResult.addError(new FieldError("userDto", "phoneNumber", "This phone number is already taken!"));
+            bindingResult.addError(
+                    new FieldError(
+                            "userDto", "phoneNumber", "This phone number is already taken!"));
         }
 
-        if (!Objects.equals(userDto.getAccountType(), "customer") &&
-                !Objects.equals(userDto.getAccountType(), "merchant")) {
-            bindingResult.addError(new FieldError("userDto", "accountType",
-                    "Account type must be either Customer or Merchant!"));
+        if (!Objects.equals(userDto.getAccountType(), "customer")
+                && !Objects.equals(userDto.getAccountType(), "merchant")) {
+            bindingResult.addError(
+                    new FieldError(
+                            "userDto",
+                            "accountType",
+                            "Account type must be either Customer or Merchant!"));
         }
 
         if (!Objects.equals(userDto.getPassword1(), userDto.getPassword2())) {
-            bindingResult.addError(new FieldError("userDto", "password1", "Passwords do not match!"));
+            bindingResult.addError(
+                    new FieldError("userDto", "password1", "Passwords do not match!"));
         }
     }
 
@@ -105,7 +114,13 @@ public class UserController {
         String encodedPassword = encoder.encode(userDto.getPassword1());
         int type = userDto.getAccountType().equals("customer") ? 3 : 2;
 
-        return new User(userDto.getFirstName(), userDto.getLastName(), userDto.getUsername(), encodedPassword,
-                type, userDto.getEmail(), userDto.getPhoneNumber());
+        return new User(
+                userDto.getFirstName(),
+                userDto.getLastName(),
+                userDto.getUsername(),
+                encodedPassword,
+                type,
+                userDto.getEmail(),
+                userDto.getPhoneNumber());
     }
 }

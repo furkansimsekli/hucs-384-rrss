@@ -102,9 +102,9 @@ public class UserDto {
 
     // TODO: move to a global utils library
     /**
-     * Converts the given string to title case. In title case, the first letter of
-     * each word is converted to uppercase, while the rest of the letters are converted
-     * to lowercase. Whitespace (e.g. spaces, tabs) separates words.
+     * Converts the given string to title case. In title case, the first letter of each word is
+     * converted to uppercase, while the rest of the letters are converted to lowercase. Whitespace
+     * (e.g. spaces, tabs) separates words.
      *
      * @param text The input string to be converted.
      * @return A new string in title case, or the original string if it's null or empty.
