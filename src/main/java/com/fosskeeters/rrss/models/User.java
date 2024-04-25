@@ -42,8 +42,6 @@ public class User {
 
     @CreatedDate private LocalDateTime createdAt;
 
-    @Column private String hashedPassword;
-
     public User(String firstName, String lastName, String username, String password, int type, String email,
                 String phoneNumber) {
         this.firstName = firstName;
@@ -160,13 +158,5 @@ public class User {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public String getHashedPassword() {
-        return hashedPassword;
-    }
-
-    public void setHashedPassword(String hashedPassword) {
-        this.hashedPassword = hashedPassword;
     }
 }
