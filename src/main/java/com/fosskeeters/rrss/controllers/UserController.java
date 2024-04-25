@@ -26,8 +26,34 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/user/{id}")
-    public String userProfileHandler(Model model, @PathVariable String id) {
+    @GetMapping("/user/{usernameParam}")
+    public String userProfileHandler(Model model, @PathVariable String usernameParam, HttpSession session) {
+        Object loggedInUsername = session.getAttribute("username");
+        if (loggedInUsername == null) {
+            return "redirect:/login";
+        }
+
+        Optional<User> loggedInUser = userRepository.findByUsername(loggedInUsername.toString());
+        if (!loggedInUser.isPresent()) {
+            // This condition should never be met but can't be too safe :)
+            return "redirect:/login";
+        }
+
+        Optional<User> displayedUser = userRepository.findByUsername(usernameParam);
+        if (!displayedUser.isPresent()) {
+            model.addAttribute("errorString", "No such user found");
+            return "user";
+        }
+
+        if (loggedInUser.get().getType() != 1 // if user is not an Admin (TODO avoid magic numbers)
+                && !loggedInUser.get().getUsername().equals(displayedUser.get().getUsername())) {
+            // the logged in user and displayed user are different
+            model.addAttribute("errorString", "Unauthorized access");
+            return "user";
+        }
+
+        // Logged in user is either an admin or the displayed user.
+        model.addAttribute("user", displayedUser.get());
         return "user";
     }
 
