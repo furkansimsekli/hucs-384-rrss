@@ -43,7 +43,7 @@ public class UserController {
     @PostMapping("/login")
     public String loginPostHandler(
             @RequestParam String username, @RequestParam String password, HttpSession session) {
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = userRepository.findByUsername(username.trim().toLowerCase());
 
         if (user.isPresent()) {
             if (encoder.matches(password, user.get().getPassword())) {
