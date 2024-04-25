@@ -12,13 +12,13 @@
             </span>
             <input type="text" name="query" placeholder="Search" style="width: 50%; margin: 0 auto;"/>
             <a class="buttonish-link" th:href="@{/community}"><span class="emoji-icon">&#x1F4AC;</span>Community</a>
-            <a th:if="${user == null}" class="buttonish-link" th:href="@{/login}">
+            <a th:if="${#strings.isEmpty(#ctx.session.username)}" class="buttonish-link" th:href="@{/login}">
                 <span class="emoji-icon">&#x1F464;</span>
                 Login
             </a>
-            <a th:if="${user != null}" class="buttonish-link" th:href="@{/user/{username}(username=${user.getUsername()})}">
+            <a th:unless="${#strings.isEmpty(#ctx.session.username)}" class="buttonish-link" th:href="@{/user/{username}(username=${#ctx.session.username})}">
                 <span class="emoji-icon">&#x1F464;</span>
-                <span th:text="${user.getUsername()}"/>
+                <span th:text="${#ctx.session.username}"/>
             </a>
         </nav>
         <main layout:fragment="content">
