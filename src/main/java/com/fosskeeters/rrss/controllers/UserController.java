@@ -1,18 +1,20 @@
 package com.fosskeeters.rrss.controllers;
 
+import com.fosskeeters.rrss.dtos.UserDto;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -62,13 +64,42 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String signupPostHandler(@RequestParam String username, @RequestParam String password1) {
-        User user = new User();
+    public String signupPostHandler(@Valid @ModelAttribute UserDto userDto, BindingResult bindingResult) {
+        validateSignup(userDto, bindingResult);
 
-        user.setUsername(username);
-        user.setPassword(encoder.encode(password1));
+        if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult);
+            return "signup";
+        }
+
+        User user = createUserFromDto(userDto);
         userRepository.save(user);
-
         return "redirect:/login";
+    }
+
+    private void validateSignup(UserDto userDto, BindingResult bindingResult) {
+        Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
+
+        if (existingUser.isPresent()) {
+            bindingResult.addError(new FieldError("userDto", "username", "Username already exists!"));
+        }
+
+        if (!Objects.equals(userDto.getAccountType(), "customer") &&
+                !Objects.equals(userDto.getAccountType(), "merchant")) {
+            bindingResult.addError(new FieldError("userDto", "accountType",
+                    "Account type must be either Customer or Merchant!"));
+        }
+
+        if (!Objects.equals(userDto.getPassword1(), userDto.getPassword2())) {
+            bindingResult.addError(new FieldError("userDto", "password1", "Passwords do not match!"));
+        }
+    }
+
+    private User createUserFromDto(UserDto userDto) {
+        String encodedPassword = encoder.encode(userDto.getPassword1());
+        int type = userDto.getAccountType().equals("customer") ? 3 : 2;
+
+        return new User(userDto.getFirstName(), userDto.getLastName(), userDto.getUsername(), encodedPassword,
+                type, userDto.getEmail(), userDto.getPhoneNumber());
     }
 }
