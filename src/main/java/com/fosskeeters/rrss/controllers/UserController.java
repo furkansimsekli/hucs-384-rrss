@@ -35,7 +35,7 @@ public class UserController {
         }
 
         Optional<User> loggedInUser = userRepository.findByUsername(loggedInUsername.toString());
-        if (!loggedInUser.isPresent()) {
+        if (loggedInUser.isEmpty()) {
             // This condition should never be met but can't be too safe :)
             return "redirect:/login";
         }
@@ -51,13 +51,13 @@ public class UserController {
         }
 
         Optional<User> loggedInUser = userRepository.findByUsername(loggedInUsername.toString());
-        if (!loggedInUser.isPresent()) {
+        if (loggedInUser.isEmpty()) {
             // This condition should never be met but can't be too safe :)
             return "redirect:/login";
         }
 
         Optional<User> displayedUser = userRepository.findByUsername(usernameParam);
-        if (!displayedUser.isPresent()) {
+        if (displayedUser.isEmpty()) {
             model.addAttribute("errorString", "No such user found");
             return "user";
         }
@@ -84,13 +84,13 @@ public class UserController {
         }
 
         Optional<User> loggedInUser = userRepository.findByUsername(loggedInUsername.toString());
-        if (!loggedInUser.isPresent()) {
+        if (loggedInUser.isEmpty()) {
             // This condition should never be met but can't be too safe :)
             return "redirect:/login";
         }
 
         Optional<User> displayedUser = userRepository.findByUsername(usernameParam);
-        if (!displayedUser.isPresent()) {
+        if (displayedUser.isEmpty()) {
             model.addAttribute("errorString", "No such user found");
             return "user";
         }
