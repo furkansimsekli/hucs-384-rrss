@@ -1,7 +1,9 @@
 package com.fosskeeters.rrss.controllers;
 
 import com.fosskeeters.rrss.dtos.UserDto;
+import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.User;
+import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
 import jakarta.servlet.http.HttpSession;
@@ -14,16 +16,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Controller
 public class UserController {
     private UserRepository userRepository;
+    private ProductRepository productRepository;
     private Argon2PasswordEncoder encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, ProductRepository productRepository) {
         this.userRepository = userRepository;
+        this.productRepository = productRepository;
     }
 
     @GetMapping("/user/{id}")
@@ -76,6 +81,33 @@ public class UserController {
         User user = createUserFromDto(userDto);
         userRepository.save(user);
         return "redirect:/login";
+    }
+
+    @GetMapping("/user/{username}/products")
+    public String merchantProductListGetHandler(Model model, HttpSession session, @PathVariable String username) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String sessionUsername = session.getAttribute("username").toString();
+        Optional<User> authenticatedUser = userRepository.findByUsername(sessionUsername);
+        Optional<User> targetUser = userRepository.findByUsername(username);
+
+        if (targetUser.isEmpty() || authenticatedUser.isEmpty()) {
+            // TODO: 404
+            System.out.println("404");
+            return "redirect:/";
+        }
+
+        if (!Objects.equals(authenticatedUser.get().getId(), targetUser.get().getId())
+                || authenticatedUser.get().getType() != 2) {
+            // TODO: 401
+            System.out.println("401");
+            return "redirect:/";
+        }
+
+        model.addAttribute("products", targetUser.get().getProducts());
+        return "merchant_product_list";
     }
 
     private void validateSignup(UserDto userDto, BindingResult bindingResult) {
