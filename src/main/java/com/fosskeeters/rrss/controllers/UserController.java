@@ -78,10 +78,16 @@ public class UserController {
     }
 
     private void validateSignup(UserDto userDto, BindingResult bindingResult) {
-        Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
+        if (userRepository.existsByUsername(userDto.getUsername())) {
+            bindingResult.addError(new FieldError("userDto", "username", "This username is already taken!"));
+        }
 
-        if (existingUser.isPresent()) {
-            bindingResult.addError(new FieldError("userDto", "username", "Username already exists!"));
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            bindingResult.addError(new FieldError("userDto", "email", "This email address is already taken!"));
+        }
+
+        if (userRepository.existsByPhoneNumber(userDto.getPhoneNumber())) {
+            bindingResult.addError(new FieldError("userDto", "phoneNumber", "This phone number is already taken!"));
         }
 
         if (!Objects.equals(userDto.getAccountType(), "customer") &&
