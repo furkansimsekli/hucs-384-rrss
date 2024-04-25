@@ -1,7 +1,6 @@
 <html layout:decorate="~{common/skeleton}">
 
 <body>
-
     <main class="row-container" style="padding: 0 10vw; gap: 15px;" layout:fragment="content">
         <h2>Account</h2>
         <div class="column-container"
@@ -13,6 +12,10 @@
                 <b>John Smith</b>
                 <span>jsmith@example.org</span>
                 <span>1600 Pennsylvania Avenue NW Washington, D.C. 20500 U.S.</span>
+                <div class="column-container" style="margin-top: 10px;">
+                    <a class="buttonish-link" style="color: white; background-color: #FF4D4D; font-weight: bold;"
+                        th:href="@{/logout}"><span style="margin-right: 10px;">&#11013;</span>Log Out</a>
+                </div>
             </div>
             <form class="row-container shown-on-edit" style="gap: 10px;">
                 <div class="column-container">
