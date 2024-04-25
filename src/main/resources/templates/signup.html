@@ -2,32 +2,36 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="/style.css">
+        <title>Join ShopSmart</title>
     </head>
     <body class="row-container">
         <main>
             <img src="/logo.webp" width="48px" style="display: block; margin: 10px auto;"/>
-            <form class="row-container auth-form">
+            <form class="row-container auth-form" method="post">
                 <div class="column-container" style="justify-content: space-between;">
                     <h2>Sign Up</h2>
-                    <a href="/login.html" style="text-decoration: none; color: black;"><h2 style="font-weight: 300;">&#8594 Log In</h2></a>
+                    <a th:href="@{/login}" style="text-decoration: none; color: black;"><h2 style="font-weight: 300;">&#8594 Log In</h2></a>
                 </div>
+                <input name="firstName" placeholder="First name" type="text">
+                <input name="lastName" placeholder="Last name" type="text">
                 <input name="username" placeholder="Username" type="text"/>
                 <input name="email" placeholder="Mail address" type="email"/>
-                <input name="password" placeholder="Password" type="password"/>
+                <input name="phoneNumber" placeholder="Phone number" type="tel"/>
+                <input name="password1" placeholder="Password" type="password"/>
                 <input name="password2" placeholder="Enter password again" type="password"/>
                 <div class="column-container">
                     <span>
-                        <input name="account_type" value="user" type="radio"/>User
+                        <input name="accountType" value="customer" type="radio"/>Customer
                     </span>
                     <span>
-                        <input name="account_type" value="merchant" type="radio">Merchant
+                        <input name="accountType" value="merchant" type="radio">Merchant
                     </span>
                 </div>
                 <input value="Sign Up" type="submit"/>
             </form>
         </main>
         <footer style="margin: auto auto; margin-bottom: 0; padding-top: 5vh;">
-            (C) FOSSketeers, 2024
+            (C) FOSSkeeters, 2024
         </footer>
     </body>
 </html>

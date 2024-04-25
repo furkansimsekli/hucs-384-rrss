@@ -1,69 +1,60 @@
-<html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="/style.css">
-    </head>
-    <body class="row-container">
-        <nav class="column-container" style="align-items: center; gap: 20px;">
-            <span class="column-container">
-                <img src="/logo.webp" width="40px"/>
-                <h3>ShopSmart</h3>
-            </span>
-            <input type="text" name="query" placeholder="Search" style="width: 50%; margin: 0 auto;"/>
-            <a class="buttonish-link" href="community"><span class="emoji-icon">&#x1F4AC;</span>Community</a>
-            <a class="buttonish-link" href="account"><span class="emoji-icon">&#x1F464;</span>Account?</a>
-        </nav>
-        <main class="row-container" style="padding: 0 10vw; gap: 50px;">
-            <div class="column-container" style="gap: 50px; flex-wrap: wrap;">
-                <img src="" width="160px" height="160px" />
-                <div class="row-container">
-                    <h2 style="margin: 0; margin-top: 10px;">Product Untitled</h2>
-                    <span style="color: gray;">from <a href="merchant.html" style="color: grey">Merchant A</a></span>
-                    <span style="margin-top: 10px; font-weight: 500; font-size: 20;">100 TL</span>
+<html layout:decorate="~{common/skeleton}">
+
+<body>
+    <main class="row-container" style="padding: 0 10vw; gap: 50px;" layout:fragment="content">
+        <div class="column-container" style="gap: 50px; flex-wrap: wrap;">
+            <img src="" width="160px" height="160px" />
+            <div class="row-container">
+                <h2 style="margin: 0; margin-top: 10px;">Product Untitled</h2>
+                <span style="color: gray;">from <a href="merchant.html" style="color: grey">Merchant A</a></span>
+                <span style="margin-top: 10px; font-weight: 500; font-size: 20;">100 TL</span>
+            </div>
+            <div class="row-container" style="padding-top: 8px; margin-left: auto;">
+                <span
+                    style="margin-left: auto; color: var(--primary-color); font-size: 24;">&starf;&starf;&starf;&starf;&star;</span>
+                <span style="margin-left: auto; color: gray; font-size: 12;">197 ratings</span>
+                <a class="buttonish-link" style="margin-top: 10px;" href="wishlist"><span class="emoji-icon">&#x1F90D;
+                    </span>Add to wishlist</a>
+            </div>
+        </div>
+        <div class="row-container" style="gap: 30px;">
+            <div class="row-container" style="gap: 20px;">
+                <div class="column-container" style="gap: 20px;">
+                    <img src="" width="64px" height="64px" />
+                    <div class="row-container">
+                        <span>Dicta tempore sit voluptatem perspiciatis? Quo at repudiandae ratione.</span>
+                        <span style="color: gray; font-size: 12px;">Julius Caesar</span>
+                        <span style="font-size: 14px;"><span
+                                style="margin-right: 10px; margin-top: 2px; color: var(--primary-color); font-size: 18px;">&hookleftarrow;</span>Reply
+                            as Merchant A</span>
+                    </div>
+                    <a href="like" style="color: gray;">Like (51)</a>
+                    <a href="share" style="color: gray;">Share</a>
                 </div>
-                <div class="row-container" style="padding-top: 8px; margin-left: auto;">
-                    <span style="margin-left: auto; color: var(--primary-color); font-size: 24;">&starf;&starf;&starf;&starf;&star;</span>
-                    <span style="margin-left: auto; color: gray; font-size: 12;">197 ratings</span>
-                    <a class="buttonish-link" style="margin-top: 10px;" href="wishlist"><span class="emoji-icon">&#x1F90D; </span>Add to wishlist</a>
+                <div class="column-container"
+                    style="margin-left: 20px; gap: 20px; border-left: 5px solid var(--primary-color); padding-left: 20px;">
+                    <img src="" width="64px" height="64px" />
+                    <div class="row-container">
+                        <span>Rerum eius et iste nihil.</span>
+                        <span style="color: gray; font-size: 12px;">Brutus</span>
+                    </div>
+                    <a href="like" style="color: gray;">Like (3)</a>
+                    <a href="share" style="color: gray;">Share</a>
                 </div>
             </div>
-            <div class="row-container" style="gap: 30px;">
-                <div class="row-container" style="gap: 20px;">
-                    <div class="column-container" style="gap: 20px;">
-                        <img src="" width="64px" height="64px" />
-                        <div class="row-container">
-                            <span>Dicta tempore sit voluptatem perspiciatis? Quo at repudiandae ratione.</span>
-                            <span style="color: gray; font-size: 12px;">Julius Caesar</span>
-                            <span style="font-size: 14px;"><span style="margin-right: 10px; margin-top: 2px; color: var(--primary-color); font-size: 18px;">&hookleftarrow;</span>Reply as Merchant A</span>
-                        </div>
-                        <a href="like" style="color: gray;">Like (51)</a>
-                        <a href="share" style="color: gray;">Share</a>
+            <div class="row-container" style="gap: 20px;">
+                <div class="column-container" style="gap: 20px;">
+                    <img src="" width="64px" height="64px" />
+                    <div class="row-container">
+                        <span>Consequatur quibusdam ratione dignissimos itaque dolorum debitis...</span>
+                        <span style="color: gray; font-size: 12px;">Augustus</span>
                     </div>
-                    <div class="column-container" style="margin-left: 20px; gap: 20px; border-left: 5px solid var(--primary-color); padding-left: 20px;">
-                        <img src="" width="64px" height="64px" />
-                        <div class="row-container">
-                            <span>Rerum eius et iste nihil.</span>
-                            <span style="color: gray; font-size: 12px;">Brutus</span>
-                        </div>
-                        <a href="like" style="color: gray;">Like (3)</a>
-                        <a href="share" style="color: gray;">Share</a>
-                    </div>
-                </div>
-                <div class="row-container" style="gap: 20px;">
-                    <div class="column-container" style="gap: 20px;">
-                        <img src="" width="64px" height="64px" />
-                        <div class="row-container">
-                            <span>Consequatur quibusdam ratione dignissimos itaque dolorum debitis...</span>
-                            <span style="color: gray; font-size: 12px;">Augustus</span>
-                        </div>
-                        <a href="like" style="color: gray;">Like (48)</a>
-                        <a href="share" style="color: gray;">Share</a>
-                    </div>
+                    <a href="like" style="color: gray;">Like (48)</a>
+                    <a href="share" style="color: gray;">Share</a>
                 </div>
             </div>
-        </main>
-        <footer style="margin: auto auto; margin-bottom: 0; padding-top: 5vw;">
-            (C) FOSSketeers, 2024
-        </footer>
-    </body>
+        </div>
+    </main>
+</body>
+
 </html>

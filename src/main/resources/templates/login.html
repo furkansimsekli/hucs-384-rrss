@@ -2,14 +2,15 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="/style.css">
+        <title>Login</title>
     </head>
     <body class="row-container">
         <main>
             <img src="/logo.webp" width="48px" style="display: block; margin: 10px auto;"/>
-            <form class="row-container auth-form">
+            <form class="row-container auth-form" method="post">
                 <div class="column-container" style="justify-content: space-between;">
                     <h2>Log In</h2>
-                    <a href="/register.html" style="text-decoration: none; color: black;"><h2 style="font-weight: 300;">&#8594 Sign Up</h2></a>
+                    <a th:href="@{/signup}" style="text-decoration: none; color: black;"><h2 style="font-weight: 300;">&#8594 Sign Up</h2></a>
                 </div>
                 <input name="username" placeholder="Username" type="text"/>
                 <input name="password" placeholder="Password" type="password"/>
@@ -17,7 +18,7 @@
             </form>
         </main>
         <footer style="margin: auto auto; margin-bottom: 0; padding-top: 5vh;">
-            (C) FOSSketeers, 2024
+            (C) FOSSkeeters, 2024
         </footer>
     </body>
 </html>
