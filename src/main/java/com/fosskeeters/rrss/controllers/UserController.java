@@ -26,6 +26,22 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
+    @GetMapping({"/user", "/user/"})
+    public String getUserRedirectHandler(HttpSession session) {
+        Object loggedInUsername = session.getAttribute("username");
+        if (loggedInUsername == null) {
+            return "redirect:/login";
+        }
+
+        Optional<User> loggedInUser = userRepository.findByUsername(loggedInUsername.toString());
+        if (!loggedInUser.isPresent()) {
+            // This condition should never be met but can't be too safe :)
+            return "redirect:/login";
+        }
+
+        return "redirect:/user/" + loggedInUsername;
+    }
+
     @GetMapping("/user/{usernameParam}")
     public String userProfileHandler(Model model, @PathVariable String usernameParam, HttpSession session) {
         Object loggedInUsername = session.getAttribute("username");
