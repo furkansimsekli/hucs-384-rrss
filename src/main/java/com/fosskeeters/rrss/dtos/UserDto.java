@@ -41,7 +41,7 @@ public class UserDto {
     }
 
     public void setFirstName(String firstName) {
-        this.firstName = firstName;
+        this.firstName = toTitleCase(firstName.trim());
     }
 
     public String getLastName() {
@@ -49,7 +49,7 @@ public class UserDto {
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+        this.lastName = toTitleCase(lastName.trim());
     }
 
     public String getUsername() {
@@ -57,7 +57,7 @@ public class UserDto {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.username = username.trim().toLowerCase();
     }
 
     public String getEmail() {
@@ -65,7 +65,7 @@ public class UserDto {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email.trim().toLowerCase();
     }
 
     public String getPhoneNumber() {
@@ -73,7 +73,7 @@ public class UserDto {
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+        this.phoneNumber = phoneNumber.trim();
     }
 
     public String getAccountType() {
@@ -98,5 +98,37 @@ public class UserDto {
 
     public void setPassword2(String password2) {
         this.password2 = password2;
+    }
+
+    // TODO: move to a global utils library
+    /**
+     * Converts the given string to title case. In title case, the first letter of
+     * each word is converted to uppercase, while the rest of the letters are converted
+     * to lowercase. Whitespace (e.g. spaces, tabs) separates words.
+     *
+     * @param text The input string to be converted.
+     * @return A new string in title case, or the original string if it's null or empty.
+     */
+    private static String toTitleCase(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+
+        StringBuilder converted = new StringBuilder();
+        boolean convertNext = true;
+
+        for (char ch : text.toCharArray()) {
+            if (Character.isSpaceChar(ch)) {
+                convertNext = true;
+            } else if (convertNext) {
+                ch = Character.toTitleCase(ch);
+                convertNext = false;
+            } else {
+                ch = Character.toLowerCase(ch);
+            }
+            converted.append(ch);
+        }
+
+        return converted.toString();
     }
 }
