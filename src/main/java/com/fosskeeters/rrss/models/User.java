@@ -44,6 +44,28 @@ public class User {
 
     @Column private String hashedPassword;
 
+    public User(String firstName, String lastName, String username, String password, int type, String email,
+                String phoneNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.type = type;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.createdAt = LocalDateTime.now();
+        this.address = "";
+        this.profileImagePath = "path/to/default/image";
+        this.dateOfBirth = LocalDate.of(1970, 1, 1);
+    }
+
+    public User() {
+        this.createdAt = LocalDateTime.now();
+        this.address = "";
+        this.profileImagePath = "path/to/default/image";
+        this.dateOfBirth = LocalDate.of(1970, 1, 1);
+    }
+
     public Long getId() {
         return id;
     }
