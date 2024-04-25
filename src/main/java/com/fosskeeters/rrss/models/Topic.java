@@ -1,6 +1,7 @@
 package com.fosskeeters.rrss.models;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
