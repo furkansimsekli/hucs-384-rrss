@@ -31,6 +31,12 @@ public class UserController {
         return "user";
     }
 
+    @GetMapping("/logout")
+    public String logoutHandler(HttpSession session) {
+        session.removeAttribute("username");
+        return "redirect:/";
+    }
+
     @GetMapping("/login")
     public String loginGetHandler(Model model, HttpSession session) {
         if (session.getAttribute("username") != null) {
