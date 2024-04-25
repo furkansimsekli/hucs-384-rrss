@@ -2,6 +2,7 @@ package com.fosskeeters.rrss.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
