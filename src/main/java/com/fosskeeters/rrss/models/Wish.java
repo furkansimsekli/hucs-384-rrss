@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Wish {
     @Id
@@ -19,7 +19,7 @@ public class Wish {
     @JoinColumn
     private User owner;
 
-    @CreatedDate private LocalDate createdAt;
+    @CreatedDate private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
@@ -45,11 +45,11 @@ public class Wish {
         this.owner = owner;
     }
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 }

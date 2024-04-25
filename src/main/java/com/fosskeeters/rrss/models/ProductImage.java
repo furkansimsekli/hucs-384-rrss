@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ProductImage {
     @Id
@@ -24,7 +24,7 @@ public class ProductImage {
 
     @Column private String imagePath;
 
-    @CreatedDate private LocalDate createdAt;
+    @CreatedDate private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
@@ -66,11 +66,11 @@ public class ProductImage {
         this.imagePath = imagePath;
     }
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 }
