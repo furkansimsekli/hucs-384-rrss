@@ -27,8 +27,6 @@ public class Product {
     @JoinColumn
     private User owner;
 
-    @Column private String productImagePath;
-
     @CreatedDate private LocalDateTime createdAt;
 
     public Long getId() {
@@ -69,14 +67,6 @@ public class Product {
 
     public void setOwner(User owner) {
         this.owner = owner;
-    }
-
-    public String getProductImagePath() {
-        return productImagePath;
-    }
-
-    public void setProductImagePath(String productImagePath) {
-        this.productImagePath = productImagePath;
     }
 
     public LocalDateTime getCreatedAt() {
