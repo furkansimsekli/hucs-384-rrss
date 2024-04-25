@@ -10,22 +10,22 @@
             <label class="buttonish-checkbox-label hidden-on-edit" for="edit">Edit</label>
             <label class="buttonish-checkbox-label shown-on-edit" for="edit">Cancel</label>
             <div class="row-container hidden-on-edit">
-                <b>John Smith</b>
-                <span>jsmith@example.org</span>
-                <span>1600 Pennsylvania Avenue NW Washington, D.C. 20500 U.S.</span>
+                <b th:text="${user.getFirstName() + ' ' + user.getLastName()}" />
+                <span th:text="${user.getEmail()}" />
+                <span th:text="${user.getAddress()}" />
                 <div class="column-container" style="margin-top: 10px;">
                     <a class="buttonish-link" style="color: white; background-color: #FF4D4D; font-weight: bold;"
                         th:href="@{/logout}"><span style="margin-right: 10px;">&#11013;</span>Log Out</a>
                 </div>
             </div>
-            <form class="row-container shown-on-edit" style="gap: 10px;">
+            <form class="row-container shown-on-edit" style="gap: 10px;" method="post">
                 <div class="column-container" style="gap: 10px;">
-                    <input name="firstname" type="text" placeholder="First Name" value="John" />
-                    <input name="lastname" type="text" placeholder="Last Name" value="Smith" />
+                    <input name="firstname" type="text" placeholder="First Name" th:value="${user.getFirstName()}" />
+                    <input name="lastname" type="text" placeholder="Last Name" th:value="${user.getLastName()}" />
                 </div>
-                <input name="email" type="email" placeholder="E-mail" value="jsmith@example.org" />
-                <input name="phonenumber" type="tel" placeholder="Phone Number" value="+15555555" />
-                <input name="birthday" type="date" placeholder="Birthday" />
+                <input name="email" type="email" placeholder="E-mail" th:value="${user.getEmail()}" />
+                <input name="phonenumber" type="tel" placeholder="Phone Number" th:value="${user.getPhoneNumber()}" />
+                <input name="birthday" type="date" placeholder="Birthday" th:value="${#temporals.format(user.getDateOfBirth(), 'yyyy-MM-dd')}"/>
                 <input type="submit" value="Save" style="padding: 5px;" />
             </form>
             <img href="" width="64px" height="64px" />
