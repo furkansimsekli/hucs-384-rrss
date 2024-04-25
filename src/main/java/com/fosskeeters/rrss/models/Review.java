@@ -2,6 +2,7 @@ package com.fosskeeters.rrss.models;
 
 import jakarta.persistence.*;
 
+import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,10 @@ public class Review {
 
     @Column(length = 4096)
     private String body;
+
+    @Column
+    @Size(min = 1, max = 5)
+    private int score;
 
     @Column(length = 4096)
     private String merchantReplyBody;
@@ -69,6 +74,14 @@ public class Review {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public String getMerchantReplyBody() {

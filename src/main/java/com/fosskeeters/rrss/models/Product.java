@@ -3,6 +3,7 @@ package com.fosskeeters.rrss.models;
 import jakarta.persistence.*;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.NumberFormat;
 
 import java.time.LocalDateTime;
 
@@ -18,8 +19,12 @@ public class Product {
     @Column(length = 4096)
     private String description;
 
+    @Column
+    @NumberFormat(style = NumberFormat.Style.CURRENCY)
+    private double price;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "owner_id")
+    @JoinColumn
     private User owner;
 
     @Column private String productImagePath;
@@ -48,6 +53,14 @@ public class Product {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public User getOwner() {
