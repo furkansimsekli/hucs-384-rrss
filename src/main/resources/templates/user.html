@@ -8,7 +8,8 @@
         <div th:if="${#strings.isEmpty(errorString)}" class="column-container"
             style="margin: 0 auto; gap: 20px; flex-direction: row-reverse; align-items: flex-start;">
 
-            <input type="checkbox" class="buttonish-checkbox" id="edit" th:unless="${#strings.isEmpty(hasErrors)}" checked />
+            <input type="checkbox" class="buttonish-checkbox" id="edit" th:unless="${#strings.isEmpty(hasErrors)}"
+                checked />
             <input type="checkbox" class="buttonish-checkbox" id="edit" th:if="${#strings.isEmpty(hasErrors)}" />
 
             <label class="buttonish-checkbox-label hidden-on-edit" for="edit">Edit</label>
@@ -17,7 +18,10 @@
                 <b th:text="${userUpdateDto.getFirstName() + ' ' + userUpdateDto.getLastName()}" />
                 <span th:text="${userUpdateDto.getEmail()}" />
                 <span th:text="${userUpdateDto.getAddress()}" />
-                <div class="column-container" style="margin-top: 10px;">
+                <div class="row-container" style="margin-top: 15px; gap: 10px;">
+                    <a class="buttonish-link" style="font-weight: bold;"
+                        th:href="@{/user/{username}/change-password(username=${#ctx.session.username})}"><span
+                            style="margin-right: 10px;">&#128273;</span>Change Password</a>
                     <a class="buttonish-link" style="color: white; background-color: #FF4D4D; font-weight: bold;"
                         th:href="@{/logout}"><span style="margin-right: 10px;">&#11013;</span>Log Out</a>
                 </div>
@@ -25,28 +29,36 @@
             <form class="row-container shown-on-edit" style="gap: 10px;" method="post" th:object="${userUpdateDto}">
                 <div class="row-container">
                     <div class="row-container">
-                        <p th:if="${#fields.hasErrors('firstName')}" th:errorclass="text-danger" th:errors="${userUpdateDto.firstName}"></p>
-                        <p th:if="${#fields.hasErrors('lastName')}" th:errorclass="text-danger" th:errors="${userUpdateDto.lastName}"></p>
+                        <p th:if="${#fields.hasErrors('firstName')}" th:errorclass="text-danger"
+                            th:errors="${userUpdateDto.firstName}"></p>
+                        <p th:if="${#fields.hasErrors('lastName')}" th:errorclass="text-danger"
+                            th:errors="${userUpdateDto.lastName}"></p>
                     </div>
                     <div class="column-container" style="gap: 10px">
-
-                        <input name="firstname" type="text" placeholder="First Name" th:field="${userUpdateDto.firstName}" />
-                        <input name="lastname" type="text" placeholder="Last Name" th:field="${userUpdateDto.lastName}" />
+                        <input name="firstname" type="text" placeholder="First Name"
+                            th:field="${userUpdateDto.firstName}" />
+                        <input name="lastname" type="text" placeholder="Last Name"
+                            th:field="${userUpdateDto.lastName}" />
                     </div>
                 </div>
 
-                <p th:if="${#fields.hasErrors('email')}" th:errorclass="text-danger" th:errors="${userUpdateDto.email}"></p>
+                <p th:if="${#fields.hasErrors('email')}" th:errorclass="text-danger" th:errors="${userUpdateDto.email}">
+                </p>
                 <input name="email" type="email" placeholder="E-mail" th:field="${userUpdateDto.email}" />
-                
-                <p th:if="${#fields.hasErrors('phoneNumber')}" th:errorclass="text-danger" th:errors="${userUpdateDto.phoneNumber}"></p>
-                <input name="phonenumber" type="tel" placeholder="Phone Number" th:field="${userUpdateDto.phoneNumber}" />
-                
-                <p th:if="${#fields.hasErrors('dateOfBirth')}" th:errorclass="text-danger" th:errors="${userUpdateDto.dateOfBirth}"></p>
-                <input name="birthday" type="date" placeholder="Birthday" th:field="${userUpdateDto.dateOfBirth}"/>
-                
-                <p th:if="${#fields.hasErrors('address')}" th:errorclass="text-danger" th:errors="${userUpdateDto.address}"></p>
+
+                <p th:if="${#fields.hasErrors('phoneNumber')}" th:errorclass="text-danger"
+                    th:errors="${userUpdateDto.phoneNumber}"></p>
+                <input name="phonenumber" type="tel" placeholder="Phone Number"
+                    th:field="${userUpdateDto.phoneNumber}" />
+
+                <p th:if="${#fields.hasErrors('dateOfBirth')}" th:errorclass="text-danger"
+                    th:errors="${userUpdateDto.dateOfBirth}"></p>
+                <input name="birthday" type="date" placeholder="Birthday" th:field="${userUpdateDto.dateOfBirth}" />
+
+                <p th:if="${#fields.hasErrors('address')}" th:errorclass="text-danger"
+                    th:errors="${userUpdateDto.address}"></p>
                 <textarea name="address" rows="4" placeholder="Address" th:field="${userUpdateDto.address}" />
-                
+
                 <input hidden th:field="${userUpdateDto.profileImagePath}" />
                 <input type="submit" value="Save" style="padding: 5px;" />
             </form>
