@@ -1,5 +1,6 @@
 package com.fosskeeters.rrss.controllers;
 
+import com.fosskeeters.rrss.dtos.ChangePasswordDto;
 import com.fosskeeters.rrss.dtos.UserDto;
 import com.fosskeeters.rrss.dtos.UserUpdateDto;
 import com.fosskeeters.rrss.models.User;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class UserController {
@@ -65,7 +68,7 @@ public class UserController {
         return Optional.empty();
     }
 
-    @GetMapping({"/user", "/user/"})
+    @GetMapping({ "/user", "/user/" })
     public String getUserRedirectHandler(HttpSession session) {
         var authenticationRedirect = checkAuthentication(session);
         if (authenticationRedirect.isPresent()) {
@@ -123,6 +126,40 @@ public class UserController {
 
         model.addAttribute("updatedSuccessfully", "true");
         return "user";
+    }
+
+    @GetMapping("/user/{usernameParam}/change-password")
+    public String getChangePasswordHandler(Model model, @PathVariable String usernameParam, HttpSession session) {
+        var authorizationRedirect = checkAuthorization(session, model, usernameParam);
+        if (authorizationRedirect.isPresent()) {
+            return authorizationRedirect.get();
+        }
+
+        ChangePasswordDto dto = new ChangePasswordDto();
+        model.addAttribute("changePasswordDto", dto);
+        return "change_password";
+    }
+
+    @PostMapping("/user/{usernameParam}/change-password")
+    public String postChangePasswordHandler(Model model, @PathVariable String usernameParam, HttpSession session,
+            @Valid @ModelAttribute ChangePasswordDto dto, BindingResult bindingResult) {
+        var authorizationRedirect = checkAuthorization(session, model, usernameParam);
+        if (authorizationRedirect.isPresent()) {
+            return authorizationRedirect.get();
+        }
+        User displayedUser = userRepository.findByUsername(usernameParam).get();
+
+        validateChangePassword(dto, bindingResult, displayedUser);
+        if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult);
+            return "change_password";
+        }
+
+        displayedUser.setPassword(encoder.encode(dto.getNewPassword1()));
+        userRepository.save(displayedUser);
+        model.addAttribute("updatedSuccessfully", "true");
+
+        return "change_password";
     }
 
     @GetMapping("/logout")
@@ -222,6 +259,17 @@ public class UserController {
             bindingResult.addError(
                     new FieldError(
                             "userUpdateDto", "phoneNumber", "This phone number is already taken!"));
+        }
+    }
+
+    private void validateChangePassword(ChangePasswordDto dto, BindingResult bindingResult, User displayedUser) {
+        if (!encoder.matches(dto.getOldPassword(), displayedUser.getPassword())) {
+            bindingResult.addError(new FieldError("changePasswordDto", "oldPassword", "Current password do not match"));
+        }
+
+        if (!Objects.equals(dto.getNewPassword1(), dto.getNewPassword2())) {
+            bindingResult.addError(
+                    new FieldError("changePasswordDto", "newPassword1", "Passwords do not match!"));
         }
     }
 
