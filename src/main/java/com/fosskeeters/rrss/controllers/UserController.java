@@ -27,50 +27,65 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping({"/user", "/user/"})
-    public String getUserRedirectHandler(HttpSession session) {
+    private Optional<String> checkAuthentication(HttpSession session) {
         Object loggedInUsername = session.getAttribute("username");
         if (loggedInUsername == null) {
-            return "redirect:/login";
+            return Optional.of("redirect:/login");
         }
 
         Optional<User> loggedInUser = userRepository.findByUsername(loggedInUsername.toString());
         if (loggedInUser.isEmpty()) {
             // This condition should never be met but can't be too safe :)
-            return "redirect:/login";
+            return Optional.of("redirect:/login");
         }
 
-        return "redirect:/user/" + loggedInUsername;
+        return Optional.empty(); // keep going
     }
 
-    @GetMapping("/user/{usernameParam}")
-    public String userProfileHandler(Model model, @PathVariable String usernameParam, HttpSession session) {
-        Object loggedInUsername = session.getAttribute("username");
-        if (loggedInUsername == null) {
-            return "redirect:/login";
-        }
-
-        Optional<User> loggedInUser = userRepository.findByUsername(loggedInUsername.toString());
-        if (loggedInUser.isEmpty()) {
-            // This condition should never be met but can't be too safe :)
-            return "redirect:/login";
+    private Optional<String> checkAuthorization(HttpSession session, Model model, String usernameParam) {
+        var authenticationRedirect = checkAuthentication(session);
+        if (authenticationRedirect.isPresent()) {
+            return authenticationRedirect;
         }
 
         Optional<User> displayedUser = userRepository.findByUsername(usernameParam);
         if (displayedUser.isEmpty()) {
             model.addAttribute("errorString", "No such user found");
-            return "user";
+            return Optional.of("user");
         }
 
-        if (loggedInUser.get().getType() != 1 // if user is not an Admin (TODO avoid magic numbers)
-                && !loggedInUser.get().getUsername().equals(displayedUser.get().getUsername())) {
+        User loggedInUser = userRepository.findByUsername(session.getAttribute("username").toString()).get();
+        if (loggedInUser.getType() != 1 // if user is not an Admin (TODO avoid magic numbers)
+                && !loggedInUser.getUsername().equals(displayedUser.get().getUsername())) {
             // the logged in user and displayed user are different
             model.addAttribute("errorString", "Unauthorized access");
-            return "user";
+            return Optional.of("user");
         }
 
+        return Optional.empty();
+    }
+
+    @GetMapping({"/user", "/user/"})
+    public String getUserRedirectHandler(HttpSession session) {
+        var authenticationRedirect = checkAuthentication(session);
+        if (authenticationRedirect.isPresent()) {
+            return authenticationRedirect.get();
+        }
+
+        return "redirect:/user/" + session.getAttribute("username").toString();
+    }
+
+    @GetMapping("/user/{usernameParam}")
+    public String userProfileHandler(Model model, @PathVariable String usernameParam, HttpSession session) {
+        var authorizationRedirect = checkAuthorization(session, model, usernameParam);
+        if (authorizationRedirect.isPresent()) {
+            return authorizationRedirect.get();
+        }
+
+        User displayedUser = userRepository.findByUsername(usernameParam).get();
+
         // Logged in user is either an admin or the displayed user.
-        UserUpdateDto userUpdateDto = UserUpdateDto.fromUser(displayedUser.get());
+        UserUpdateDto userUpdateDto = UserUpdateDto.fromUser(displayedUser);
         model.addAttribute("userUpdateDto", userUpdateDto);
         return "user";
     }
@@ -78,31 +93,13 @@ public class UserController {
     @PostMapping("/user/{usernameParam}")
     public String userUpdateHandler(Model model, @PathVariable String usernameParam, HttpSession session,
             @Valid @ModelAttribute UserUpdateDto userUpdateDto, BindingResult bindingResult) {
-        Object loggedInUsername = session.getAttribute("username");
-        if (loggedInUsername == null) {
-            return "redirect:/login";
+        var authorizationRedirect = checkAuthorization(session, model, usernameParam);
+        if (authorizationRedirect.isPresent()) {
+            return authorizationRedirect.get();
         }
+        User displayedUser = userRepository.findByUsername(usernameParam).get();
 
-        Optional<User> loggedInUser = userRepository.findByUsername(loggedInUsername.toString());
-        if (loggedInUser.isEmpty()) {
-            // This condition should never be met but can't be too safe :)
-            return "redirect:/login";
-        }
-
-        Optional<User> displayedUser = userRepository.findByUsername(usernameParam);
-        if (displayedUser.isEmpty()) {
-            model.addAttribute("errorString", "No such user found");
-            return "user";
-        }
-
-        if (loggedInUser.get().getType() != 1 // if user is not an Admin (TODO avoid magic numbers)
-                && !loggedInUser.get().getUsername().equals(displayedUser.get().getUsername())) {
-            // the logged in user and displayed user are different
-            model.addAttribute("errorString", "Unauthorized access");
-            return "user";
-        }
-
-        validateUserUpdate(userUpdateDto, bindingResult, displayedUser.get());
+        validateUserUpdate(userUpdateDto, bindingResult, displayedUser);
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("hasErrors", "true");
@@ -111,10 +108,10 @@ public class UserController {
         }
 
         User user = new User();
-        user.setId(displayedUser.get().getId());
-        user.setUsername(displayedUser.get().getUsername());
-        user.setPassword(displayedUser.get().getPassword());
-        user.setType(displayedUser.get().getType());
+        user.setId(displayedUser.getId());
+        user.setUsername(displayedUser.getUsername());
+        user.setPassword(displayedUser.getPassword());
+        user.setType(displayedUser.getType());
         user.setProfileImagePath(userUpdateDto.getProfileImagePath());
         user.setAddress(userUpdateDto.getAddress());
         user.setDateOfBirth(userUpdateDto.getDateOfBirth());
@@ -124,7 +121,6 @@ public class UserController {
         user.setPhoneNumber(userUpdateDto.getPhoneNumber());
         userRepository.save(user);
 
-        //model.addAttribute("userUpdateDbo", user);
         model.addAttribute("updatedSuccessfully", "true");
         return "user";
     }
