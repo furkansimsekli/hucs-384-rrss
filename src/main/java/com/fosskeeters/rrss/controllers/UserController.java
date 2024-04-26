@@ -1,9 +1,7 @@
 package com.fosskeeters.rrss.controllers;
 
 import com.fosskeeters.rrss.dtos.UserDto;
-import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.User;
-import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
 import jakarta.servlet.http.HttpSession;
@@ -16,19 +14,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Controller
 public class UserController {
     private UserRepository userRepository;
-    private ProductRepository productRepository;
     private Argon2PasswordEncoder encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
 
-    public UserController(UserRepository userRepository, ProductRepository productRepository) {
+    public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.productRepository = productRepository;
     }
 
     @GetMapping("/user/{id}")
