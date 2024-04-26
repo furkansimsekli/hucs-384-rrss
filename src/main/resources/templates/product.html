@@ -5,16 +5,15 @@
         <div class="column-container" style="gap: 50px; flex-wrap: wrap;">
             <img src="" width="160px" height="160px" />
             <div class="row-container">
-                <h2 style="margin: 0; margin-top: 10px;">Product Untitled</h2>
-                <span style="color: gray;">from <a href="merchant.html" style="color: grey">Merchant A</a></span>
-                <span style="margin-top: 10px; font-weight: 500; font-size: 20;">100 TL</span>
+                <h2 th:text="${product.getName()}" style="margin: 0; margin-top: 10px;">Product Untitled</h2>
+                <span th:text="${product.getOwner().getUsername()}" style="color: gray;">from <a href="merchant.html" style="color: grey">Merchant A</a></span>
+                <span th:text="${product.getPrice()} + 'TL'" style="margin-top: 10px; font-weight: 500; font-size: 20;">0</span>
+                <span th:text="${product.getDescription()}"> Product Description</span>
             </div>
             <div class="row-container" style="padding-top: 8px; margin-left: auto;">
-                <span
-                    style="margin-left: auto; color: var(--primary-color); font-size: 24;">&starf;&starf;&starf;&starf;&star;</span>
+                <span style="margin-left: auto; color: var(--primary-color); font-size: 24;">&starf;&starf;&starf;&starf;&star;</span>
                 <span style="margin-left: auto; color: gray; font-size: 12;">197 ratings</span>
-                <a class="buttonish-link" style="margin-top: 10px;" href="wishlist"><span class="emoji-icon">&#x1F90D;
-                    </span>Add to wishlist</a>
+                <a class="buttonish-link" style="margin-top: 10px;" href="wishlist"><span class="emoji-icon">&#x1F90D; </span>Add to wishlist</a>
             </div>
         </div>
         <div class="row-container" style="gap: 30px;">
@@ -24,15 +23,12 @@
                     <div class="row-container">
                         <span>Dicta tempore sit voluptatem perspiciatis? Quo at repudiandae ratione.</span>
                         <span style="color: gray; font-size: 12px;">Julius Caesar</span>
-                        <span style="font-size: 14px;"><span
-                                style="margin-right: 10px; margin-top: 2px; color: var(--primary-color); font-size: 18px;">&hookleftarrow;</span>Reply
-                            as Merchant A</span>
+                        <span style="font-size: 14px;"><span style="margin-right: 10px; margin-top: 2px; color: var(--primary-color); font-size: 18px;">&hookleftarrow;</span>Reply as Merchant A</span>
                     </div>
                     <a href="like" style="color: gray;">Like (51)</a>
                     <a href="share" style="color: gray;">Share</a>
                 </div>
-                <div class="column-container"
-                    style="margin-left: 20px; gap: 20px; border-left: 5px solid var(--primary-color); padding-left: 20px;">
+                <div class="column-container" style="margin-left: 20px; gap: 20px; border-left: 5px solid var(--primary-color); padding-left: 20px;">
                     <img src="" width="64px" height="64px" />
                     <div class="row-container">
                         <span>Rerum eius et iste nihil.</span>
