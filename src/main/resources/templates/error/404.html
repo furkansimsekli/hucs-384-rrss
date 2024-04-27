@@ -1,0 +1,33 @@
+<html layout:decorate="~{common/skeleton}">
+    <head>
+        <style>
+            svg {
+                width: 100vw;
+                position: absolute;
+                left: 0;
+                bottom: 0;
+            }
+
+            footer {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <main layout:fragment="content">
+            <svg viewBox="0 0 500 150">
+              <path id="curve" d="M0.00,50.00 C150.00,150.00 349.20,-50.00 500.00,50.00 L500.00,150.00 L0.00,150.00 Z" fill="var(--primary-color)"></path>
+              <text width="500" x="50" y="2.5">
+                <textPath alignment-baseline="top" xlink:href="#curve">
+                  404 Not Found
+                </textPath>
+              </text>
+              <text width="500" x="300" y="2.5">
+                <textPath alignment-baseline="top" xlink:href="#curve">
+                  Try looking a bit harder
+                </textPath>
+              </text>
+            </svg>
+        </main>
+    </body>
+</html>
