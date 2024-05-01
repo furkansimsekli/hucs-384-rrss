@@ -31,13 +31,15 @@ public class MerchantController {
     }
 
     @GetMapping("/{username}/products")
-    public String getMerchantProducts(@PathVariable("username") String username,
+    public String getMerchantProducts(HttpSession session,
+                                      @PathVariable("username") String username,
                                       Model model) {
 
         Optional<User> user = userRepository.findByUsername(username);
 
-        if (user.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (!Objects.equals(username, session.getAttribute("username"))
+                || user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
         model.addAttribute("user", user.get());
