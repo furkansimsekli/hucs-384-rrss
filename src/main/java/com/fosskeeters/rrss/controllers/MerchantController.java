@@ -46,12 +46,14 @@ public class MerchantController {
 
     @GetMapping("/{username}/products/create")
     public String getProductCreateForm(HttpSession session,
-                                       @PathVariable("username") String username) {
+                                       @PathVariable("username") String username,
+                                       Model model) {
 
         if (!Objects.equals(username, session.getAttribute("username"))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
+        model.addAttribute("productDto", new ProductDto());
         return "merchants/create_product";
     }
 
