@@ -67,14 +67,54 @@ public class MerchantController {
 
         Optional<User> user = userRepository.findByUsername(username);
 
-        Product product = new Product();
-        product.setOwner(user.get());
-        product.setName(productDto.getName());
-        product.setDescription(productDto.getDescription());
-        product.setPrice(productDto.getPrice());
-        product.setCreatedAt(LocalDateTime.now());
+        if (user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        Product product = new Product(user.get(), productDto);
         productRepository.save(product);
 
+        return "redirect:/merchants/" + username + "/products";
+    }
+
+    @GetMapping("/{username}/products/{product_id}/update")
+    public String getUpdateProductForm(HttpSession session, Model model, @PathVariable("username") String username,
+                                       @PathVariable("product_id") long product_id) {
+        if (!Objects.equals(username, session.getAttribute("username"))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        Optional<Product> product = productRepository.findById(product_id);
+
+        if (product.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        ProductDto productDto = new ProductDto(product.get());
+        model.addAttribute("productDto", productDto);
+        return "merchants/update_product";
+    }
+
+    @PostMapping("/{username}/products/{product_id}/update")
+    public String updateProduct(HttpSession session, Model model, @PathVariable("username") String username,
+                                @PathVariable("product_id") long product_id,
+                                @Valid @ModelAttribute ProductDto productDto, BindingResult bindingResult) {
+        if (!Objects.equals(username, session.getAttribute("username"))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "merchants/update_product";
+        }
+
+        Optional<Product> product = productRepository.findById(product_id);
+
+        if (product.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        product.get().setFromProductDto(productDto);
+        productRepository.save(product.get());
         return "redirect:/merchants/" + username + "/products";
     }
 }
