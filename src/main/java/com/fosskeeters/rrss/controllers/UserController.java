@@ -215,33 +215,6 @@ public class UserController {
         return "redirect:/login";
     }
 
-    @GetMapping("/user/{username}/products")
-    public String merchantProductListGetHandler(Model model, HttpSession session, @PathVariable String username) {
-        if (session.getAttribute("username") == null) {
-            return "redirect:/login";
-        }
-
-        String sessionUsername = session.getAttribute("username").toString();
-        Optional<User> authenticatedUser = userRepository.findByUsername(sessionUsername);
-        Optional<User> targetUser = userRepository.findByUsername(username);
-
-        if (targetUser.isEmpty() || authenticatedUser.isEmpty()) {
-            // TODO: 404
-            System.out.println("404");
-            return "redirect:/";
-        }
-
-        if (!Objects.equals(authenticatedUser.get().getId(), targetUser.get().getId())
-                || authenticatedUser.get().getType() != 2) {
-            // TODO: 401
-            System.out.println("401");
-            return "redirect:/";
-        }
-
-        model.addAttribute("products", targetUser.get().getProducts());
-        return "merchant_product_list";
-    }
-
     private void validateSignup(UserDto userDto, BindingResult bindingResult) {
         if (userRepository.existsByUsername(userDto.getUsername())) {
             bindingResult.addError(
