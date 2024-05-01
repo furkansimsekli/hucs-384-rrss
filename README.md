@@ -4,21 +4,30 @@
 
 ## Requirements
 - OpenJDK >= 21
-- Docker
-- Docker Compose
+- Docker (production only)
+- Docker Compose (production only)
 - [Spring Boot Extension Pack](https://marketplace.visualstudio.com/items?itemName=vmware.vscode-boot-dev-pack) for VSCode (optional)
 
 ## Build and Run (for local builds)
-Create a directory named `data`. This step is only required once.
 
-```sh
-mkdir data
-```
+### IntelliJ
+IntelliJ automatically detects, indexes, and builds the project by itself. All you have to do just click the Run icon at
+the top right.
 
-Then run the application with:
+The website should be accessible from `localhost:8080`
+
+### CLI
+You can immediately run the application with the command below:
 
 ```sh
 ./gradlew bootRun
+```
+
+If you would like to make the program hot-reload i.e. restart everytime there is a change in the codebase, then you can
+use this command:
+
+```sh
+./gradlew compileJava
 ```
 
 The website should be accessible from `localhost:8080`
