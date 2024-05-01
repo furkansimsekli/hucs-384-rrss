@@ -24,7 +24,7 @@ public class Product {
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     private double price;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn
     private User owner;
 
