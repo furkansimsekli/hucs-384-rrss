@@ -1,5 +1,7 @@
 package com.fosskeeters.rrss.dtos;
 
+import com.fosskeeters.rrss.models.Product;
+
 import jakarta.validation.constraints.*;
 
 public class ProductDto {
@@ -14,6 +16,15 @@ public class ProductDto {
 
     @NotNull(message = "Price can not be empty!")
     private double price;
+
+    public ProductDto() {
+    }
+
+    public ProductDto(Product product) {
+        this.name = product.getName();
+        this.description = product.getDescription();
+        this.price = product.getPrice();
+    }
 
     public String getName() {
         return name;

@@ -1,5 +1,6 @@
 package com.fosskeeters.rrss.models;
 
+import com.fosskeeters.rrss.dtos.ProductDto;
 import jakarta.persistence.*;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -27,7 +28,25 @@ public class Product {
     @JoinColumn
     private User owner;
 
-    @CreatedDate private LocalDateTime createdAt;
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    public Product() {
+    }
+
+    public Product(User owner, ProductDto productDto) {
+        this.owner = owner;
+        this.name = productDto.getName();
+        this.description = productDto.getDescription();
+        this.price = productDto.getPrice();
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public void setFromProductDto(ProductDto productDto) {
+        this.name = productDto.getName();
+        this.description = productDto.getDescription();
+        this.price = productDto.getPrice();
+    }
 
     public Long getId() {
         return id;
