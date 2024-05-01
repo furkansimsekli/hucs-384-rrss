@@ -44,7 +44,7 @@ public class MerchantController {
 
     @GetMapping("/{username}/products/create")
     public String getProductCreateForm(HttpSession session, Model model,
-                                               @PathVariable("username") String username) {
+                                       @PathVariable("username") String username) {
         if (!Objects.equals(username, session.getAttribute("username"))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
@@ -115,6 +115,23 @@ public class MerchantController {
 
         product.get().setFromProductDto(productDto);
         productRepository.save(product.get());
+        return "redirect:/merchants/" + username + "/products";
+    }
+
+    @GetMapping("/{username}/products/{product_id}/delete")
+    public String deleteProduct(HttpSession session, Model model, @PathVariable("username") String username,
+                                @PathVariable("product_id") long product_id) {
+        if (!Objects.equals(username, session.getAttribute("username"))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        Optional<Product> product = productRepository.findById(product_id);
+
+        if (product.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        productRepository.delete(product.get());
         return "redirect:/merchants/" + username + "/products";
     }
 }
