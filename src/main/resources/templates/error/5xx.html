@@ -1,0 +1,32 @@
+<html layout:decorate="~{common/skeleton}">
+    <head>
+        <style>
+            main > div {
+                background-color: #232627;
+                border-radius: 5px;
+                font-family: monospace;
+                margin: 0 auto;
+                color: white;
+                width: 50vw;
+                padding: 5vw;
+            }
+        </style>
+    </head>
+    <body>
+        <main layout:fragment="content">
+            <div>
+                <h2>5xx Server Error</h2>
+                <p>Congratulations. You broke our website. Your prize will be awarded to you shortly.</p>
+                <br>
+                <br>
+                <span style="color: #434647">> var application = Application.getApplication();</span>
+                <br>
+                <span style="color: #434647">> var developers  = application.getCodeMonkeys();</span>
+                <br>
+                <span style="color: #434647">> developers.gitBlame();</span>
+                <br>
+                <span style="color: #434647">> developers.fixBug();</span>
+            </div>
+        </main>
+    </body>
+</html>
