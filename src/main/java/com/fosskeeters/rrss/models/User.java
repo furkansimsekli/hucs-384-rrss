@@ -10,6 +10,12 @@ import java.util.List;
 
 @Entity
 public class User {
+    public enum Type {
+        CUSTOMER,
+        MERCHANT,
+        ADMIN,
+        COMMUNITY_MOD
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +32,7 @@ public class User {
 
     @Column private String password;
 
-    @Column private int type; // 1: Administrator, 2: Merchant, 3: Customer, 4: Moderator
+    @Column private Type type;
 
     @Column(unique = true, length = 160)
     private String email;
@@ -51,7 +57,7 @@ public class User {
             String lastName,
             String username,
             String password,
-            int type,
+            Type type,
             String email,
             String phoneNumber) {
         this.firstName = firstName;
@@ -114,11 +120,11 @@ public class User {
         this.password = password;
     }
 
-    public int getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
