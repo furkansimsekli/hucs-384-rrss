@@ -1,10 +1,10 @@
 package com.fosskeeters.rrss.dtos;
 
-import java.time.LocalDate;
+import com.fosskeeters.rrss.models.User;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fosskeeters.rrss.models.User;
+import java.time.LocalDate;
 
 import jakarta.validation.constraints.*;
 

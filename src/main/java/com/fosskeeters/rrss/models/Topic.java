@@ -1,10 +1,10 @@
 package com.fosskeeters.rrss.models;
 
-import jakarta.persistence.*;
-
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
 
 @Entity
 public class Topic {
@@ -19,7 +19,8 @@ public class Topic {
     @JoinColumn
     private User owner;
 
-    @CreatedDate private LocalDateTime createdAt;
+    @CreatedDate
+    private LocalDateTime createdAt;
 
     public Long getTopicID() {
         return topicID;

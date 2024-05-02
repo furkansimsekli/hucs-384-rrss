@@ -81,7 +81,7 @@
     in
       {
         default = pkgs.mkShell {
-          nativeBuildInputs = packages.${system}.default.nativeBuildInputs ++ [ pkgs.google-java-format ];
+          nativeBuildInputs = packages.${system}.default.nativeBuildInputs ++ [ pkgs.clang-tools ];
         };
       }
     );
@@ -92,13 +92,13 @@
       rec {
         default = rrss-java-fmt;
 
-        rrss-java-fmt = pkgs.runCommand "rrss-java-fmt" { src = self; buildInputs = [ pkgs.google-java-format ]; } ''
+        rrss-java-fmt = pkgs.runCommand "rrss-java-fmt" { src = self; buildInputs = [ pkgs.clang-tools ]; } ''
           mkdir -p $out
           cp -r $src/* $out
           chmod -R u+w $out
           JAVA_FILES="$(find $out/src -name '*.java')"
-          if ! google-java-format -a --set-exit-if-changed -n $JAVA_FILES; then
-            google-java-format -a -i $JAVA_FILES
+          if ! clang-format -n --Werror --style=file $JAVA_FILES; then
+            clang-format --style=file -i $JAVA_FILES
             for f in $JAVA_FILES; do
               diff --color=always -u $(sed "s|$out|$src|" <<< "$f") "$f" || true
             done

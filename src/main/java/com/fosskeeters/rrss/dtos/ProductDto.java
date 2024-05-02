@@ -5,7 +5,6 @@ import com.fosskeeters.rrss.models.Product;
 import jakarta.validation.constraints.*;
 
 public class ProductDto {
-
     @NotNull
     @Size(min = 1, max = 128, message = "Name can not be longer than 128 characters!")
     private String name;
@@ -17,8 +16,7 @@ public class ProductDto {
     @NotNull(message = "Price can not be empty!")
     private double price;
 
-    public ProductDto() {
-    }
+    public ProductDto() {}
 
     public ProductDto(Product product) {
         this.name = product.getName();

@@ -14,7 +14,8 @@ import javax.sql.DataSource;
 @Configuration
 @PropertySource("persistence.properties")
 public class DbConfig {
-    @Autowired private Environment env;
+    @Autowired
+    private Environment env;
 
     @Bean
     public DataSource dataSource() {

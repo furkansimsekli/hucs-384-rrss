@@ -1,0 +1,7 @@
+---
+BasedOnStyle: Chromium
+IndentWidth: 4
+---
+Language: Java
+AlignAfterOpenBracket: Align
+ColumnLimit: 100

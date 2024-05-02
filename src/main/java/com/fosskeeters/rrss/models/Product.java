@@ -1,12 +1,13 @@
 package com.fosskeeters.rrss.models;
 
 import com.fosskeeters.rrss.dtos.ProductDto;
-import jakarta.persistence.*;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.NumberFormat;
 
 import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
 
 @Entity
 public class Product {
@@ -31,8 +32,7 @@ public class Product {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public Product() {
-    }
+    public Product() {}
 
     public Product(User owner, ProductDto productDto) {
         this.owner = owner;

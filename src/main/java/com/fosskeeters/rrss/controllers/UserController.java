@@ -6,20 +6,20 @@ import com.fosskeeters.rrss.dtos.UserUpdateDto;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
-
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Objects;
 import java.util.Optional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 public class UserController {
@@ -45,7 +45,8 @@ public class UserController {
         return Optional.empty(); // keep going
     }
 
-    private Optional<String> checkAuthorization(HttpSession session, Model model, String usernameParam) {
+    private Optional<String> checkAuthorization(HttpSession session, Model model,
+                                                String usernameParam) {
         var authenticationRedirect = checkAuthentication(session);
         if (authenticationRedirect.isPresent()) {
             return authenticationRedirect;
@@ -57,9 +58,10 @@ public class UserController {
             return Optional.of("user");
         }
 
-        User loggedInUser = userRepository.findByUsername(session.getAttribute("username").toString()).get();
+        User loggedInUser =
+                userRepository.findByUsername(session.getAttribute("username").toString()).get();
         if (loggedInUser.getType() != User.Type.ADMIN
-                && !loggedInUser.getUsername().equals(displayedUser.get().getUsername())) {
+            && !loggedInUser.getUsername().equals(displayedUser.get().getUsername())) {
             // the logged in user and displayed user are different
             model.addAttribute("errorString", "Unauthorized access");
             return Optional.of("user");
@@ -68,7 +70,7 @@ public class UserController {
         return Optional.empty();
     }
 
-    @GetMapping({ "/user", "/user/" })
+    @GetMapping({"/user", "/user/"})
     public String getUserRedirectHandler(HttpSession session) {
         var authenticationRedirect = checkAuthentication(session);
         if (authenticationRedirect.isPresent()) {
@@ -79,7 +81,8 @@ public class UserController {
     }
 
     @GetMapping("/user/{usernameParam}")
-    public String userProfileHandler(Model model, @PathVariable String usernameParam, HttpSession session) {
+    public String userProfileHandler(Model model, @PathVariable String usernameParam,
+                                     HttpSession session) {
         var authorizationRedirect = checkAuthorization(session, model, usernameParam);
         if (authorizationRedirect.isPresent()) {
             return authorizationRedirect.get();
@@ -94,8 +97,10 @@ public class UserController {
     }
 
     @PostMapping("/user/{usernameParam}")
-    public String userUpdateHandler(Model model, @PathVariable String usernameParam, HttpSession session,
-            @Valid @ModelAttribute UserUpdateDto userUpdateDto, BindingResult bindingResult) {
+    public String userUpdateHandler(Model model, @PathVariable String usernameParam,
+                                    HttpSession session,
+                                    @Valid @ModelAttribute UserUpdateDto userUpdateDto,
+                                    BindingResult bindingResult) {
         var authorizationRedirect = checkAuthorization(session, model, usernameParam);
         if (authorizationRedirect.isPresent()) {
             return authorizationRedirect.get();
@@ -129,7 +134,8 @@ public class UserController {
     }
 
     @GetMapping("/user/{usernameParam}/change-password")
-    public String getChangePasswordHandler(Model model, @PathVariable String usernameParam, HttpSession session) {
+    public String getChangePasswordHandler(Model model, @PathVariable String usernameParam,
+                                           HttpSession session) {
         var authorizationRedirect = checkAuthorization(session, model, usernameParam);
         if (authorizationRedirect.isPresent()) {
             return authorizationRedirect.get();
@@ -141,8 +147,10 @@ public class UserController {
     }
 
     @PostMapping("/user/{usernameParam}/change-password")
-    public String postChangePasswordHandler(Model model, @PathVariable String usernameParam, HttpSession session,
-            @Valid @ModelAttribute ChangePasswordDto dto, BindingResult bindingResult) {
+    public String postChangePasswordHandler(Model model, @PathVariable String usernameParam,
+                                            HttpSession session,
+                                            @Valid @ModelAttribute ChangePasswordDto dto,
+                                            BindingResult bindingResult) {
         var authorizationRedirect = checkAuthorization(session, model, usernameParam);
         if (authorizationRedirect.isPresent()) {
             return authorizationRedirect.get();
@@ -178,8 +186,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String loginPostHandler(
-            @RequestParam String username, @RequestParam String password, HttpSession session) {
+    public String loginPostHandler(@RequestParam String username, @RequestParam String password,
+                                   HttpSession session) {
         Optional<User> user = userRepository.findByUsername(username.trim().toLowerCase());
 
         if (user.isPresent()) {
@@ -201,8 +209,8 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String signupPostHandler(
-            @Valid @ModelAttribute UserDto userDto, BindingResult bindingResult) {
+    public String signupPostHandler(@Valid @ModelAttribute UserDto userDto,
+                                    BindingResult bindingResult) {
         validateSignup(userDto, bindingResult);
 
         if (bindingResult.hasErrors()) {
@@ -227,18 +235,14 @@ public class UserController {
         }
 
         if (userRepository.existsByPhoneNumber(userDto.getPhoneNumber())) {
-            bindingResult.addError(
-                    new FieldError(
-                            "userDto", "phoneNumber", "This phone number is already taken!"));
+            bindingResult.addError(new FieldError("userDto", "phoneNumber",
+                                                  "This phone number is already taken!"));
         }
 
         if (!Objects.equals(userDto.getAccountType(), "customer")
-                && !Objects.equals(userDto.getAccountType(), "merchant")) {
-            bindingResult.addError(
-                    new FieldError(
-                            "userDto",
-                            "accountType",
-                            "Account type must be either Customer or Merchant!"));
+            && !Objects.equals(userDto.getAccountType(), "merchant")) {
+            bindingResult.addError(new FieldError(
+                    "userDto", "accountType", "Account type must be either Customer or Merchant!"));
         }
 
         if (!Objects.equals(userDto.getPassword1(), userDto.getPassword2())) {
@@ -247,24 +251,26 @@ public class UserController {
         }
     }
 
-    private void validateUserUpdate(UserUpdateDto userUpdateDto, BindingResult bindingResult, User oldUser) {
+    private void validateUserUpdate(UserUpdateDto userUpdateDto, BindingResult bindingResult,
+                                    User oldUser) {
         if (!oldUser.getEmail().equals(userUpdateDto.getEmail())
-                && userRepository.existsByEmail(userUpdateDto.getEmail())) {
-            bindingResult.addError(
-                    new FieldError("userUpdateDto", "email", "This email address is already taken!"));
+            && userRepository.existsByEmail(userUpdateDto.getEmail())) {
+            bindingResult.addError(new FieldError("userUpdateDto", "email",
+                                                  "This email address is already taken!"));
         }
 
         if (!oldUser.getPhoneNumber().equals(userUpdateDto.getPhoneNumber())
-                && userRepository.existsByPhoneNumber(userUpdateDto.getPhoneNumber())) {
-            bindingResult.addError(
-                    new FieldError(
-                            "userUpdateDto", "phoneNumber", "This phone number is already taken!"));
+            && userRepository.existsByPhoneNumber(userUpdateDto.getPhoneNumber())) {
+            bindingResult.addError(new FieldError("userUpdateDto", "phoneNumber",
+                                                  "This phone number is already taken!"));
         }
     }
 
-    private void validateChangePassword(ChangePasswordDto dto, BindingResult bindingResult, User displayedUser) {
+    private void validateChangePassword(ChangePasswordDto dto, BindingResult bindingResult,
+                                        User displayedUser) {
         if (!encoder.matches(dto.getOldPassword(), displayedUser.getPassword())) {
-            bindingResult.addError(new FieldError("changePasswordDto", "oldPassword", "Current password do not match"));
+            bindingResult.addError(new FieldError("changePasswordDto", "oldPassword",
+                                                  "Current password do not match"));
         }
 
         if (!Objects.equals(dto.getNewPassword1(), dto.getNewPassword2())) {
@@ -275,15 +281,10 @@ public class UserController {
 
     private User createUserFromDto(UserDto userDto) {
         String encodedPassword = encoder.encode(userDto.getPassword1());
-        User.Type type = userDto.getAccountType().equals("customer") ? User.Type.CUSTOMER : User.Type.MERCHANT;
+        User.Type type = userDto.getAccountType().equals("customer") ? User.Type.CUSTOMER
+                                                                     : User.Type.MERCHANT;
 
-        return new User(
-                userDto.getFirstName(),
-                userDto.getLastName(),
-                userDto.getUsername(),
-                encodedPassword,
-                type,
-                userDto.getEmail(),
-                userDto.getPhoneNumber());
+        return new User(userDto.getFirstName(), userDto.getLastName(), userDto.getUsername(),
+                        encodedPassword, type, userDto.getEmail(), userDto.getPhoneNumber());
     }
 }
