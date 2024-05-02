@@ -1,0 +1,35 @@
+<html layout:decorate="~{common/skeleton}">
+
+<body>
+<main layout:fragment="content">
+    <h2>Your Products</h2>
+    <a th:href="@{/merchants/{username}/products/create(username=${user.username})}">Create Product</a>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Created At</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${user.products}">
+            <td th:text="${product.id}"></td>
+            <td><a th:text="${product.name}" th:href="@{/products/{product_id}(product_id=${product.id})}"></a></td>
+            <td th:text="@{${product.price} + '$'}"></td>
+            <td th:text="${product.createdAt.toString()}"></td>
+            <td>
+                <a th:href="@{/merchants/{username}/products/{product_id}/update(username=${product.owner.username}, product_id=${product.id})}">Edit</a>
+                <a th:href="@{/merchants/{username}/products/{product_id}/delete(username=${product.owner.username}, product_id=${product.id})}"
+                   onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+
+</html>
