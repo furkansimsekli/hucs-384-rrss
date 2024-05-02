@@ -32,7 +32,7 @@ public class MerchantController {
 
     @GetMapping("/{username}/products")
     public String getMerchantProducts(HttpSession session,
-                                      @PathVariable("username") String username,
+                                      @PathVariable String username,
                                       Model model) {
 
         Optional<User> user = userRepository.findByUsername(username);
@@ -48,7 +48,7 @@ public class MerchantController {
 
     @GetMapping("/{username}/products/create")
     public String getProductCreateForm(HttpSession session,
-                                       @PathVariable("username") String username,
+                                       @PathVariable String username,
                                        Model model) {
 
         if (!Objects.equals(username, session.getAttribute("username"))) {
@@ -61,7 +61,7 @@ public class MerchantController {
 
     @PostMapping("/{username}/products/create")
     public String createProduct(HttpSession session,
-                                @PathVariable("username") String username,
+                                @PathVariable String username,
                                 @Valid @ModelAttribute ProductDto productDto,
                                 BindingResult bindingResult) {
 
@@ -87,8 +87,8 @@ public class MerchantController {
 
     @GetMapping("/{username}/products/{productId}/update")
     public String getUpdateProductForm(HttpSession session,
-                                       @PathVariable("username") String username,
-                                       @PathVariable("productId") long productId,
+                                       @PathVariable String username,
+                                       @PathVariable long productId,
                                        Model model) {
 
         if (!Objects.equals(username, session.getAttribute("username"))) {
@@ -108,8 +108,8 @@ public class MerchantController {
 
     @PostMapping("/{username}/products/{productId}/update")
     public String updateProduct(HttpSession session,
-                                @PathVariable("username") String username,
-                                @PathVariable("productId") long productId,
+                                @PathVariable String username,
+                                @PathVariable long productId,
                                 @Valid @ModelAttribute ProductDto productDto,
                                 BindingResult bindingResult) {
 
@@ -134,8 +134,8 @@ public class MerchantController {
 
     @GetMapping("/{username}/products/{productId}/delete")
     public String deleteProduct(HttpSession session,
-                                @PathVariable("username") String username,
-                                @PathVariable("productId") long productId) {
+                                @PathVariable String username,
+                                @PathVariable long productId) {
 
         if (!Objects.equals(username, session.getAttribute("username"))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
