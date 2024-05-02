@@ -19,7 +19,7 @@ public class ProductImage {
 
     @Column
     @Size(max = 9)
-    private int order;
+    private int displayOrder;
 
     @Column(length = 128)
     private String caption;
@@ -46,12 +46,12 @@ public class ProductImage {
         this.product = product;
     }
 
-    public int getOrder() {
-        return order;
+    public int getDisplayOrder() {
+        return displayOrder;
     }
 
-    public void setOrder(int order) {
-        this.order = order;
+    public void setDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     public String getCaption() {
