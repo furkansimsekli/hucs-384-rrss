@@ -85,10 +85,10 @@ public class MerchantController {
         return "redirect:/merchants/" + username + "/products";
     }
 
-    @GetMapping("/{username}/products/{product_id}/update")
+    @GetMapping("/{username}/products/{productId}/update")
     public String getUpdateProductForm(HttpSession session,
                                        @PathVariable("username") String username,
-                                       @PathVariable("product_id") long productId,
+                                       @PathVariable("productId") long productId,
                                        Model model) {
 
         if (!Objects.equals(username, session.getAttribute("username"))) {
@@ -106,10 +106,10 @@ public class MerchantController {
         return "merchants/update_product";
     }
 
-    @PostMapping("/{username}/products/{product_id}/update")
+    @PostMapping("/{username}/products/{productId}/update")
     public String updateProduct(HttpSession session,
                                 @PathVariable("username") String username,
-                                @PathVariable("product_id") long productId,
+                                @PathVariable("productId") long productId,
                                 @Valid @ModelAttribute ProductDto productDto,
                                 BindingResult bindingResult) {
 
@@ -132,10 +132,10 @@ public class MerchantController {
         return "redirect:/merchants/" + username + "/products";
     }
 
-    @GetMapping("/{username}/products/{product_id}/delete")
+    @GetMapping("/{username}/products/{productId}/delete")
     public String deleteProduct(HttpSession session,
                                 @PathVariable("username") String username,
-                                @PathVariable("product_id") long productId) {
+                                @PathVariable("productId") long productId) {
 
         if (!Objects.equals(username, session.getAttribute("username"))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
