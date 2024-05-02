@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 
+@Entity
 public class Wish {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

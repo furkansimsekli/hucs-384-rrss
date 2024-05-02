@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
+@Entity
 public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
