@@ -18,12 +18,12 @@
         <tbody>
         <tr th:each="product : ${user.products}">
             <td th:text="${product.id}"></td>
-            <td><a th:text="${product.name}" th:href="@{/products/{product_id}(product_id=${product.id})}"></a></td>
+            <td><a th:text="${product.name}" th:href="@{/products/{productId}(productId=${product.id})}"></a></td>
             <td th:text="@{${product.price} + '$'}"></td>
             <td th:text="${product.createdAt.toString()}"></td>
             <td>
-                <a th:href="@{/merchants/{username}/products/{product_id}/update(username=${product.owner.username}, product_id=${product.id})}">Edit</a>
-                <a th:href="@{/merchants/{username}/products/{product_id}/delete(username=${product.owner.username}, product_id=${product.id})}"
+                <a th:href="@{/merchants/{username}/products/{productId}/update(username=${product.owner.username}, productId=${product.id})}">Edit</a>
+                <a th:href="@{/merchants/{username}/products/{productId}/delete(username=${product.owner.username}, productId=${product.id})}"
                    onclick="return confirm('Are you sure?')">Delete</a>
             </td>
         </tr>

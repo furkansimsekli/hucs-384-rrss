@@ -58,7 +58,7 @@ public class UserController {
         }
 
         User loggedInUser = userRepository.findByUsername(session.getAttribute("username").toString()).get();
-        if (loggedInUser.getType() != 1 // if user is not an Admin (TODO avoid magic numbers)
+        if (loggedInUser.getType() != User.Type.ADMIN
                 && !loggedInUser.getUsername().equals(displayedUser.get().getUsername())) {
             // the logged in user and displayed user are different
             model.addAttribute("errorString", "Unauthorized access");
@@ -275,7 +275,7 @@ public class UserController {
 
     private User createUserFromDto(UserDto userDto) {
         String encodedPassword = encoder.encode(userDto.getPassword1());
-        int type = userDto.getAccountType().equals("customer") ? 3 : 2;
+        User.Type type = userDto.getAccountType().equals("customer") ? User.Type.CUSTOMER : User.Type.MERCHANT;
 
         return new User(
                 userDto.getFirstName(),
