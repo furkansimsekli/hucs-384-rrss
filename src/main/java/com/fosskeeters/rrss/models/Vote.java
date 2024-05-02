@@ -15,7 +15,8 @@ public class Vote {
     @JoinColumn
     private User user;
 
-    @Column private boolean value;
+    @Column
+    private boolean value;
 
     public Long getId() {
         return id;

@@ -1,11 +1,11 @@
 package com.fosskeeters.rrss.models;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
-
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Review {
@@ -34,7 +34,8 @@ public class Review {
     @Column(length = 4096)
     private String merchantReplyBody;
 
-    @CreatedDate private LocalDateTime createdAt;
+    @CreatedDate
+    private LocalDateTime createdAt;
 
     public Long getId() {
         return id;

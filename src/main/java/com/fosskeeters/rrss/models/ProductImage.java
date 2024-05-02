@@ -1,11 +1,11 @@
 package com.fosskeeters.rrss.models;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
-
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 
 public class ProductImage {
     @Id
@@ -23,9 +23,11 @@ public class ProductImage {
     @Column(length = 128)
     private String caption;
 
-    @Column private String imagePath;
+    @Column
+    private String imagePath;
 
-    @CreatedDate private LocalDateTime createdAt;
+    @CreatedDate
+    private LocalDateTime createdAt;
 
     public Long getId() {
         return id;

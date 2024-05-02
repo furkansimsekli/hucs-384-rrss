@@ -6,9 +6,6 @@ import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +15,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Objects;
 import java.util.Optional;
+
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/merchants")
@@ -31,14 +31,11 @@ public class MerchantController {
     }
 
     @GetMapping("/{username}/products")
-    public String getMerchantProducts(HttpSession session,
-                                      @PathVariable String username,
+    public String getMerchantProducts(HttpSession session, @PathVariable String username,
                                       Model model) {
-
         Optional<User> user = userRepository.findByUsername(username);
 
-        if (!Objects.equals(username, session.getAttribute("username"))
-                || user.isEmpty()) {
+        if (!Objects.equals(username, session.getAttribute("username")) || user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -47,10 +44,8 @@ public class MerchantController {
     }
 
     @GetMapping("/{username}/products/create")
-    public String getProductCreateForm(HttpSession session,
-                                       @PathVariable String username,
+    public String getProductCreateForm(HttpSession session, @PathVariable String username,
                                        Model model) {
-
         if (!Objects.equals(username, session.getAttribute("username"))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
@@ -60,11 +55,9 @@ public class MerchantController {
     }
 
     @PostMapping("/{username}/products/create")
-    public String createProduct(HttpSession session,
-                                @PathVariable String username,
+    public String createProduct(HttpSession session, @PathVariable String username,
                                 @Valid @ModelAttribute ProductDto productDto,
                                 BindingResult bindingResult) {
-
         if (!Objects.equals(username, session.getAttribute("username"))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
@@ -86,11 +79,8 @@ public class MerchantController {
     }
 
     @GetMapping("/{username}/products/{productId}/update")
-    public String getUpdateProductForm(HttpSession session,
-                                       @PathVariable String username,
-                                       @PathVariable long productId,
-                                       Model model) {
-
+    public String getUpdateProductForm(HttpSession session, @PathVariable String username,
+                                       @PathVariable long productId, Model model) {
         if (!Objects.equals(username, session.getAttribute("username"))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
@@ -107,12 +97,10 @@ public class MerchantController {
     }
 
     @PostMapping("/{username}/products/{productId}/update")
-    public String updateProduct(HttpSession session,
-                                @PathVariable String username,
+    public String updateProduct(HttpSession session, @PathVariable String username,
                                 @PathVariable long productId,
                                 @Valid @ModelAttribute ProductDto productDto,
                                 BindingResult bindingResult) {
-
         if (!Objects.equals(username, session.getAttribute("username"))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
@@ -133,10 +121,8 @@ public class MerchantController {
     }
 
     @GetMapping("/{username}/products/{productId}/delete")
-    public String deleteProduct(HttpSession session,
-                                @PathVariable String username,
+    public String deleteProduct(HttpSession session, @PathVariable String username,
                                 @PathVariable long productId) {
-
         if (!Objects.equals(username, session.getAttribute("username"))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }

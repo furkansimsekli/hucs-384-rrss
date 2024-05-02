@@ -1,21 +1,16 @@
 package com.fosskeeters.rrss.models;
 
-import jakarta.persistence.*;
-
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.*;
+
 @Entity
 public class User {
-    public enum Type {
-        CUSTOMER,
-        MERCHANT,
-        ADMIN,
-        COMMUNITY_MOD
-    }
+    public enum Type { CUSTOMER, MERCHANT, ADMIN, COMMUNITY_MOD }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,9 +25,11 @@ public class User {
     @Column(unique = true, length = 16)
     private String username;
 
-    @Column private String password;
+    @Column
+    private String password;
 
-    @Column private Type type;
+    @Column
+    private Type type;
 
     @Column(unique = true, length = 160)
     private String email;
@@ -40,26 +37,23 @@ public class User {
     @Column(unique = true, length = 15)
     private String phoneNumber;
 
-    @Column private LocalDate dateOfBirth;
+    @Column
+    private LocalDate dateOfBirth;
 
     @Column(length = 256)
     private String address;
 
-    @Column private String profileImagePath;
+    @Column
+    private String profileImagePath;
 
-    @CreatedDate private LocalDateTime createdAt;
+    @CreatedDate
+    private LocalDateTime createdAt;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
     private List<Product> products;
 
-    public User(
-            String firstName,
-            String lastName,
-            String username,
-            String password,
-            Type type,
-            String email,
-            String phoneNumber) {
+    public User(String firstName, String lastName, String username, String password, Type type,
+                String email, String phoneNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;

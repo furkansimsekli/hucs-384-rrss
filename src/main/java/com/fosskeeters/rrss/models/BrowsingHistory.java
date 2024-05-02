@@ -1,10 +1,10 @@
 package com.fosskeeters.rrss.models;
 
-import jakarta.persistence.*;
-
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
 
 public class BrowsingHistory {
     @Id
@@ -19,7 +19,8 @@ public class BrowsingHistory {
     @JoinColumn
     private User owner;
 
-    @CreatedDate LocalDateTime viewedAt;
+    @CreatedDate
+    LocalDateTime viewedAt;
 
     public Long getId() {
         return id;
