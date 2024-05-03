@@ -9,6 +9,7 @@ public class Vote {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn
     private Review review;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
