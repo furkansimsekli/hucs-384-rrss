@@ -3,6 +3,7 @@ package com.fosskeeters.rrss.models;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -15,9 +16,12 @@ public class Topic {
     @Column(length = 64)
     private String title;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn
     private User owner;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "topic", cascade = CascadeType.ALL)
+    private List<Entry> entries;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -52,5 +56,13 @@ public class Topic {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<Entry> getEntries() {
+        return entries;
+    }
+
+    public void setEntries(List<Entry> entries) {
+        this.entries = entries;
     }
 }

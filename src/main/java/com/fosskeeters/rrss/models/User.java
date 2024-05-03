@@ -49,8 +49,26 @@ public class User {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Product> products;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "author", cascade = CascadeType.ALL)
+    private List<Review> reviews;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<BrowsingHistory> browsingHistory;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "author", cascade = CascadeType.ALL)
+    private List<Entry> entries;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<Topic> topics;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Vote> votes;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<Wish> wishes;
 
     public User(String firstName, String lastName, String username, String password, Type type,
                 String email, String phoneNumber) {
@@ -176,5 +194,53 @@ public class User {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public List<BrowsingHistory> getBrowsingHistory() {
+        return browsingHistory;
+    }
+
+    public void setBrowsingHistory(List<BrowsingHistory> browsingHistory) {
+        this.browsingHistory = browsingHistory;
+    }
+
+    public List<Entry> getEntries() {
+        return entries;
+    }
+
+    public void setEntries(List<Entry> entries) {
+        this.entries = entries;
+    }
+
+    public List<Topic> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(List<Topic> topics) {
+        this.topics = topics;
+    }
+
+    public List<Vote> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
+    }
+
+    public List<Wish> getWishes() {
+        return wishes;
+    }
+
+    public void setWishes(List<Wish> wishes) {
+        this.wishes = wishes;
     }
 }

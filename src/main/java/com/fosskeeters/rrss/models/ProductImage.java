@@ -7,18 +7,19 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
+@Entity
 public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn
     private Product product;
 
     @Column
     @Size(max = 9)
-    private int order;
+    private int displayOrder;
 
     @Column(length = 128)
     private String caption;
@@ -45,12 +46,12 @@ public class ProductImage {
         this.product = product;
     }
 
-    public int getOrder() {
-        return order;
+    public int getDisplayOrder() {
+        return displayOrder;
     }
 
-    public void setOrder(int order) {
-        this.order = order;
+    public void setDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     public String getCaption() {

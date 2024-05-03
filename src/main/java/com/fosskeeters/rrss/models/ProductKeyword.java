@@ -1,10 +1,8 @@
 package com.fosskeeters.rrss.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+@Entity
 public class ProductKeyword {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
