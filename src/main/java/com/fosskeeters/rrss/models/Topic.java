@@ -16,11 +16,11 @@ public class Topic {
     @Column(length = 64)
     private String title;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn
     private User owner;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "topic")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "topic", cascade = CascadeType.ALL)
     private List<Entry> entries;
 
     @CreatedDate

@@ -14,11 +14,11 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn
     private User author;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn
     private Product product;
 
@@ -38,7 +38,7 @@ public class Review {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "review")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL)
     private List<Vote> votes;
 
     public Long getId() {
