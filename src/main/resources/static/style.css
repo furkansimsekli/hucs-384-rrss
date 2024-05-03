@@ -98,6 +98,26 @@ input[type="submit"] {
     text-shadow: 0 0 0 var(--primary-color);
 }
 
+.error-text {
+    color: #b3261e;
+    font-size: 0.7em;
+    margin-top: 0.3em !important;
+    margin-bottom: 0.7em;
+}
+
+.error-input {
+    border: 0.5px solid #b3261e !important;
+    color: #b3261e;
+}
+
+.error-box {
+    color: #b3261e;
+    background-color: #f3c6ce;
+    border: #b3261e 0.5px solid;
+    border-radius: 10px;
+    padding: 1em 2em;
+}
+
 /* ============= NAV BAR ========== */
 
 nav {
@@ -271,9 +291,4 @@ nav * {
     border: gray 0.5px solid;
     border-radius: 10px;
     padding: 20px 30px;
-}
-
-.error-text{
-    margin-top: 1px;
-    color: red;
 }
