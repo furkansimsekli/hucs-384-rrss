@@ -4,8 +4,7 @@
     <main class="row-container" style="padding: 0 10vw; gap: 15px;" layout:fragment="content">
         <h2>Account</h2>
         <p th:unless="${#strings.isEmpty(updatedSuccessfully)}">Profile information updated successfully!</p>
-        <div th:unless="${#strings.isEmpty(errorString)}" th:text="${'Error: ' + errorString}"></div>
-        <div th:if="${#strings.isEmpty(errorString)}" class="column-container"
+        <div class="column-container"
             style="margin: 0 auto; gap: 20px; flex-direction: row-reverse; align-items: flex-start;">
 
             <input type="checkbox" class="buttonish-checkbox" id="edit" th:unless="${#strings.isEmpty(hasErrors)}"
