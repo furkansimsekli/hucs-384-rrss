@@ -35,15 +35,17 @@ public class UserUpdateDto {
     @NotNull
     private String profileImagePath;
 
-    // @NotNull()
-    // @Size(min = 1, max = 256, message = "Password length must be between 1-256
-    // characters!")
-    // private String password1;
+    public UserUpdateDto() {}
 
-    // @NotNull
-    // @Size(min = 1, max = 256, message = "Password length must be between 1-256
-    // characters!")
-    // private String password2;
+    public UserUpdateDto(User user) {
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.email = user.getEmail();
+        this.phoneNumber = user.getPhoneNumber();
+        this.dateOfBirth = user.getDateOfBirth();
+        this.address = user.getAddress();
+        this.profileImagePath = user.getProfileImagePath();
+    }
 
     public String getFirstName() {
         return firstName;
@@ -100,34 +102,6 @@ public class UserUpdateDto {
     public void setProfileImagePath(String profileImagePath) {
         this.profileImagePath = profileImagePath;
     }
-
-    public static UserUpdateDto fromUser(User user) {
-        UserUpdateDto dto = new UserUpdateDto();
-        dto.setAddress(user.getAddress());
-        dto.setDateOfBirth(user.getDateOfBirth());
-        dto.setEmail(user.getEmail());
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setPhoneNumber(user.getPhoneNumber());
-        dto.setProfileImagePath(user.getProfileImagePath());
-        return dto;
-    }
-
-    // public String getPassword1() {
-    // return password1;
-    // }
-
-    // public void setPassword1(String password1) {
-    // this.password1 = password1;
-    // }
-
-    // public String getPassword2() {
-    // return password2;
-    // }
-
-    // public void setPassword2(String password2) {
-    // this.password2 = password2;
-    // }
 
     // TODO: move to a global utils library
     /**
