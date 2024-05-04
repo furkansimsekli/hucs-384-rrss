@@ -1,5 +1,15 @@
 /* ============= GLOBAL STYLES ========== */
 
+@font-face {
+    font-family: Inika;
+    src: url(./font/Inika-Regular.ttf)format('truetype');
+}
+
+@font-face {
+    font-family: Inika-bold;
+    src: url(./font/Inika-Bold.ttf)format('truetype');
+}
+
 :root {
     --primary-color: #34514c;
 }
@@ -11,8 +21,12 @@ html {
 
 body {
     height: 95%;
-
+    font-family: 'Inika', serif;
     accent-color: var(--primary-color);
+}
+
+h2{
+    font-family: 'Inika-bold', serif;
 }
 
 main {
