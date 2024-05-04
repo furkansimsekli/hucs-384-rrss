@@ -22,12 +22,15 @@ public class IndexController {
 
     @GetMapping("/")
     public String indexGetController(Model model, HttpSession session) {
+        // TODO: get trending products from browsing history (last 24h maybe)
+        List<Product> trendingProducts = productRepository.findTop10ByOrderByCreatedAtDesc();
         List<Product> latestProducts = productRepository.findTop10ByOrderByCreatedAtDesc();
 
         if (session.getAttribute("username") != null) {
             // TODO : Use recommendation algorithm here.
         }
 
+        model.addAttribute("carouselProducts", trendingProducts);
         model.addAttribute("latestProducts", latestProducts);
 
         return "index";
