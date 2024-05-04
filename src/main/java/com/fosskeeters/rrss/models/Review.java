@@ -1,5 +1,7 @@
 package com.fosskeeters.rrss.models;
 
+import com.fosskeeters.rrss.dtos.ReviewDto;
+
 import org.hibernate.validator.constraints.Range;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -40,6 +42,15 @@ public class Review {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL)
     private List<Vote> votes;
+
+    public Review() {}
+
+    public Review(ReviewDto reviewDto) {
+        this.title = reviewDto.getTitle();
+        this.body = reviewDto.getBody();
+        this.score = reviewDto.getScore();
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Long getId() {
         return id;
