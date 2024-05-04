@@ -61,7 +61,7 @@ public class UserController {
         // Logged-in user is either an admin or the displayed user.
         UserUpdateDto userUpdateDto = new UserUpdateDto(displayedUser.get());
         model.addAttribute("userUpdateDto", userUpdateDto);
-        return "user";
+        return "user/profile";
     }
 
     @PostMapping("/{usernameParam}")
@@ -86,13 +86,13 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("hasErrors", "true");
             System.out.println(bindingResult);
-            return "user";
+            return "user/profile";
         }
 
         displayedUser.get().setFromUserUpdateDto(userUpdateDto);
         userRepository.save(displayedUser.get());
         model.addAttribute("updatedSuccessfully", "true");
-        return "user";
+        return "user/profile";
     }
 
     @GetMapping("/{usernameParam}/change-password")
@@ -112,7 +112,7 @@ public class UserController {
 
         ChangePasswordDto dto = new ChangePasswordDto();
         model.addAttribute("changePasswordDto", dto);
-        return "change_password";
+        return "user/change_password";
     }
 
     @PostMapping("/{usernameParam}/change-password")
@@ -136,13 +136,13 @@ public class UserController {
 
         if (bindingResult.hasErrors()) {
             System.out.println(bindingResult);
-            return "change_password";
+            return "user/change_password";
         }
 
         displayedUser.get().setPassword(encoder.encode(dto.getNewPassword1()));
         userRepository.save(displayedUser.get());
         model.addAttribute("updatedSuccessfully", "true");
-        return "change_password";
+        return "user/change_password";
     }
 
     /**
