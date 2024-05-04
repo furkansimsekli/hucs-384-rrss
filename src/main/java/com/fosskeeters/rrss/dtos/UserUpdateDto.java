@@ -35,16 +35,6 @@ public class UserUpdateDto {
     @NotNull
     private String profileImagePath;
 
-    // @NotNull()
-    // @Size(min = 1, max = 256, message = "Password length must be between 1-256
-    // characters!")
-    // private String password1;
-
-    // @NotNull
-    // @Size(min = 1, max = 256, message = "Password length must be between 1-256
-    // characters!")
-    // private String password2;
-
     public UserUpdateDto() {}
 
     public UserUpdateDto(User user) {
@@ -112,22 +102,6 @@ public class UserUpdateDto {
     public void setProfileImagePath(String profileImagePath) {
         this.profileImagePath = profileImagePath;
     }
-
-    // public String getPassword1() {
-    // return password1;
-    // }
-
-    // public void setPassword1(String password1) {
-    // this.password1 = password1;
-    // }
-
-    // public String getPassword2() {
-    // return password2;
-    // }
-
-    // public void setPassword2(String password2) {
-    // this.password2 = password2;
-    // }
 
     // TODO: move to a global utils library
     /**

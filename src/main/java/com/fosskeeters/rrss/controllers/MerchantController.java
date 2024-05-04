@@ -22,8 +22,8 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/merchants")
 public class MerchantController {
-    private UserRepository userRepository;
-    private ProductRepository productRepository;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
     public MerchantController(UserRepository userRepository, ProductRepository productRepository) {
         this.userRepository = userRepository;

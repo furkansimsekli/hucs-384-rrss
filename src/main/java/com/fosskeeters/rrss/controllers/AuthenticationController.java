@@ -21,8 +21,8 @@ import jakarta.validation.Valid;
 
 @Controller
 public class AuthenticationController {
-    private UserRepository userRepository;
-    private Argon2PasswordEncoder encoder;
+    private final UserRepository userRepository;
+    private final Argon2PasswordEncoder encoder;
 
     public AuthenticationController(UserRepository userRepository) {
         this.userRepository = userRepository;

@@ -14,7 +14,7 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/products/")
 public class ProductController {
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
     public ProductController(ProductRepository productRepository) {
         this.productRepository = productRepository;

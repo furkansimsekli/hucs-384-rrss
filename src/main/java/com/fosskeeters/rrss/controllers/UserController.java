@@ -24,11 +24,12 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-    private UserRepository userRepository;
-    private Argon2PasswordEncoder encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+    private final UserRepository userRepository;
+    private final Argon2PasswordEncoder encoder;
 
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
+        this.encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
     }
 
     @GetMapping({"", "/"})
