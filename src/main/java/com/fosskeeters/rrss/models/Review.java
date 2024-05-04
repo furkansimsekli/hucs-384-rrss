@@ -52,6 +52,12 @@ public class Review {
         this.createdAt = LocalDateTime.now();
     }
 
+    public void setFromReviewDto(ReviewDto reviewDto) {
+        this.title = reviewDto.getTitle();
+        this.body = reviewDto.getBody();
+        this.score = reviewDto.getScore();
+    }
+
     public Long getId() {
         return id;
     }

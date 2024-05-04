@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpSession;
@@ -94,6 +95,85 @@ public class ProductController {
         review.setProduct(product.get());
         reviewRepository.save(review);
         model.addAttribute("notificationMessage", "Voila! Your review has been submitted.");
+        return "redirect:/products/" + productId;
+    }
+
+    @PostMapping("/{productId}/reviews/{reviewId}/update")
+    public String updateReview(HttpSession session, @PathVariable Long productId,
+                               @PathVariable Long reviewId,
+                               @Valid @ModelAttribute ReviewDto reviewDto,
+                               BindingResult bindingResult, Model model) {
+        // Check authentication
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            // Maybe we should throw 500, because being authenticated but not being in db is not OK
+            // Need to handle the authentication/authorization somewhere else. It's repeating over
+            // and over.
+            return "redirect:/login";
+        }
+
+        // Binding result check
+        if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult);
+            return "redirect:/products/" + productId;
+        }
+
+        Optional<Review> review = reviewRepository.findById(reviewId);
+
+        if (review.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        // Don't let other users whose not the author herself update the review
+        if (!Objects.equals(review.get().getAuthor().getId(), user.get().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        // Save updated review to database
+        review.get().setFromReviewDto(reviewDto);
+        reviewRepository.save(review.get());
+        model.addAttribute("notificationMessage", "Voila! Your review has been updated!");
+        return "redirect:/products/" + productId;
+    }
+
+    @GetMapping("/{productId}/reviews/{reviewId}/delete")
+    public String deleteReview(HttpSession session, @PathVariable Long productId,
+                               @PathVariable Long reviewId, Model model) {
+        // Check authentication
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            // Maybe we should throw 500, because being authenticated but not being in db is not OK
+            // Need to handle the authentication/authorization somewhere else. It's repeating over
+            // and over.
+            return "redirect:/login";
+        }
+
+        Optional<Review> review = reviewRepository.findById(reviewId);
+
+        if (review.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        // Don't let other users whose not the author herself delete the review
+        if (!Objects.equals(review.get().getAuthor().getId(), user.get().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        // Delete the review from database
+        reviewRepository.delete(review.get());
+        model.addAttribute("notificationMessage", "Oh no! Where did your review go?");
         return "redirect:/products/" + productId;
     }
 }
