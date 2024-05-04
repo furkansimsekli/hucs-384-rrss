@@ -169,3 +169,10 @@ nav * {
 .auth-form span:has(input:checked) {
     border: var(--primary-color) 2px solid;
 }
+
+/* ============= MERCHANT PAGE ============= */
+
+.table-view {
+    margin-left: auto;
+    margin-right: auto;
+}
