@@ -83,6 +83,24 @@ public class AuthenticationController {
         return "redirect:/";
     }
 
+    /**
+     * Validates the data provided in a UserDto object for user registration.
+     * This method checks for the following conflicts and adds error messages to the provided
+     * BindingResult object if any are found:
+     * <p>
+     * 1. Username must not exist in the system.
+     * <p>
+     * 2. Email address must not exist in the system.
+     * <p>
+     * 3. Phone number must not exist in the system.
+     * <p>
+     * 4. Account type must be either "customer" or "merchant".
+     * <p>
+     * 5. Password and re-type password must match with each other.
+     *
+     * @param userDto The UserDto object containing the user registration information.
+     * @param bindingResult The BindingResult object to which validation errors will be added.
+     */
     private void validateSignup(UserDto userDto, BindingResult bindingResult) {
         if (userRepository.existsByUsername(userDto.getUsername())) {
             bindingResult.addError(

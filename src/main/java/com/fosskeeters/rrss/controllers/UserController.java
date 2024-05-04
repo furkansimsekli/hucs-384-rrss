@@ -144,6 +144,21 @@ public class UserController {
         return "change_password";
     }
 
+    /**
+     * Validates the data provided in a UserUpdateDto object for updating a user's information.
+     * This method checks for the following conflicts and adds error messages to the provided
+     * BindingResult object if any are found:
+     * <p>
+     * 1. Provided email address must be different from tha user's current email, and it must not
+     * exist in the system.
+     * <p>
+     * 2. Provided phone number must be different from tha user's current phone number, and it must
+     * not exist in the system.
+     *
+     * @param userUpdateDto The UserUpdateDto object containing the updated user information.
+     * @param bindingResult The BindingResult object to which validation errors will be added.
+     * @param oldUser The User object representing the user whose information is being updated.
+     */
     private void validateUserUpdate(UserUpdateDto userUpdateDto, BindingResult bindingResult,
                                     User oldUser) {
         if (!oldUser.getEmail().equals(userUpdateDto.getEmail())
@@ -159,6 +174,20 @@ public class UserController {
         }
     }
 
+    /**
+     * Validates the data provided in a ChangePasswordDto object for changing a user's password. The
+     * validations rules are the following:
+     * <p>
+     * 1. Current password field must match with the old password.
+     * <p>
+     * 2. Password and re-type password fields must match each other.
+     * <p>
+     * This method adds error messages to the provided BindingResult object if any validation fails.
+     *
+     * @param dto The ChangePasswordDto object containing old and new password information.
+     * @param bindingResult The BindingResult object to which validation errors will be added.
+     * @param displayedUser The User object representing the user whose password is being changed.
+     */
     private void validateChangePassword(ChangePasswordDto dto, BindingResult bindingResult,
                                         User displayedUser) {
         if (!encoder.matches(dto.getOldPassword(), displayedUser.getPassword())) {
@@ -172,15 +201,38 @@ public class UserController {
         }
     }
 
+    /**
+     * This method checks if a user is authenticated based on the presence of a username attribute
+     * in the provided HttpSession.
+     *
+     * @param session The HttpSession object containing user session information.
+     * @return An Optional<String> containing a redirect URL to the login page if the user is not
+     *         authenticated, or Optional.empty() if the user is authenticated (allowing further
+     *         processing).
+     */
     private Optional<String> checkAuthentication(HttpSession session) {
         Object loggedInUsername = session.getAttribute("username");
         if (loggedInUsername == null) {
             return Optional.of("redirect:/login");
         }
 
-        return Optional.empty(); // keep going
+        return Optional.empty();
     }
 
+    /**
+     * This method checks if a user is authorized to perform an action on a specific user based on
+     * their authentication and role.
+     *
+     * @param session The HttpSession object containing user session information.
+     * @param displayedUser The User object representing the user whose information is being
+     *         accessed.
+     * @return An Optional<String> containing a redirect URL to the login page if the user is not
+     *         authenticated, or throws an exception if the user is not authorized. If the user is
+     *         authorized, it returns Optional.empty() allowing further processing.
+     * @throws ResponseStatusException with HttpStatus.NOT_FOUND if the user is not authenticated
+     *         (based on the result of checkAuthentication) or if the user is not authorized (not an
+     *         admin or the owner of the displayed user).
+     */
     private Optional<String> checkAuthorization(HttpSession session, User displayedUser) {
         var authenticationRedirect = checkAuthentication(session);
         if (authenticationRedirect.isPresent()) {
