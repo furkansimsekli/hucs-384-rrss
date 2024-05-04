@@ -1,11 +1,11 @@
 package com.fosskeeters.rrss.controllers;
 
 import com.fosskeeters.rrss.dtos.ChangePasswordDto;
-import com.fosskeeters.rrss.dtos.UserDto;
 import com.fosskeeters.rrss.dtos.UserUpdateDto;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -22,57 +22,20 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
+@RequestMapping("/user")
 public class UserController {
-    private UserRepository userRepository;
-    private Argon2PasswordEncoder encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+    private final UserRepository userRepository;
+    private final Argon2PasswordEncoder encoder;
 
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
+        this.encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
     }
 
-    private Optional<String> checkAuthentication(HttpSession session) {
-        Object loggedInUsername = session.getAttribute("username");
-        if (loggedInUsername == null) {
-            return Optional.of("redirect:/login");
-        }
-
-        Optional<User> loggedInUser = userRepository.findByUsername(loggedInUsername.toString());
-        if (loggedInUser.isEmpty()) {
-            // This condition should never be met but can't be too safe :)
-            return Optional.of("redirect:/login");
-        }
-
-        return Optional.empty(); // keep going
-    }
-
-    private Optional<String> checkAuthorization(HttpSession session, Model model,
-                                                String usernameParam) {
-        var authenticationRedirect = checkAuthentication(session);
-        if (authenticationRedirect.isPresent()) {
-            return authenticationRedirect;
-        }
-
-        Optional<User> displayedUser = userRepository.findByUsername(usernameParam);
-        if (displayedUser.isEmpty()) {
-            model.addAttribute("errorString", "No such user found");
-            return Optional.of("user");
-        }
-
-        User loggedInUser =
-                userRepository.findByUsername(session.getAttribute("username").toString()).get();
-        if (loggedInUser.getType() != User.Type.ADMIN
-            && !loggedInUser.getUsername().equals(displayedUser.get().getUsername())) {
-            // the logged in user and displayed user are different
-            model.addAttribute("errorString", "Unauthorized access");
-            return Optional.of("user");
-        }
-
-        return Optional.empty();
-    }
-
-    @GetMapping({"/user", "/user/"})
+    @GetMapping({"", "/"})
     public String getUserRedirectHandler(HttpSession session) {
         var authenticationRedirect = checkAuthentication(session);
+
         if (authenticationRedirect.isPresent()) {
             return authenticationRedirect.get();
         }
@@ -80,177 +43,123 @@ public class UserController {
         return "redirect:/user/" + session.getAttribute("username").toString();
     }
 
-    @GetMapping("/user/{usernameParam}")
+    @GetMapping("/{usernameParam}")
     public String userProfileHandler(Model model, @PathVariable String usernameParam,
                                      HttpSession session) {
-        var authorizationRedirect = checkAuthorization(session, model, usernameParam);
+        Optional<User> displayedUser = userRepository.findByUsername(usernameParam);
+
+        if (displayedUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        var authorizationRedirect = checkAuthorization(session, displayedUser.get());
+
         if (authorizationRedirect.isPresent()) {
             return authorizationRedirect.get();
         }
 
-        User displayedUser = userRepository.findByUsername(usernameParam).get();
-
-        // Logged in user is either an admin or the displayed user.
-        UserUpdateDto userUpdateDto = UserUpdateDto.fromUser(displayedUser);
+        // Logged-in user is either an admin or the displayed user.
+        UserUpdateDto userUpdateDto = new UserUpdateDto(displayedUser.get());
         model.addAttribute("userUpdateDto", userUpdateDto);
-        return "user";
+        return "user/profile";
     }
 
-    @PostMapping("/user/{usernameParam}")
+    @PostMapping("/{usernameParam}")
     public String userUpdateHandler(Model model, @PathVariable String usernameParam,
                                     HttpSession session,
                                     @Valid @ModelAttribute UserUpdateDto userUpdateDto,
                                     BindingResult bindingResult) {
-        var authorizationRedirect = checkAuthorization(session, model, usernameParam);
+        Optional<User> displayedUser = userRepository.findByUsername(usernameParam);
+
+        if (displayedUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        var authorizationRedirect = checkAuthorization(session, displayedUser.get());
+
         if (authorizationRedirect.isPresent()) {
             return authorizationRedirect.get();
         }
-        User displayedUser = userRepository.findByUsername(usernameParam).get();
 
-        validateUserUpdate(userUpdateDto, bindingResult, displayedUser);
+        validateUserUpdate(userUpdateDto, bindingResult, displayedUser.get());
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("hasErrors", "true");
             System.out.println(bindingResult);
-            return "user";
+            return "user/profile";
         }
 
-        User user = new User();
-        user.setId(displayedUser.getId());
-        user.setUsername(displayedUser.getUsername());
-        user.setPassword(displayedUser.getPassword());
-        user.setType(displayedUser.getType());
-        user.setProfileImagePath(userUpdateDto.getProfileImagePath());
-        user.setAddress(userUpdateDto.getAddress());
-        user.setDateOfBirth(userUpdateDto.getDateOfBirth());
-        user.setEmail(userUpdateDto.getEmail());
-        user.setFirstName(userUpdateDto.getFirstName());
-        user.setLastName(userUpdateDto.getLastName());
-        user.setPhoneNumber(userUpdateDto.getPhoneNumber());
-        userRepository.save(user);
-
+        displayedUser.get().setFromUserUpdateDto(userUpdateDto);
+        userRepository.save(displayedUser.get());
         model.addAttribute("updatedSuccessfully", "true");
-        return "user";
+        return "user/profile";
     }
 
-    @GetMapping("/user/{usernameParam}/change-password")
+    @GetMapping("/{usernameParam}/change-password")
     public String getChangePasswordHandler(Model model, @PathVariable String usernameParam,
                                            HttpSession session) {
-        var authorizationRedirect = checkAuthorization(session, model, usernameParam);
+        Optional<User> displayedUser = userRepository.findByUsername(usernameParam);
+
+        if (displayedUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        var authorizationRedirect = checkAuthorization(session, displayedUser.get());
+
         if (authorizationRedirect.isPresent()) {
             return authorizationRedirect.get();
         }
 
         ChangePasswordDto dto = new ChangePasswordDto();
         model.addAttribute("changePasswordDto", dto);
-        return "change_password";
+        return "user/change_password";
     }
 
-    @PostMapping("/user/{usernameParam}/change-password")
+    @PostMapping("/{usernameParam}/change-password")
     public String postChangePasswordHandler(Model model, @PathVariable String usernameParam,
                                             HttpSession session,
                                             @Valid @ModelAttribute ChangePasswordDto dto,
                                             BindingResult bindingResult) {
-        var authorizationRedirect = checkAuthorization(session, model, usernameParam);
+        Optional<User> displayedUser = userRepository.findByUsername(usernameParam);
+
+        if (displayedUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        var authorizationRedirect = checkAuthorization(session, displayedUser.get());
+
         if (authorizationRedirect.isPresent()) {
             return authorizationRedirect.get();
         }
-        User displayedUser = userRepository.findByUsername(usernameParam).get();
 
-        validateChangePassword(dto, bindingResult, displayedUser);
+        validateChangePassword(dto, bindingResult, displayedUser.get());
+
         if (bindingResult.hasErrors()) {
             System.out.println(bindingResult);
-            return "change_password";
+            return "user/change_password";
         }
 
-        displayedUser.setPassword(encoder.encode(dto.getNewPassword1()));
-        userRepository.save(displayedUser);
+        displayedUser.get().setPassword(encoder.encode(dto.getNewPassword1()));
+        userRepository.save(displayedUser.get());
         model.addAttribute("updatedSuccessfully", "true");
-
-        return "change_password";
+        return "user/change_password";
     }
 
-    @GetMapping("/logout")
-    public String logoutHandler(HttpSession session) {
-        session.removeAttribute("username");
-        return "redirect:/";
-    }
-
-    @GetMapping("/login")
-    public String loginGetHandler(Model model, HttpSession session) {
-        if (session.getAttribute("username") != null) {
-            return "redirect:/";
-        }
-
-        return "login";
-    }
-
-    @PostMapping("/login")
-    public String loginPostHandler(@RequestParam String username, @RequestParam String password,
-                                   HttpSession session) {
-        Optional<User> user = userRepository.findByUsername(username.trim().toLowerCase());
-
-        if (user.isPresent()) {
-            if (encoder.matches(password, user.get().getPassword())) {
-                session.setAttribute("username", user.get().getUsername());
-                return "redirect:/";
-            }
-        }
-        return "redirect:/login";
-    }
-
-    @GetMapping("/signup")
-    public String signupGetHandler(Model model, HttpSession session) {
-        if (session.getAttribute("username") != null) {
-            return "redirect:/";
-        }
-
-        return "signup";
-    }
-
-    @PostMapping("/signup")
-    public String signupPostHandler(@Valid @ModelAttribute UserDto userDto,
-                                    BindingResult bindingResult) {
-        validateSignup(userDto, bindingResult);
-
-        if (bindingResult.hasErrors()) {
-            System.out.println(bindingResult);
-            return "signup";
-        }
-
-        User user = createUserFromDto(userDto);
-        userRepository.save(user);
-        return "redirect:/login";
-    }
-
-    private void validateSignup(UserDto userDto, BindingResult bindingResult) {
-        if (userRepository.existsByUsername(userDto.getUsername())) {
-            bindingResult.addError(
-                    new FieldError("userDto", "username", "This username is already taken!"));
-        }
-
-        if (userRepository.existsByEmail(userDto.getEmail())) {
-            bindingResult.addError(
-                    new FieldError("userDto", "email", "This email address is already taken!"));
-        }
-
-        if (userRepository.existsByPhoneNumber(userDto.getPhoneNumber())) {
-            bindingResult.addError(new FieldError("userDto", "phoneNumber",
-                                                  "This phone number is already taken!"));
-        }
-
-        if (!Objects.equals(userDto.getAccountType(), "customer")
-            && !Objects.equals(userDto.getAccountType(), "merchant")) {
-            bindingResult.addError(new FieldError(
-                    "userDto", "accountType", "Account type must be either Customer or Merchant!"));
-        }
-
-        if (!Objects.equals(userDto.getPassword1(), userDto.getPassword2())) {
-            bindingResult.addError(
-                    new FieldError("userDto", "password1", "Passwords do not match!"));
-        }
-    }
-
+    /**
+     * Validates the data provided in a UserUpdateDto object for updating a user's information.
+     * This method checks for the following conflicts and adds error messages to the provided
+     * BindingResult object if any are found:
+     * <p>
+     * 1. Provided email address must be different from tha user's current email, and it must not
+     * exist in the system.
+     * <p>
+     * 2. Provided phone number must be different from tha user's current phone number, and it must
+     * not exist in the system.
+     *
+     * @param userUpdateDto The UserUpdateDto object containing the updated user information.
+     * @param bindingResult The BindingResult object to which validation errors will be added.
+     * @param oldUser The User object representing the user whose information is being updated.
+     */
     private void validateUserUpdate(UserUpdateDto userUpdateDto, BindingResult bindingResult,
                                     User oldUser) {
         if (!oldUser.getEmail().equals(userUpdateDto.getEmail())
@@ -266,6 +175,20 @@ public class UserController {
         }
     }
 
+    /**
+     * Validates the data provided in a ChangePasswordDto object for changing a user's password. The
+     * validations rules are the following:
+     * <p>
+     * 1. Current password field must match with the old password.
+     * <p>
+     * 2. Password and re-type password fields must match each other.
+     * <p>
+     * This method adds error messages to the provided BindingResult object if any validation fails.
+     *
+     * @param dto The ChangePasswordDto object containing old and new password information.
+     * @param bindingResult The BindingResult object to which validation errors will be added.
+     * @param displayedUser The User object representing the user whose password is being changed.
+     */
     private void validateChangePassword(ChangePasswordDto dto, BindingResult bindingResult,
                                         User displayedUser) {
         if (!encoder.matches(dto.getOldPassword(), displayedUser.getPassword())) {
@@ -279,12 +202,57 @@ public class UserController {
         }
     }
 
-    private User createUserFromDto(UserDto userDto) {
-        String encodedPassword = encoder.encode(userDto.getPassword1());
-        User.Type type = userDto.getAccountType().equals("customer") ? User.Type.CUSTOMER
-                                                                     : User.Type.MERCHANT;
+    /**
+     * This method checks if a user is authenticated based on the presence of a username attribute
+     * in the provided HttpSession.
+     *
+     * @param session The HttpSession object containing user session information.
+     * @return An Optional<String> containing a redirect URL to the login page if the user is not
+     *         authenticated, or Optional.empty() if the user is authenticated (allowing further
+     *         processing).
+     */
+    private Optional<String> checkAuthentication(HttpSession session) {
+        Object loggedInUsername = session.getAttribute("username");
+        if (loggedInUsername == null) {
+            return Optional.of("redirect:/login");
+        }
 
-        return new User(userDto.getFirstName(), userDto.getLastName(), userDto.getUsername(),
-                        encodedPassword, type, userDto.getEmail(), userDto.getPhoneNumber());
+        return Optional.empty();
+    }
+
+    /**
+     * This method checks if a user is authorized to perform an action on a specific user based on
+     * their authentication and role.
+     *
+     * @param session The HttpSession object containing user session information.
+     * @param displayedUser The User object representing the user whose information is being
+     *         accessed.
+     * @return An Optional<String> containing a redirect URL to the login page if the user is not
+     *         authenticated, or throws an exception if the user is not authorized. If the user is
+     *         authorized, it returns Optional.empty() allowing further processing.
+     * @throws ResponseStatusException with HttpStatus.NOT_FOUND if the user is not authenticated
+     *         (based on the result of checkAuthentication) or if the user is not authorized (not an
+     *         admin or the owner of the displayed user).
+     */
+    private Optional<String> checkAuthorization(HttpSession session, User displayedUser) {
+        var authenticationRedirect = checkAuthentication(session);
+        if (authenticationRedirect.isPresent()) {
+            return authenticationRedirect;
+        }
+
+        Optional<User> loggedInUser =
+                userRepository.findByUsername(session.getAttribute("username").toString());
+
+        if (loggedInUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        // Only let the admins and the owner proceed
+        if (loggedInUser.get().getType() != User.Type.ADMIN
+            && !loggedInUser.get().getUsername().equals(displayedUser.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        return Optional.empty();
     }
 }
