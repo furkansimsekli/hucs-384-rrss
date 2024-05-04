@@ -3,8 +3,7 @@ package com.fosskeeters.rrss.controllers;
 import com.fosskeeters.rrss.dtos.UserDto;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.UserRepository;
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
+
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -16,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Objects;
 import java.util.Optional;
+
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 public class AuthenticationController {
@@ -46,7 +48,8 @@ public class AuthenticationController {
             return "signup";
         }
 
-        User user = createUserFromDto(userDto);
+        String encodedPassword = encoder.encode(userDto.getPassword1());
+        User user = new User(userDto, encodedPassword);
         userRepository.save(user);
         return "redirect:/login";
     }
@@ -106,14 +109,5 @@ public class AuthenticationController {
             bindingResult.addError(
                     new FieldError("userDto", "password1", "Passwords do not match!"));
         }
-    }
-
-    private User createUserFromDto(UserDto userDto) {
-        String encodedPassword = encoder.encode(userDto.getPassword1());
-        User.Type type = userDto.getAccountType().equals("customer") ? User.Type.CUSTOMER
-                                                                     : User.Type.MERCHANT;
-
-        return new User(userDto.getFirstName(), userDto.getLastName(), userDto.getUsername(),
-                        encodedPassword, type, userDto.getEmail(), userDto.getPhoneNumber());
     }
 }

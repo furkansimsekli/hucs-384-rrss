@@ -45,6 +45,18 @@ public class UserUpdateDto {
     // characters!")
     // private String password2;
 
+    public UserUpdateDto() {}
+
+    public UserUpdateDto(User user) {
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.email = user.getEmail();
+        this.phoneNumber = user.getPhoneNumber();
+        this.dateOfBirth = user.getDateOfBirth();
+        this.address = user.getAddress();
+        this.profileImagePath = user.getProfileImagePath();
+    }
+
     public String getFirstName() {
         return firstName;
     }
@@ -99,18 +111,6 @@ public class UserUpdateDto {
 
     public void setProfileImagePath(String profileImagePath) {
         this.profileImagePath = profileImagePath;
-    }
-
-    public static UserUpdateDto fromUser(User user) {
-        UserUpdateDto dto = new UserUpdateDto();
-        dto.setAddress(user.getAddress());
-        dto.setDateOfBirth(user.getDateOfBirth());
-        dto.setEmail(user.getEmail());
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setPhoneNumber(user.getPhoneNumber());
-        dto.setProfileImagePath(user.getProfileImagePath());
-        return dto;
     }
 
     // public String getPassword1() {

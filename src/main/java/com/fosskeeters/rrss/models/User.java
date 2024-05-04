@@ -1,5 +1,8 @@
 package com.fosskeeters.rrss.models;
 
+import com.fosskeeters.rrss.dtos.UserDto;
+import com.fosskeeters.rrss.dtos.UserUpdateDto;
+
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
@@ -90,6 +93,31 @@ public class User {
         this.address = "";
         this.profileImagePath = "path/to/default/image";
         this.dateOfBirth = LocalDate.of(1970, 1, 1);
+    }
+
+    public User(UserDto userDto, String encodedPassword) {
+        this.firstName = userDto.getFirstName();
+        this.lastName = userDto.getLastName();
+        this.username = userDto.getUsername();
+        this.type = userDto.getAccountType().equals("customer") ? User.Type.CUSTOMER
+                                                                : User.Type.MERCHANT;
+        this.email = userDto.getEmail();
+        this.phoneNumber = userDto.getPhoneNumber();
+        this.createdAt = LocalDateTime.now();
+        this.address = "";
+        this.profileImagePath = "path/to/default/image";
+        this.dateOfBirth = LocalDate.of(1970, 1, 1);
+        this.password = encodedPassword;
+    }
+
+    public void setFromUserUpdateDto(UserUpdateDto userUpdateDto) {
+        this.firstName = userUpdateDto.getFirstName();
+        this.lastName = userUpdateDto.getLastName();
+        this.email = userUpdateDto.getEmail();
+        this.phoneNumber = userUpdateDto.getPhoneNumber();
+        this.address = userUpdateDto.getAddress();
+        this.profileImagePath = userUpdateDto.getProfileImagePath();
+        this.dateOfBirth = userUpdateDto.getDateOfBirth();
     }
 
     public Long getId() {

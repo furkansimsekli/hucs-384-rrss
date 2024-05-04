@@ -51,7 +51,7 @@ public class UserController {
         User displayedUser = userRepository.findByUsername(usernameParam).get();
 
         // Logged in user is either an admin or the displayed user.
-        UserUpdateDto userUpdateDto = UserUpdateDto.fromUser(displayedUser);
+        UserUpdateDto userUpdateDto = new UserUpdateDto(displayedUser);
         model.addAttribute("userUpdateDto", userUpdateDto);
         return "user";
     }
@@ -75,20 +75,8 @@ public class UserController {
             return "user";
         }
 
-        User user = new User();
-        user.setId(displayedUser.getId());
-        user.setUsername(displayedUser.getUsername());
-        user.setPassword(displayedUser.getPassword());
-        user.setType(displayedUser.getType());
-        user.setProfileImagePath(userUpdateDto.getProfileImagePath());
-        user.setAddress(userUpdateDto.getAddress());
-        user.setDateOfBirth(userUpdateDto.getDateOfBirth());
-        user.setEmail(userUpdateDto.getEmail());
-        user.setFirstName(userUpdateDto.getFirstName());
-        user.setLastName(userUpdateDto.getLastName());
-        user.setPhoneNumber(userUpdateDto.getPhoneNumber());
-        userRepository.save(user);
-
+        displayedUser.setFromUserUpdateDto(userUpdateDto);
+        userRepository.save(displayedUser);
         model.addAttribute("updatedSuccessfully", "true");
         return "user";
     }
