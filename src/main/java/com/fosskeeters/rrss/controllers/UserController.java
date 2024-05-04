@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
+@RequestMapping("/user")
 public class UserController {
     private UserRepository userRepository;
     private Argon2PasswordEncoder encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
@@ -28,7 +29,7 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping({"/user", "/user/"})
+    @GetMapping({"", "/"})
     public String getUserRedirectHandler(HttpSession session) {
         var authenticationRedirect = checkAuthentication(session);
 
@@ -39,7 +40,7 @@ public class UserController {
         return "redirect:/user/" + session.getAttribute("username").toString();
     }
 
-    @GetMapping("/user/{usernameParam}")
+    @GetMapping("/{usernameParam}")
     public String userProfileHandler(Model model, @PathVariable String usernameParam,
                                      HttpSession session) {
         var authorizationRedirect = checkAuthorization(session, model, usernameParam);
@@ -55,7 +56,7 @@ public class UserController {
         return "user";
     }
 
-    @PostMapping("/user/{usernameParam}")
+    @PostMapping("/{usernameParam}")
     public String userUpdateHandler(Model model, @PathVariable String usernameParam,
                                     HttpSession session,
                                     @Valid @ModelAttribute UserUpdateDto userUpdateDto,
@@ -92,7 +93,7 @@ public class UserController {
         return "user";
     }
 
-    @GetMapping("/user/{usernameParam}/change-password")
+    @GetMapping("/{usernameParam}/change-password")
     public String getChangePasswordHandler(Model model, @PathVariable String usernameParam,
                                            HttpSession session) {
         var authorizationRedirect = checkAuthorization(session, model, usernameParam);
@@ -106,7 +107,7 @@ public class UserController {
         return "change_password";
     }
 
-    @PostMapping("/user/{usernameParam}/change-password")
+    @PostMapping("/{usernameParam}/change-password")
     public String postChangePasswordHandler(Model model, @PathVariable String usernameParam,
                                             HttpSession session,
                                             @Valid @ModelAttribute ChangePasswordDto dto,
