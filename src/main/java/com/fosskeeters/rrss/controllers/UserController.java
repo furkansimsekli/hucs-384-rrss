@@ -30,49 +30,63 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    private Optional<String> checkAuthentication(HttpSession session) {
-        Object loggedInUsername = session.getAttribute("username");
-        if (loggedInUsername == null) {
-            return Optional.of("redirect:/login");
+    @GetMapping("/signup")
+    public String signupGetHandler(HttpSession session) {
+        if (session.getAttribute("username") != null) {
+            return "redirect:/";
         }
 
-        Optional<User> loggedInUser = userRepository.findByUsername(loggedInUsername.toString());
-        if (loggedInUser.isEmpty()) {
-            // This condition should never be met but can't be too safe :)
-            return Optional.of("redirect:/login");
-        }
-
-        return Optional.empty(); // keep going
+        return "signup";
     }
 
-    private Optional<String> checkAuthorization(HttpSession session, Model model,
-                                                String usernameParam) {
-        var authenticationRedirect = checkAuthentication(session);
-        if (authenticationRedirect.isPresent()) {
-            return authenticationRedirect;
+    @PostMapping("/signup")
+    public String signupPostHandler(@Valid @ModelAttribute UserDto userDto,
+                                    BindingResult bindingResult) {
+        validateSignup(userDto, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult);
+            return "signup";
         }
 
-        Optional<User> displayedUser = userRepository.findByUsername(usernameParam);
-        if (displayedUser.isEmpty()) {
-            model.addAttribute("errorString", "No such user found");
-            return Optional.of("user");
+        User user = createUserFromDto(userDto);
+        userRepository.save(user);
+        return "redirect:/login";
+    }
+
+    @GetMapping("/login")
+    public String loginGetHandler(HttpSession session) {
+        if (session.getAttribute("username") != null) {
+            return "redirect:/";
         }
 
-        User loggedInUser =
-                userRepository.findByUsername(session.getAttribute("username").toString()).get();
-        if (loggedInUser.getType() != User.Type.ADMIN
-            && !loggedInUser.getUsername().equals(displayedUser.get().getUsername())) {
-            // the logged in user and displayed user are different
-            model.addAttribute("errorString", "Unauthorized access");
-            return Optional.of("user");
-        }
+        return "login";
+    }
 
-        return Optional.empty();
+    @PostMapping("/login")
+    public String loginPostHandler(@RequestParam String username, @RequestParam String password,
+                                   HttpSession session) {
+        Optional<User> user = userRepository.findByUsername(username.trim().toLowerCase());
+
+        if (user.isPresent()) {
+            if (encoder.matches(password, user.get().getPassword())) {
+                session.setAttribute("username", user.get().getUsername());
+                return "redirect:/";
+            }
+        }
+        return "redirect:/login";
+    }
+
+    @GetMapping("/logout")
+    public String logoutHandler(HttpSession session) {
+        session.removeAttribute("username");
+        return "redirect:/";
     }
 
     @GetMapping({"/user", "/user/"})
     public String getUserRedirectHandler(HttpSession session) {
         var authenticationRedirect = checkAuthentication(session);
+
         if (authenticationRedirect.isPresent()) {
             return authenticationRedirect.get();
         }
@@ -137,6 +151,7 @@ public class UserController {
     public String getChangePasswordHandler(Model model, @PathVariable String usernameParam,
                                            HttpSession session) {
         var authorizationRedirect = checkAuthorization(session, model, usernameParam);
+
         if (authorizationRedirect.isPresent()) {
             return authorizationRedirect.get();
         }
@@ -152,12 +167,14 @@ public class UserController {
                                             @Valid @ModelAttribute ChangePasswordDto dto,
                                             BindingResult bindingResult) {
         var authorizationRedirect = checkAuthorization(session, model, usernameParam);
+
         if (authorizationRedirect.isPresent()) {
             return authorizationRedirect.get();
         }
-        User displayedUser = userRepository.findByUsername(usernameParam).get();
 
+        User displayedUser = userRepository.findByUsername(usernameParam).get();
         validateChangePassword(dto, bindingResult, displayedUser);
+
         if (bindingResult.hasErrors()) {
             System.out.println(bindingResult);
             return "change_password";
@@ -166,61 +183,7 @@ public class UserController {
         displayedUser.setPassword(encoder.encode(dto.getNewPassword1()));
         userRepository.save(displayedUser);
         model.addAttribute("updatedSuccessfully", "true");
-
         return "change_password";
-    }
-
-    @GetMapping("/logout")
-    public String logoutHandler(HttpSession session) {
-        session.removeAttribute("username");
-        return "redirect:/";
-    }
-
-    @GetMapping("/login")
-    public String loginGetHandler(Model model, HttpSession session) {
-        if (session.getAttribute("username") != null) {
-            return "redirect:/";
-        }
-
-        return "login";
-    }
-
-    @PostMapping("/login")
-    public String loginPostHandler(@RequestParam String username, @RequestParam String password,
-                                   HttpSession session) {
-        Optional<User> user = userRepository.findByUsername(username.trim().toLowerCase());
-
-        if (user.isPresent()) {
-            if (encoder.matches(password, user.get().getPassword())) {
-                session.setAttribute("username", user.get().getUsername());
-                return "redirect:/";
-            }
-        }
-        return "redirect:/login";
-    }
-
-    @GetMapping("/signup")
-    public String signupGetHandler(Model model, HttpSession session) {
-        if (session.getAttribute("username") != null) {
-            return "redirect:/";
-        }
-
-        return "signup";
-    }
-
-    @PostMapping("/signup")
-    public String signupPostHandler(@Valid @ModelAttribute UserDto userDto,
-                                    BindingResult bindingResult) {
-        validateSignup(userDto, bindingResult);
-
-        if (bindingResult.hasErrors()) {
-            System.out.println(bindingResult);
-            return "signup";
-        }
-
-        User user = createUserFromDto(userDto);
-        userRepository.save(user);
-        return "redirect:/login";
     }
 
     private void validateSignup(UserDto userDto, BindingResult bindingResult) {
@@ -277,6 +240,46 @@ public class UserController {
             bindingResult.addError(
                     new FieldError("changePasswordDto", "newPassword1", "Passwords do not match!"));
         }
+    }
+
+    private Optional<String> checkAuthentication(HttpSession session) {
+        Object loggedInUsername = session.getAttribute("username");
+        if (loggedInUsername == null) {
+            return Optional.of("redirect:/login");
+        }
+
+        Optional<User> loggedInUser = userRepository.findByUsername(loggedInUsername.toString());
+        if (loggedInUser.isEmpty()) {
+            // This condition should never be met but can't be too safe :)
+            return Optional.of("redirect:/login");
+        }
+
+        return Optional.empty(); // keep going
+    }
+
+    private Optional<String> checkAuthorization(HttpSession session, Model model,
+                                                String usernameParam) {
+        var authenticationRedirect = checkAuthentication(session);
+        if (authenticationRedirect.isPresent()) {
+            return authenticationRedirect;
+        }
+
+        Optional<User> displayedUser = userRepository.findByUsername(usernameParam);
+        if (displayedUser.isEmpty()) {
+            model.addAttribute("errorString", "No such user found");
+            return Optional.of("user");
+        }
+
+        User loggedInUser =
+                userRepository.findByUsername(session.getAttribute("username").toString()).get();
+        if (loggedInUser.getType() != User.Type.ADMIN
+            && !loggedInUser.getUsername().equals(displayedUser.get().getUsername())) {
+            // the logged in user and displayed user are different
+            model.addAttribute("errorString", "Unauthorized access");
+            return Optional.of("user");
+        }
+
+        return Optional.empty();
     }
 
     private User createUserFromDto(UserDto userDto) {
