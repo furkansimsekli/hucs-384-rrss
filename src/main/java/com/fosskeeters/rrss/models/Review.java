@@ -1,12 +1,12 @@
 package com.fosskeeters.rrss.models;
 
+import org.hibernate.validator.constraints.Range;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 
 @Entity
 public class Review {
@@ -29,7 +29,7 @@ public class Review {
     private String body;
 
     @Column
-    @Size(min = 1, max = 5)
+    @Range(min = 1, max = 5)
     private int score;
 
     @Column(length = 4096)

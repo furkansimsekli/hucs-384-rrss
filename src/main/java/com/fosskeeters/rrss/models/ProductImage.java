@@ -1,11 +1,11 @@
 package com.fosskeeters.rrss.models;
 
+import org.hibernate.validator.constraints.Range;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 
 @Entity
 public class ProductImage {
@@ -18,7 +18,7 @@ public class ProductImage {
     private Product product;
 
     @Column
-    @Size(max = 9)
+    @Range(max = 9)
     private int displayOrder;
 
     @Column(length = 128)
