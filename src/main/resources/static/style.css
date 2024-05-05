@@ -170,7 +170,7 @@ nav * {
     border: var(--primary-color) 2px solid;
 }
 
-/* ============= MERCHANT PAGE ============= */
+/* ============= MERCHANT PAGES ============= */
 
 .list{
     width: 90%;
@@ -253,4 +253,19 @@ nav * {
     padding: 20px;
     width: 60%;
     max-width: 400px;
+}
+
+.form{
+    width: fit-content;
+    min-width: 300px;
+    gap: 10px;
+    margin: 0 auto;
+    border: gray 0.5px solid;
+    border-radius: 10px;
+    padding: 20px 30px;
+}
+
+.error-text{
+    margin-top: 1px;
+    color: red;
 }
