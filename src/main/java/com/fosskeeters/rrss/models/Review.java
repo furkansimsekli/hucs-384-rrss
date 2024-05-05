@@ -1,12 +1,14 @@
 package com.fosskeeters.rrss.models;
 
+import com.fosskeeters.rrss.dtos.ReviewDto;
+
+import org.hibernate.validator.constraints.Range;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 
 @Entity
 public class Review {
@@ -29,7 +31,7 @@ public class Review {
     private String body;
 
     @Column
-    @Size(min = 1, max = 5)
+    @Range(min = 1, max = 5)
     private int score;
 
     @Column(length = 4096)
@@ -40,6 +42,21 @@ public class Review {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL)
     private List<Vote> votes;
+
+    public Review() {}
+
+    public Review(ReviewDto reviewDto) {
+        this.title = reviewDto.getTitle();
+        this.body = reviewDto.getBody();
+        this.score = reviewDto.getScore();
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public void setFromReviewDto(ReviewDto reviewDto) {
+        this.title = reviewDto.getTitle();
+        this.body = reviewDto.getBody();
+        this.score = reviewDto.getScore();
+    }
 
     public Long getId() {
         return id;
