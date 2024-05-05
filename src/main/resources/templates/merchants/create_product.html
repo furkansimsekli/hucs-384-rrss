@@ -6,13 +6,13 @@
         <h2>New Product</h2>
         <div class="row-container">
             <label>Name</label>
-            <input th:field="${productDto.name}">
+            <input type="text" th:field="${productDto.name}">
             <p class="error-text" th:if="${#fields.hasErrors('name')}" th:errorclass="text-danger" th:errors="${productDto.name}"></p>
         </div>
 
         <div class="row-container">
             <label>Description</label>
-            <textarea th:field="${productDto.description}"></textarea>
+            <textarea th:field="${productDto.description}" style="min-height: 60px;"></textarea>
             <p class="error-text" th:if="${#fields.hasErrors('description')}" th:errorclass="text-danger"
                th:errors="${productDto.description}"></p>
         </div>

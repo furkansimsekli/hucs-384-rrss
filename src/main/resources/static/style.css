@@ -43,7 +43,15 @@ main {
     flex-direction: row;
 }
 
-input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="date"] {
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="date"], input[type="number"] {
+    height: 30px;
+    padding-left: 7px;
+
+    border: gray 0.5px solid;
+    border-radius: 5px;
+}
+
+textarea{
     height: 30px;
     padding-left: 7px;
 
