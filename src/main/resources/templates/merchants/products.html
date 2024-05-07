@@ -17,8 +17,8 @@
             </a>
             <div class="spacer"></div>
             <a th:href="@{/merchants/{username}/products/{productId}/update(username=${product.owner.username}, productId=${product.id})}" class="mini-button"><span>Edit</span></a>
-            <a href='#delete-modal' class="red-button">Delete</a>
-            <div id="delete-modal" class="modal">
+            <a th:href="'#delete-modal-' + ${product.id}" class="red-button">Delete</a>
+            <div th:id="'delete-modal-' + ${product.id}" class="modal">
                 <div class="modal-content">
                     <h2 style="margin-top: 10px;">Product Deletion</h2>
                     <p style="margin-bottom: 40px;">This action will delete your product from the system. Do you confirm?</p>
