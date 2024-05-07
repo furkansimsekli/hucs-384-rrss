@@ -58,17 +58,18 @@ public class AuthenticationController {
     }
 
     @GetMapping("/login")
-    public String loginGetHandler(HttpSession session) {
+    public String loginGetHandler(HttpSession session, Model model) {
         if (session.getAttribute("username") != null) {
             return "redirect:/";
         }
 
+        model.addAttribute("error", false);
         return "login";
     }
 
     @PostMapping("/login")
     public String loginPostHandler(@RequestParam String username, @RequestParam String password,
-                                   HttpSession session) {
+                                   HttpSession session, Model model) {
         Optional<User> user = userRepository.findByUsername(username.trim().toLowerCase());
 
         if (user.isPresent()) {
@@ -77,7 +78,9 @@ public class AuthenticationController {
                 return "redirect:/";
             }
         }
-        return "redirect:/login";
+
+        model.addAttribute("error", true);
+        return "login";
     }
 
     @GetMapping("/logout")
