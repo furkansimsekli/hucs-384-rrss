@@ -7,18 +7,25 @@
     <body class="row-container">
         <main>
             <img src="/logo.webp" width="48px" style="display: block; margin: 10px auto;"/>
-            <form class="row-container auth-form" method="post">
+            <form class="row-container auth-form" method="post" th:object="${userDto}">
                 <div class="column-container" style="justify-content: space-between;">
                     <h2>Sign Up</h2>
                     <a th:href="@{/login}" style="text-decoration: none; color: black;"><h2 style="font-weight: 300;">&#8594 Log In</h2></a>
                 </div>
-                <input name="firstName" placeholder="First name" type="text">
-                <input name="lastName" placeholder="Last name" type="text">
-                <input name="username" placeholder="Username" type="text"/>
-                <input name="email" placeholder="Mail address" type="email"/>
-                <input name="phoneNumber" placeholder="Phone number" type="tel"/>
-                <input name="password1" placeholder="Password" type="password"/>
-                <input name="password2" placeholder="Enter password again" type="password"/>
+                <input th:errorclass="error-input" name="firstName" placeholder="First name" type="text">
+                <label class="error-text" for="firstName" th:if="${#fields.hasErrors('firstName')}" th:errors="${userDto.firstName}" />
+                <input th:errorclass="error-input" name="lastName" placeholder="Last name" type="text">
+                <label class="error-text" for="lastName" th:if="${#fields.hasErrors('lastName')}" th:errors="${userDto.lastName}" />
+                <input th:errorclass="error-input" name="username" placeholder="Username" type="text"/>
+                <label class="error-text" for="username" th:if="${#fields.hasErrors('username')}" th:errors="${userDto.username}" />
+                <input th:errorclass="error-input" name="email" placeholder="Mail address" type="email"/>
+                <label class="error-text" for="email" th:if="${#fields.hasErrors('email')}" th:errors="${userDto.email}" />
+                <input th:errorclass="error-input" name="phoneNumber" placeholder="Phone number" type="tel"/>
+                <label class="error-text" for="phoneNumber" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="${userDto.phoneNumber}" />
+                <input th:errorclass="error-input" name="password1" placeholder="Password" type="password"/>
+                <label class="error-text" for="password1" th:if="${#fields.hasErrors('password1')}" th:errors="${userDto.password1}" />
+                <input th:errorclass="error-input" name="password2" placeholder="Enter password again" type="password"/>
+                <label class="error-text" for="password2" th:if="${#fields.hasErrors('password2')}" th:errors="${userDto.password2}" />
                 <div class="column-container">
                     <span>
                         <input name="accountType" value="customer" type="radio"/>Customer
@@ -27,6 +34,7 @@
                         <input name="accountType" value="merchant" type="radio">Merchant
                     </span>
                 </div>
+                <label class="error-text" for="accountType" th:if="${#fields.hasErrors('accountType')}" th:errors="${userDto.accountType}" />
                 <input value="Sign Up" type="submit"/>
             </form>
         </main>

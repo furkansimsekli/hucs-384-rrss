@@ -6,6 +6,7 @@ import com.fosskeeters.rrss.repositories.UserRepository;
 
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,18 +31,20 @@ public class AuthenticationController {
     }
 
     @GetMapping("/signup")
-    public String signupGetHandler(HttpSession session) {
+    public String signupGetHandler(HttpSession session, Model model) {
         if (session.getAttribute("username") != null) {
             return "redirect:/";
         }
 
+        model.addAttribute("userDto", new UserDto());
         return "signup";
     }
 
     @PostMapping("/signup")
     public String signupPostHandler(@Valid @ModelAttribute UserDto userDto,
-                                    BindingResult bindingResult) {
+                                    BindingResult bindingResult, Model model) {
         validateSignup(userDto, bindingResult);
+        model.addAttribute("userDto", userDto);
 
         if (bindingResult.hasErrors()) {
             System.out.println(bindingResult);
