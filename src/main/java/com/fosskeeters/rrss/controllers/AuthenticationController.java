@@ -123,7 +123,9 @@ public class AuthenticationController {
                                                   "This phone number is already taken!"));
         }
 
-        if (!Objects.equals(userDto.getAccountType(), "customer")
+        // The null and blank cases are handled in the UserDto.accountType @NotBlank annotation.
+        if (userDto.getAccountType() != null && !Objects.equals(userDto.getAccountType(), "")
+            && !Objects.equals(userDto.getAccountType(), "customer")
             && !Objects.equals(userDto.getAccountType(), "merchant")) {
             bindingResult.addError(new FieldError(
                     "userDto", "accountType", "Account type must be either Customer or Merchant!"));

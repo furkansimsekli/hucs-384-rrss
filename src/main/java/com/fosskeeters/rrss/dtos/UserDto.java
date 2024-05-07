@@ -24,7 +24,6 @@ public class UserDto {
     @Size(min = 1, max = 64, message = "Phone number must be between 1-15 characters!")
     private String phoneNumber;
 
-    @NotNull
     @NotBlank(message = "User type is required!")
     private String accountType;
 
