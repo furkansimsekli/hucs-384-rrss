@@ -2,30 +2,29 @@
 
 <body>
 <main layout:fragment="content">
-    <h2>Edit Your Product</h2>
-
-    <form method="post" enctype="multipart/form-data" th:object="${productDto}">
-        <div>
+    <form class="row-container form" method="post" enctype="multipart/form-data" th:object="${productDto}">
+        <h2>Edit Your Product</h2>
+        <div class="row-container">
             <label>Name</label>
-            <input th:field="${productDto.name}">
-            <p th:if="${#fields.hasErrors('name')}" th:errorclass="text-danger" th:errors="${productDto.name}"></p>
+            <input type="text" th:field="${productDto.name}">
+            <p class="error-text" th:if="${#fields.hasErrors('name')}" th:errorclass="text-danger" th:errors="${productDto.name}"></p>
         </div>
 
-        <div>
+        <div class="row-container">
             <label>Description</label>
-            <textarea th:field="${productDto.description}"></textarea>
-            <p th:if="${#fields.hasErrors('description')}" th:errorclass="text-danger"
+            <textarea th:field="${productDto.description}" style="min-height: 60px;"></textarea>
+            <p class="error-text" th:if="${#fields.hasErrors('description')}" th:errorclass="text-danger"
                th:errors="${productDto.description}"></p>
         </div>
 
-        <div>
+        <div class="row-container">
             <label>Price</label>
             <input type="number" min="0" step="0.01" th:field="${productDto.price}">
-            <p th:if="${#fields.hasErrors('price')}" th:errorclass="text-danger" th:errors="${productDto.price}"></p>
+            <p class="error-text" th:if="${#fields.hasErrors('price')}" th:errorclass="text-danger" th:errors="${productDto.price}"></p>
         </div>
 
-        <div>
-            <button type="submit">Submit</button>
+        <div style="margin: 10 auto; width: 100%;">
+            <button class="mini-button" type="submit" style="width: 100%; border-radius: 5px;">Submit</button>
         </div>
     </form>
 </main>

@@ -2,33 +2,34 @@
 
 <body>
 <main layout:fragment="content">
-    <h2>Your Products</h2>
-    <a th:href="@{/merchants/{username}/products/create(username=${user.username})}">Create Product</a>
+    <div class="row-container list">
+        <div class="column-container list-header">
+            <h2>Your Products</h2>
+            <div class="spacer"></div>
+            <a class="mini-button" th:href="@{/merchants/{username}/products/create(username=${user.username})}"><span style="font-family: Inika-bold;">&#x2b;</span> New Product</a>
+        </div>
+        <div th:each="product : ${user.products}"  class="column-container list-cell">
+            <a th:href="@{/products/{productId}(productId=${product.id})}" ><img src="/filler-product.png" width="50" height="60"></img></a> <!-- To be changed after imageId implementation -->
+            <a th:href="@{/products/{productId}(productId=${product.id})}" class="row-container" style="text-decoration: none; color: inherit;">
+                <h3 th:text="${product.name}" style="margin: 0px;"></h3>
+                <span th:text="@{${product.price} + '$'}"></span>
+                <span th:text="'Published at ' + ${#temporals.format(product.createdAt, 'dd/MM/yyyy')}"></span>
+            </a>
+            <div class="spacer"></div>
+            <a th:href="@{/merchants/{username}/products/{productId}/update(username=${product.owner.username}, productId=${product.id})}" class="mini-button"><span>Edit</span></a>
+            <a th:href="'#delete-modal-' + ${product.id}" class="red-button">Delete</a>
+            <div th:id="'delete-modal-' + ${product.id}" class="modal">
+                <div class="modal-content">
+                    <h2 style="margin-top: 10px;">Product Deletion</h2>
+                    <p style="margin-bottom: 40px;">This action will delete your product from the system. Do you confirm?</p>
+                    <a th:href="@{/merchants/{username}/products/{productId}/delete(username=${product.owner.username}, productId=${product.id})}" class="red-button">Confirm</a>
+                    <a href="#" class="mini-button">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Created At</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="product : ${user.products}">
-            <td th:text="${product.id}"></td>
-            <td><a th:text="${product.name}" th:href="@{/products/{productId}(productId=${product.id})}"></a></td>
-            <td th:text="@{${product.price} + '$'}"></td>
-            <td th:text="${product.createdAt.toString()}"></td>
-            <td>
-                <a th:href="@{/merchants/{username}/products/{productId}/update(username=${product.owner.username}, productId=${product.id})}">Edit</a>
-                <a th:href="@{/merchants/{username}/products/{productId}/delete(username=${product.owner.username}, productId=${product.id})}"
-                   onclick="return confirm('Are you sure?')">Delete</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    
 </main>
 </body>
 
