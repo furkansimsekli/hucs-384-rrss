@@ -12,15 +12,15 @@
                     <h2>Sign Up</h2>
                     <a th:href="@{/login}" style="text-decoration: none; color: black;"><h2 style="font-weight: 300;">&#8594 Log In</h2></a>
                 </div>
-                <input th:errorclass="error-input" name="firstName" placeholder="First name" type="text">
+                <input th:errorclass="error-input" name="firstName" placeholder="First name" type="text" th:field="${userDto.firstName}">
                 <label class="error-text" for="firstName" th:if="${#fields.hasErrors('firstName')}" th:errors="${userDto.firstName}" />
-                <input th:errorclass="error-input" name="lastName" placeholder="Last name" type="text">
+                <input th:errorclass="error-input" name="lastName" placeholder="Last name" type="text" th:field="${userDto.lastName}">
                 <label class="error-text" for="lastName" th:if="${#fields.hasErrors('lastName')}" th:errors="${userDto.lastName}" />
-                <input th:errorclass="error-input" name="username" placeholder="Username" type="text"/>
+                <input th:errorclass="error-input" name="username" placeholder="Username" type="text" th:field="${userDto.username}" />
                 <label class="error-text" for="username" th:if="${#fields.hasErrors('username')}" th:errors="${userDto.username}" />
-                <input th:errorclass="error-input" name="email" placeholder="Mail address" type="email"/>
+                <input th:errorclass="error-input" name="email" placeholder="Mail address" type="email" th:field="${userDto.email}"/>
                 <label class="error-text" for="email" th:if="${#fields.hasErrors('email')}" th:errors="${userDto.email}" />
-                <input th:errorclass="error-input" name="phoneNumber" placeholder="Phone number" type="tel"/>
+                <input th:errorclass="error-input" name="phoneNumber" placeholder="Phone number" type="tel" th:field="${userDto.phoneNumber}"/>
                 <label class="error-text" for="phoneNumber" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="${userDto.phoneNumber}" />
                 <input th:errorclass="error-input" name="password1" placeholder="Password" type="password"/>
                 <label class="error-text" for="password1" th:if="${#fields.hasErrors('password1')}" th:errors="${userDto.password1}" />
