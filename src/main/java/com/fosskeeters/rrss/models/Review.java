@@ -1,6 +1,7 @@
 package com.fosskeeters.rrss.models;
 
 import com.fosskeeters.rrss.dtos.ReviewDto;
+import com.fosskeeters.rrss.dtos.ReviewReplyDto;
 
 import org.hibernate.validator.constraints.Range;
 import org.springframework.data.annotation.CreatedDate;
@@ -56,6 +57,10 @@ public class Review {
         this.title = reviewDto.getTitle();
         this.body = reviewDto.getBody();
         this.score = reviewDto.getScore();
+    }
+
+    public void setFromReviewReplyDto(ReviewReplyDto reviewReplyDto) {
+        this.merchantReplyBody = reviewReplyDto.getMerchantReplyBody();
     }
 
     public long getId() {
