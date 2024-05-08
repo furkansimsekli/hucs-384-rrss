@@ -19,11 +19,13 @@
         <div class="row-container" style="gap: 10px;">
             <h2>Reviews</h2>
             <div class="column-container" style="gap: 1vw;">
-                <input type="checkbox" class="buttonish-checkbox" id="new-review" />
+                <input type="checkbox" class="buttonish-checkbox" id="new-review" th:checked="${hasErrors}" />
                 <label class="buttonish-checkbox-label hidden-on-edit" for="new-review" th:text="${reviewId == null} ? 'New Review' : 'Update Review'"/>
                 <form class="row-container shown-on-edit" style="gap: 20px; width: 30em;" method="post" th:action="${reviewId == null} ? @{/products/{productId}/reviews/create(productId=${product.getId()})} : @{/products/{productId}/reviews/{reviewId}/update(productId=${product.getId()},reviewId=${reviewId})}" th:object="${reviewDto}">
-                    <input name="title" type="text" placeholder="Title" th:field="${reviewDto.title}" />
-                    <textarea name="body" style="height: 10em;" placeholder="Body" th:field="${reviewDto.body}"></textarea>
+                    <input th:errorclass="error-input" name="title" type="text" placeholder="Title" th:field="${reviewDto.title}" />
+                    <label class="error-text" for="title" th:if="${#fields.hasErrors('title')}" th:errors="${reviewDto.title}" />
+                    <textarea th:errorclass="error-input" name="body" style="height: 10em;" placeholder="Body" th:field="${reviewDto.body}"></textarea>
+                    <label class="error-text" for="body" th:if="${#fields.hasErrors('body')}" th:errors="${reviewDto.body}" />
                     <div class="column-container" style="flex-direction: row-reverse; width: fit-content;">
                         <input name="score" id="score5" type="radio" value="5" hidden="1" />
                         <label class="review-star" for="score5"></label>
@@ -36,6 +38,7 @@
                         <input name="score" id="score1" type="radio" value="1" hidden="1" />
                         <label class="review-star" for="score1"></label>
                     </div>
+                    <label class="error-text" for="score" th:if="${#fields.hasErrors('score')}" th:errors="${reviewDto.score}" />
                     <input type="submit" value="Submit" style="padding: 5px;" />
                 </form>
                 <label class="buttonish-checkbox-label shown-on-edit" for="new-review" style="height: fit-content;">Cancel</label>

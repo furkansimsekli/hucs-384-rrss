@@ -57,6 +57,7 @@ public class ProductController {
         model.addAttribute("product", product.get());
         model.addAttribute("reviewId", review != null ? review.getId() : null);
         model.addAttribute("reviewDto", review != null ? new ReviewDto(review) : new ReviewDto());
+        model.addAttribute("hasErrors", false);
         return "product";
     }
 
@@ -92,14 +93,16 @@ public class ProductController {
 
         // Every customer can have at most one review
         if (reviewRepository.existsByProductIdAndAuthorId(productId, user.get().getId())) {
-            model.addAttribute("notificationMessage", "You already reviewed this product!");
-            return "redirect:/products/" + productId;
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
         // Binding result check
         if (bindingResult.hasErrors()) {
-            System.out.println(bindingResult);
-            return "redirect:/products/" + productId;
+            model.addAttribute("product", product.get());
+            model.addAttribute("reviewId", null);
+            model.addAttribute("reviewDto", reviewDto);
+            model.addAttribute("hasErrors", true);
+            return "product";
         }
 
         // Save new review to database
@@ -116,6 +119,12 @@ public class ProductController {
                                @PathVariable Long reviewId,
                                @Valid @ModelAttribute ReviewDto reviewDto,
                                BindingResult bindingResult, Model model) {
+        Optional<Product> product = productRepository.findById(productId);
+
+        if (product.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
         // Check authentication
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
@@ -131,12 +140,6 @@ public class ProductController {
             return "redirect:/login";
         }
 
-        // Binding result check
-        if (bindingResult.hasErrors()) {
-            System.out.println(bindingResult);
-            return "redirect:/products/" + productId;
-        }
-
         Optional<Review> review = reviewRepository.findById(reviewId);
 
         if (review.isEmpty()) {
@@ -146,6 +149,16 @@ public class ProductController {
         // Don't let other users whose not the author herself update the review
         if (!Objects.equals(review.get().getAuthor().getId(), user.get().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        // Binding result check
+        if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult);
+            model.addAttribute("product", product.get());
+            model.addAttribute("reviewId", review.get().getId());
+            model.addAttribute("reviewDto", reviewDto);
+            model.addAttribute("hasErrors", true);
+            return "product";
         }
 
         // Save updated review to database
