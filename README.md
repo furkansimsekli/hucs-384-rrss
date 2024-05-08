@@ -42,6 +42,10 @@ docker compose up --build
 
 The website should be accessible from `localhost:8520`. The port number can be changed by editing the `compose.yaml` file.
 
+## Database Path
+The default path for the database file is `./rrss.sqlite`. 
+This can be easily overriden by setting the environment variable `DB_PATH` to desired path.
+
 ## License
 This project is released under the terms of the GNU Affero General Public License version 3.
 Check out the [LICENSE](/LICENSE) file in this repository for details.
