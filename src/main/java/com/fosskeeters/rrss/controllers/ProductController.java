@@ -2,6 +2,7 @@ package com.fosskeeters.rrss.controllers;
 
 import com.fosskeeters.rrss.dtos.ProductDto;
 import com.fosskeeters.rrss.dtos.ReviewDto;
+import com.fosskeeters.rrss.dtos.ReviewReplyDto;
 import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.Review;
 import com.fosskeeters.rrss.models.User;
@@ -333,5 +334,44 @@ public class ProductController {
         reviewRepository.delete(review.get());
         model.addAttribute("notificationMessage", "Oh no! Where did your review go?");
         return "redirect:/products/" + productId;
+    }
+
+    // Different endpoint structure is started to being used.
+    // Instead of changing old ones, I'm writing this one with the new structure
+    // TODO: delete these commands after adapting other handlers as well
+    @PostMapping("/reviews/{reviewId}/reply")
+    public String replyReview(HttpSession session, @PathVariable long reviewId,
+                              @Valid @ModelAttribute ReviewReplyDto reviewReplyDto,
+                              BindingResult bindingResult) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+        Optional<Review> review = reviewRepository.findById(reviewId);
+
+        if (user.isEmpty() || review.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        // Only one reply can be made
+        if (review.get().getMerchantReplyBody() != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+
+        // Merchant must be the owner of the product in order to reply
+        if (review.get().getProduct().getOwner().getId() != user.get().getId()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult);
+            return "product";
+        }
+
+        review.get().setFromReviewReplyDto(reviewReplyDto);
+        reviewRepository.save(review.get());
+        return "redirect:/products/" + review.get().getProduct().getId();
     }
 }
