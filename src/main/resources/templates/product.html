@@ -21,7 +21,7 @@
             <div class="column-container" style="gap: 1vw;">
                 <input type="checkbox" class="buttonish-checkbox" id="new-review" th:checked="${hasErrors}" />
                 <label class="buttonish-checkbox-label hidden-on-edit" for="new-review" th:text="${reviewId == null} ? 'New Review' : 'Update Review'"/>
-                <form class="row-container shown-on-edit" style="gap: 20px; width: 30em;" method="post" th:action="${reviewId == null} ? @{/products/{productId}/reviews/create(productId=${product.getId()})} : @{/products/{productId}/reviews/{reviewId}/update(productId=${product.getId()},reviewId=${reviewId})}" th:object="${reviewDto}">
+                <form class="row-container shown-on-edit" style="gap: 10px; width: 30em;" method="post" th:action="${reviewId == null} ? @{/products/{productId}/reviews/create(productId=${product.getId()})} : @{/products/{productId}/reviews/{reviewId}/update(productId=${product.getId()},reviewId=${reviewId})}" th:object="${reviewDto}">
                     <input th:errorclass="error-input" name="title" type="text" placeholder="Title" th:field="${reviewDto.title}" />
                     <label class="error-text" for="title" th:if="${#fields.hasErrors('title')}" th:errors="${reviewDto.title}" />
                     <textarea th:errorclass="error-input" name="body" style="height: 10em;" placeholder="Body" th:field="${reviewDto.body}"></textarea>
