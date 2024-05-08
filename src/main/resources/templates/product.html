@@ -18,7 +18,7 @@
         </div>
         <div class="row-container" style="gap: 10px;">
             <h2>Reviews</h2>
-            <div class="column-container" style="gap: 1vw;">
+            <div class="column-container" style="gap: 1vw;" th:if="${isCustomer}">
                 <input type="checkbox" class="buttonish-checkbox" id="new-review" th:checked="${hasErrors}" />
                 <label class="buttonish-checkbox-label hidden-on-edit" for="new-review" th:text="${reviewId == null} ? 'New Review' : 'Update Review'"/>
                 <form class="row-container shown-on-edit" style="gap: 10px; width: 30em;" method="post" th:action="${reviewId == null} ? @{/products/{productId}/reviews/create(productId=${product.getId()})} : @{/products/{productId}/reviews/{reviewId}/update(productId=${product.getId()},reviewId=${reviewId})}" th:object="${reviewDto}">

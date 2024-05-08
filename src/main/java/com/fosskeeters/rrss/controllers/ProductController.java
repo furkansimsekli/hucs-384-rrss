@@ -43,6 +43,7 @@ public class ProductController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
+        User user = null;
         Review review = null;
         if (session.getAttribute("username") != null) {
             review = product.get()
@@ -53,7 +54,13 @@ public class ProductController {
                                              session.getAttribute("username")))
                              .findFirst()
                              .orElse(null);
+
+            Optional<User> userOpt =
+                    userRepository.findByUsername((String) session.getAttribute("username"));
+            user = userOpt.isPresent() ? userOpt.get() : null;
         }
+        model.addAttribute("isCustomer",
+                           user != null ? user.getType() == User.Type.CUSTOMER : false);
         model.addAttribute("product", product.get());
         model.addAttribute("reviewId", review != null ? review.getId() : null);
         model.addAttribute("reviewDto", review != null ? new ReviewDto(review) : new ReviewDto());
@@ -102,6 +109,14 @@ public class ProductController {
             model.addAttribute("reviewId", null);
             model.addAttribute("reviewDto", reviewDto);
             model.addAttribute("hasErrors", true);
+
+            // This should not be needed as we're returning FORBIDDEN for non-customer users above
+            // but in a real codebase this would be a trap waiting for someone to move the check
+            // above to somewhere else. Assert to condition to make it explicit what we're depending
+            // on.
+            assert user.get().getType() == User.Type.CUSTOMER;
+            model.addAttribute("isCustomer", true);
+
             return "product";
         }
 
@@ -158,6 +173,7 @@ public class ProductController {
             model.addAttribute("reviewId", review.get().getId());
             model.addAttribute("reviewDto", reviewDto);
             model.addAttribute("hasErrors", true);
+            model.addAttribute("isCustomer", true);
             return "product";
         }
 
