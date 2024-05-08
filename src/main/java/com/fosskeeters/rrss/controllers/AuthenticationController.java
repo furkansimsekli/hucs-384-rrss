@@ -6,6 +6,7 @@ import com.fosskeeters.rrss.repositories.UserRepository;
 
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,18 +31,20 @@ public class AuthenticationController {
     }
 
     @GetMapping("/signup")
-    public String signupGetHandler(HttpSession session) {
+    public String signupGetHandler(HttpSession session, Model model) {
         if (session.getAttribute("username") != null) {
             return "redirect:/";
         }
 
+        model.addAttribute("userDto", new UserDto());
         return "signup";
     }
 
     @PostMapping("/signup")
     public String signupPostHandler(@Valid @ModelAttribute UserDto userDto,
-                                    BindingResult bindingResult) {
+                                    BindingResult bindingResult, Model model) {
         validateSignup(userDto, bindingResult);
+        model.addAttribute("userDto", userDto);
 
         if (bindingResult.hasErrors()) {
             System.out.println(bindingResult);
@@ -55,17 +58,18 @@ public class AuthenticationController {
     }
 
     @GetMapping("/login")
-    public String loginGetHandler(HttpSession session) {
+    public String loginGetHandler(HttpSession session, Model model) {
         if (session.getAttribute("username") != null) {
             return "redirect:/";
         }
 
+        model.addAttribute("error", false);
         return "login";
     }
 
     @PostMapping("/login")
     public String loginPostHandler(@RequestParam String username, @RequestParam String password,
-                                   HttpSession session) {
+                                   HttpSession session, Model model) {
         Optional<User> user = userRepository.findByUsername(username.trim().toLowerCase());
 
         if (user.isPresent()) {
@@ -74,7 +78,9 @@ public class AuthenticationController {
                 return "redirect:/";
             }
         }
-        return "redirect:/login";
+
+        model.addAttribute("error", true);
+        return "login";
     }
 
     @GetMapping("/logout")
@@ -117,7 +123,9 @@ public class AuthenticationController {
                                                   "This phone number is already taken!"));
         }
 
-        if (!Objects.equals(userDto.getAccountType(), "customer")
+        // The null and blank cases are handled in the UserDto.accountType @NotBlank annotation.
+        if (userDto.getAccountType() != null && !Objects.equals(userDto.getAccountType(), "")
+            && !Objects.equals(userDto.getAccountType(), "customer")
             && !Objects.equals(userDto.getAccountType(), "merchant")) {
             bindingResult.addError(new FieldError(
                     "userDto", "accountType", "Account type must be either Customer or Merchant!"));
