@@ -27,15 +27,15 @@
                     <textarea th:errorclass="error-input" name="body" style="height: 10em;" placeholder="Body" th:field="${reviewDto.body}"></textarea>
                     <label class="error-text" for="body" th:if="${#fields.hasErrors('body')}" th:errors="${reviewDto.body}" />
                     <div class="column-container" style="flex-direction: row-reverse; width: fit-content;">
-                        <input name="score" id="score5" type="radio" value="5" hidden="1" />
+                        <input name="score" id="score5" type="radio" value="5" hidden="1" th:checked="${reviewDto.score == 5}" />
                         <label class="review-star" for="score5"></label>
-                        <input name="score" id="score4" type="radio" value="4" hidden="1" />
+                        <input name="score" id="score4" type="radio" value="4" hidden="1" th:checked="${reviewDto.score == 4}" />
                         <label class="review-star" for="score4"></label>
-                        <input name="score" id="score3" type="radio" value="3" hidden="1" />
+                        <input name="score" id="score3" type="radio" value="3" hidden="1" th:checked="${reviewDto.score == 3}" />
                         <label class="review-star" for="score3"></label>
-                        <input name="score" id="score2" type="radio" value="2" hidden="1" />
+                        <input name="score" id="score2" type="radio" value="2" hidden="1" th:checked="${reviewDto.score == 2}" />
                         <label class="review-star" for="score2"></label>
-                        <input name="score" id="score1" type="radio" value="1" hidden="1" />
+                        <input name="score" id="score1" type="radio" value="1" hidden="1" th:checked="${reviewDto.score == 1}" />
                         <label class="review-star" for="score1"></label>
                     </div>
                     <label class="error-text" for="score" th:if="${#fields.hasErrors('score')}" th:errors="${reviewDto.score}" />
