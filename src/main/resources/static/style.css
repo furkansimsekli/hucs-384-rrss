@@ -292,3 +292,29 @@ nav * {
     border-radius: 10px;
     padding: 20px 30px;
 }
+
+/* ============= REVIEWS ============= */
+
+/* \02606 -> empty star | \02605 -> filled star */
+.review-star:before {
+    content: '\02606';
+
+    color: var(--primary-color);
+    font-size: 24;
+}
+
+input[name="score"]:checked ~ .review-star::before {
+    content: '\02605';
+}
+
+/* This is necessary as the CSS above will cause the already checked stars to be filled even when hovered. */
+div:hover > .review-star::before {
+    content: '\02606' !important;
+}
+
+/* The div:hover is necessary here, as otherwise the rule above will be more important and prevent the star under
+ * cursor to be filled. */
+div:hover > .review-star:hover::before, .review-star:hover ~ .review-star::before {
+    content: '\02605' !important;
+    cursor: pointer;
+}
