@@ -36,14 +36,27 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public String productGetHandler(@PathVariable Long id, Model model) {
+    public String productGetHandler(HttpSession session, @PathVariable Long id, Model model) {
         Optional<Product> product = productRepository.findById(id);
 
         if (product.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
+        Long reviewId = null;
+        if (session.getAttribute("username") != null) {
+            reviewId = product.get()
+                               .getReviews()
+                               .stream()
+                               .filter(review
+                                       -> review.getAuthor().getUsername().equals(
+                                               session.getAttribute("username")))
+                               .map(review -> review.getId())
+                               .findFirst()
+                               .orElse(null);
+        }
         model.addAttribute("product", product.get());
+        model.addAttribute("reviewId", reviewId);
         return "product";
     }
 
