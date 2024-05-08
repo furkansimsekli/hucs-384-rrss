@@ -17,12 +17,13 @@
             </div>
         </div>
         <div class="row-container" style="gap: 30px;">
-            <div class="row-container" style="gap: 20px;">
+            <div th:each="review : ${product.getReviews()}" class="row-container" style="gap: 20px;">
                 <div class="column-container" style="gap: 20px;">
                     <img src="" width="64px" height="64px" />
                     <div class="row-container">
-                        <span>Dicta tempore sit voluptatem perspiciatis? Quo at repudiandae ratione.</span>
-                        <span style="color: gray; font-size: 12px;">Julius Caesar</span>
+                        <h6 th:text="${review.getTitle()}" />
+                        <span th:text="${review.getBody()}" />
+                        <span th:text="${review.getAuthor().getUsername()}" style="color: gray; font-size: 12px;" />
                         <span style="font-size: 14px;"><span style="margin-right: 10px; margin-top: 2px; color: var(--primary-color); font-size: 18px;">&hookleftarrow;</span>Reply as Merchant A</span>
                     </div>
                     <a href="like" style="color: gray;">Like (51)</a>
@@ -35,17 +36,6 @@
                         <span style="color: gray; font-size: 12px;">Brutus</span>
                     </div>
                     <a href="like" style="color: gray;">Like (3)</a>
-                    <a href="share" style="color: gray;">Share</a>
-                </div>
-            </div>
-            <div class="row-container" style="gap: 20px;">
-                <div class="column-container" style="gap: 20px;">
-                    <img src="" width="64px" height="64px" />
-                    <div class="row-container">
-                        <span>Consequatur quibusdam ratione dignissimos itaque dolorum debitis...</span>
-                        <span style="color: gray; font-size: 12px;">Augustus</span>
-                    </div>
-                    <a href="like" style="color: gray;">Like (48)</a>
                     <a href="share" style="color: gray;">Share</a>
                 </div>
             </div>
