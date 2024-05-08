@@ -41,7 +41,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public String signupPostHandler(@Valid @ModelAttribute UserDto userDto,
+    public String signupPostHandler(HttpSession session, @Valid @ModelAttribute UserDto userDto,
                                     BindingResult bindingResult, Model model) {
         validateSignup(userDto, bindingResult);
         model.addAttribute("userDto", userDto);
@@ -54,7 +54,8 @@ public class AuthenticationController {
         String encodedPassword = encoder.encode(userDto.getPassword1());
         User user = new User(userDto, encodedPassword);
         userRepository.save(user);
-        return "redirect:/login";
+        session.setAttribute("username", userDto.getUsername());
+        return "redirect:/";
     }
 
     @GetMapping("/login")
