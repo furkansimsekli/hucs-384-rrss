@@ -39,6 +39,7 @@
                     <input type="submit" value="Submit" style="padding: 5px;" />
                 </form>
                 <label class="buttonish-checkbox-label shown-on-edit" for="new-review" style="height: fit-content;">Cancel</label>
+                <a th:if="${reviewId != null}" th:href="@{/products/{productId}/reviews/{reviewId}/delete(productId=${product.getId()},reviewId=${reviewId})}" class="buttonish-link" onclick="return confirm('Are you sure?')" style="height: fit-content;">Delete Review</a>
             </div>
             <div class="row-container" style="gap: 30px;">
                 <div th:each="review : ${product.getReviews()}" class="row-container" style="gap: 20px;">
