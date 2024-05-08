@@ -43,20 +43,20 @@ public class ProductController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        Long reviewId = null;
+        Review review = null;
         if (session.getAttribute("username") != null) {
-            reviewId = product.get()
-                               .getReviews()
-                               .stream()
-                               .filter(review
-                                       -> review.getAuthor().getUsername().equals(
-                                               session.getAttribute("username")))
-                               .map(review -> review.getId())
-                               .findFirst()
-                               .orElse(null);
+            review = product.get()
+                             .getReviews()
+                             .stream()
+                             .filter(r
+                                     -> r.getAuthor().getUsername().equals(
+                                             session.getAttribute("username")))
+                             .findFirst()
+                             .orElse(null);
         }
         model.addAttribute("product", product.get());
-        model.addAttribute("reviewId", reviewId);
+        model.addAttribute("reviewId", review != null ? review.getId() : null);
+        model.addAttribute("reviewDto", review != null ? new ReviewDto(review) : new ReviewDto());
         return "product";
     }
 
