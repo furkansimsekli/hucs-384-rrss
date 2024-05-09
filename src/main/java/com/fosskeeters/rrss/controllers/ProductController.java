@@ -36,14 +36,35 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public String productGetHandler(@PathVariable Long id, Model model) {
+    public String productGetHandler(HttpSession session, @PathVariable Long id, Model model) {
         Optional<Product> product = productRepository.findById(id);
 
         if (product.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
+        User user = null;
+        Review review = null;
+        if (session.getAttribute("username") != null) {
+            review = product.get()
+                             .getReviews()
+                             .stream()
+                             .filter(r
+                                     -> r.getAuthor().getUsername().equals(
+                                             session.getAttribute("username")))
+                             .findFirst()
+                             .orElse(null);
+
+            Optional<User> userOpt =
+                    userRepository.findByUsername((String) session.getAttribute("username"));
+            user = userOpt.isPresent() ? userOpt.get() : null;
+        }
+        model.addAttribute("isCustomer",
+                           user != null ? user.getType() == User.Type.CUSTOMER : false);
         model.addAttribute("product", product.get());
+        model.addAttribute("reviewId", review != null ? review.getId() : null);
+        model.addAttribute("reviewDto", review != null ? new ReviewDto(review) : new ReviewDto());
+        model.addAttribute("hasErrors", false);
         return "product";
     }
 
@@ -79,14 +100,24 @@ public class ProductController {
 
         // Every customer can have at most one review
         if (reviewRepository.existsByProductIdAndAuthorId(productId, user.get().getId())) {
-            model.addAttribute("notificationMessage", "You already reviewed this product!");
-            return "redirect:/products/" + productId;
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
         // Binding result check
         if (bindingResult.hasErrors()) {
-            System.out.println(bindingResult);
-            return "redirect:/products/" + productId;
+            model.addAttribute("product", product.get());
+            model.addAttribute("reviewId", null);
+            model.addAttribute("reviewDto", reviewDto);
+            model.addAttribute("hasErrors", true);
+
+            // This should not be needed as we're returning FORBIDDEN for non-customer users above
+            // but in a real codebase this would be a trap waiting for someone to move the check
+            // above to somewhere else. Assert to condition to make it explicit what we're depending
+            // on.
+            assert user.get().getType() == User.Type.CUSTOMER;
+            model.addAttribute("isCustomer", true);
+
+            return "product";
         }
 
         // Save new review to database
@@ -103,6 +134,12 @@ public class ProductController {
                                @PathVariable Long reviewId,
                                @Valid @ModelAttribute ReviewDto reviewDto,
                                BindingResult bindingResult, Model model) {
+        Optional<Product> product = productRepository.findById(productId);
+
+        if (product.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
         // Check authentication
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
@@ -118,12 +155,6 @@ public class ProductController {
             return "redirect:/login";
         }
 
-        // Binding result check
-        if (bindingResult.hasErrors()) {
-            System.out.println(bindingResult);
-            return "redirect:/products/" + productId;
-        }
-
         Optional<Review> review = reviewRepository.findById(reviewId);
 
         if (review.isEmpty()) {
@@ -133,6 +164,17 @@ public class ProductController {
         // Don't let other users whose not the author herself update the review
         if (!Objects.equals(review.get().getAuthor().getId(), user.get().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        // Binding result check
+        if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult);
+            model.addAttribute("product", product.get());
+            model.addAttribute("reviewId", review.get().getId());
+            model.addAttribute("reviewDto", reviewDto);
+            model.addAttribute("hasErrors", true);
+            model.addAttribute("isCustomer", true);
+            return "product";
         }
 
         // Save updated review to database
