@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 public class Wish {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn
@@ -23,11 +23,11 @@ public class Wish {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

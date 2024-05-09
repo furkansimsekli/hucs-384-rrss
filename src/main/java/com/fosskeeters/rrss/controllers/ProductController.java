@@ -36,7 +36,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public String productGetHandler(HttpSession session, @PathVariable Long id, Model model) {
+    public String productGetHandler(HttpSession session, @PathVariable long id, Model model) {
         Optional<Product> product = productRepository.findById(id);
 
         if (product.isEmpty()) {
@@ -69,7 +69,7 @@ public class ProductController {
     }
 
     @PostMapping("/{productId}/reviews/create")
-    public String createReview(HttpSession session, @PathVariable Long productId,
+    public String createReview(HttpSession session, @PathVariable long productId,
                                @Valid @ModelAttribute ReviewDto reviewDto,
                                BindingResult bindingResult, Model model) {
         Optional<Product> product = productRepository.findById(productId);
@@ -130,8 +130,8 @@ public class ProductController {
     }
 
     @PostMapping("/{productId}/reviews/{reviewId}/update")
-    public String updateReview(HttpSession session, @PathVariable Long productId,
-                               @PathVariable Long reviewId,
+    public String updateReview(HttpSession session, @PathVariable long productId,
+                               @PathVariable long reviewId,
                                @Valid @ModelAttribute ReviewDto reviewDto,
                                BindingResult bindingResult, Model model) {
         Optional<Product> product = productRepository.findById(productId);
@@ -162,7 +162,7 @@ public class ProductController {
         }
 
         // Don't let other users whose not the author herself update the review
-        if (!Objects.equals(review.get().getAuthor().getId(), user.get().getId())) {
+        if (review.get().getAuthor().getId() != user.get().getId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -185,8 +185,8 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}/reviews/{reviewId}/delete")
-    public String deleteReview(HttpSession session, @PathVariable Long productId,
-                               @PathVariable Long reviewId, Model model) {
+    public String deleteReview(HttpSession session, @PathVariable long productId,
+                               @PathVariable long reviewId, Model model) {
         // Check authentication
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
@@ -209,7 +209,7 @@ public class ProductController {
         }
 
         // Don't let other users whose not the author herself delete the review
-        if (!Objects.equals(review.get().getAuthor().getId(), user.get().getId())) {
+        if (review.get().getAuthor().getId() != user.get().getId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 

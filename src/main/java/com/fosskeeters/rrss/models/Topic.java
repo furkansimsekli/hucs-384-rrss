@@ -11,7 +11,7 @@ import jakarta.persistence.*;
 public class Topic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long topicID;
+    private long topicID;
 
     @Column(length = 64)
     private String title;
@@ -26,11 +26,11 @@ public class Topic {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public Long getTopicID() {
+    public long getTopicID() {
         return topicID;
     }
 
-    public void setTopicID(Long topicID) {
+    public void setTopicID(long topicID) {
         this.topicID = topicID;
     }
 
