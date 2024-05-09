@@ -16,37 +16,56 @@
                 <a class="buttonish-link" style="margin-top: 10px;" href="wishlist"><span class="emoji-icon">&#x1F90D; </span>Add to wishlist</a>
             </div>
         </div>
-        <div class="row-container" style="gap: 30px;">
-            <div class="row-container" style="gap: 20px;">
-                <div class="column-container" style="gap: 20px;">
-                    <img src="" width="64px" height="64px" />
-                    <div class="row-container">
-                        <span>Dicta tempore sit voluptatem perspiciatis? Quo at repudiandae ratione.</span>
-                        <span style="color: gray; font-size: 12px;">Julius Caesar</span>
-                        <span style="font-size: 14px;"><span style="margin-right: 10px; margin-top: 2px; color: var(--primary-color); font-size: 18px;">&hookleftarrow;</span>Reply as Merchant A</span>
+        <div class="row-container" style="gap: 10px;">
+            <h2>Reviews</h2>
+            <div class="column-container" style="gap: 1vw;" th:if="${isCustomer}">
+                <input type="checkbox" class="buttonish-checkbox" id="new-review" th:checked="${hasErrors}" />
+                <label class="buttonish-checkbox-label hidden-on-edit" for="new-review" th:text="${reviewId == null} ? 'New Review' : 'Update Review'"/>
+                <form class="row-container shown-on-edit" style="gap: 10px; width: 30em;" method="post" th:action="${reviewId == null} ? @{/products/{productId}/reviews/create(productId=${product.getId()})} : @{/products/{productId}/reviews/{reviewId}/update(productId=${product.getId()},reviewId=${reviewId})}" th:object="${reviewDto}">
+                    <input th:errorclass="error-input" name="title" type="text" placeholder="Title" th:field="${reviewDto.title}" />
+                    <label class="error-text" for="title" th:if="${#fields.hasErrors('title')}" th:errors="${reviewDto.title}" />
+                    <textarea th:errorclass="error-input" name="body" style="height: 10em;" placeholder="Body" th:field="${reviewDto.body}"></textarea>
+                    <label class="error-text" for="body" th:if="${#fields.hasErrors('body')}" th:errors="${reviewDto.body}" />
+                    <div class="column-container" style="flex-direction: row-reverse; width: fit-content;">
+                        <input name="score" id="score5" type="radio" value="5" hidden="1" th:checked="${reviewDto.score == 5}" />
+                        <label class="review-star" for="score5"></label>
+                        <input name="score" id="score4" type="radio" value="4" hidden="1" th:checked="${reviewDto.score == 4}" />
+                        <label class="review-star" for="score4"></label>
+                        <input name="score" id="score3" type="radio" value="3" hidden="1" th:checked="${reviewDto.score == 3}" />
+                        <label class="review-star" for="score3"></label>
+                        <input name="score" id="score2" type="radio" value="2" hidden="1" th:checked="${reviewDto.score == 2}" />
+                        <label class="review-star" for="score2"></label>
+                        <input name="score" id="score1" type="radio" value="1" hidden="1" th:checked="${reviewDto.score == 1}" />
+                        <label class="review-star" for="score1"></label>
                     </div>
-                    <a href="like" style="color: gray;">Like (51)</a>
-                    <a href="share" style="color: gray;">Share</a>
-                </div>
-                <div class="column-container" style="margin-left: 20px; gap: 20px; border-left: 5px solid var(--primary-color); padding-left: 20px;">
-                    <img src="" width="64px" height="64px" />
-                    <div class="row-container">
-                        <span>Rerum eius et iste nihil.</span>
-                        <span style="color: gray; font-size: 12px;">Brutus</span>
-                    </div>
-                    <a href="like" style="color: gray;">Like (3)</a>
-                    <a href="share" style="color: gray;">Share</a>
-                </div>
+                    <label class="error-text" for="score" th:if="${#fields.hasErrors('score')}" th:errors="${reviewDto.score}" />
+                    <input type="submit" value="Submit" style="padding: 5px;" />
+                </form>
+                <label class="buttonish-checkbox-label shown-on-edit" for="new-review" style="height: fit-content;">Cancel</label>
+                <a th:if="${reviewId != null}" th:href="@{/products/{productId}/reviews/{reviewId}/delete(productId=${product.getId()},reviewId=${reviewId})}" class="buttonish-link" onclick="return confirm('Are you sure?')" style="height: fit-content;">Delete Review</a>
             </div>
-            <div class="row-container" style="gap: 20px;">
-                <div class="column-container" style="gap: 20px;">
-                    <img src="" width="64px" height="64px" />
-                    <div class="row-container">
-                        <span>Consequatur quibusdam ratione dignissimos itaque dolorum debitis...</span>
-                        <span style="color: gray; font-size: 12px;">Augustus</span>
+            <div class="row-container" style="gap: 30px;">
+                <div th:each="review : ${product.getReviews()}" class="row-container" style="gap: 20px;">
+                    <div class="column-container" style="gap: 20px;">
+                        <img src="" width="64px" height="64px" />
+                        <div class="row-container">
+                            <b th:text="${review.getTitle()}" />
+                            <span th:text="${review.getBody()}" />
+                            <span th:text="${review.getAuthor().getUsername()}" style="color: gray; font-size: 12px;" />
+                            <span style="font-size: 14px;"><span style="margin-right: 10px; margin-top: 2px; color: var(--primary-color); font-size: 18px;">&hookleftarrow;</span>Reply as Merchant A</span>
+                        </div>
+                        <a href="like" style="color: gray;">Like (51)</a>
+                        <a href="share" style="color: gray;">Share</a>
                     </div>
-                    <a href="like" style="color: gray;">Like (48)</a>
-                    <a href="share" style="color: gray;">Share</a>
+                    <div class="column-container" style="margin-left: 20px; gap: 20px; border-left: 5px solid var(--primary-color); padding-left: 20px;">
+                        <img src="" width="64px" height="64px" />
+                        <div class="row-container">
+                            <span>Rerum eius et iste nihil.</span>
+                            <span style="color: gray; font-size: 12px;">Brutus</span>
+                        </div>
+                        <a href="like" style="color: gray;">Like (3)</a>
+                        <a href="share" style="color: gray;">Share</a>
+                    </div>
                 </div>
             </div>
         </div>
