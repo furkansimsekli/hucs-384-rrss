@@ -1,5 +1,6 @@
 package com.fosskeeters.rrss.controllers;
 
+import com.fosskeeters.rrss.dtos.ProductDto;
 import com.fosskeeters.rrss.dtos.ReviewDto;
 import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.Review;
@@ -15,7 +16,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpSession;
@@ -66,6 +66,122 @@ public class ProductController {
         model.addAttribute("reviewDto", review != null ? new ReviewDto(review) : new ReviewDto());
         model.addAttribute("hasErrors", false);
         return "product";
+    }
+
+    @GetMapping("/create")
+    public String getProductCreateForm(HttpSession session, Model model) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        Optional<User> user =
+                userRepository.findByUsername(session.getAttribute("username").toString());
+
+        if (user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        model.addAttribute("productDto", new ProductDto());
+        return "merchants/create_product";
+    }
+
+    @PostMapping("/create")
+    public String createProduct(HttpSession session, @Valid @ModelAttribute ProductDto productDto,
+                                BindingResult bindingResult) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult);
+            return "merchants/create_product";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        Product product = new Product(user.get(), productDto);
+        productRepository.save(product);
+        return "redirect:/merchants/" + username;
+    }
+
+    @GetMapping("/{productId}/update")
+    public String getUpdateProductForm(HttpSession session, @PathVariable long productId,
+                                       Model model) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        Optional<User> user =
+                userRepository.findByUsername(session.getAttribute("username").toString());
+        Optional<Product> product = productRepository.findById(productId);
+
+        if (user.isEmpty() || product.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        if (product.get().getOwner().getId() != user.get().getId()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        ProductDto productDto = new ProductDto(product.get());
+        model.addAttribute("productDto", productDto);
+        return "merchants/update_product";
+    }
+
+    @PostMapping("/{productId}/update")
+    public String updateProduct(HttpSession session, @PathVariable long productId,
+                                @Valid @ModelAttribute ProductDto productDto,
+                                BindingResult bindingResult) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "merchants/update_product";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+        Optional<Product> product = productRepository.findById(productId);
+
+        if (user.isEmpty() || product.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        if (product.get().getOwner().getId() != user.get().getId()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        product.get().setFromProductDto(productDto);
+        productRepository.save(product.get());
+        return "redirect:/merchants/" + username;
+    }
+
+    @GetMapping("/{productId}/delete")
+    public String deleteProduct(HttpSession session, @PathVariable long productId) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+        Optional<Product> product = productRepository.findById(productId);
+
+        if (user.isEmpty() || product.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        if (product.get().getOwner().getId() != user.get().getId()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        productRepository.delete(product.get());
+        return "redirect:/merchants/" + username;
     }
 
     @PostMapping("/{productId}/reviews/create")
