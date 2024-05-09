@@ -17,6 +17,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpSession;
@@ -46,6 +48,7 @@ public class ProductController {
 
         User user = null;
         Review review = null;
+        List<ReviewReplyDto> reviewDtoList = new ArrayList<>();
         if (session.getAttribute("username") != null) {
             review = product.get()
                              .getReviews()
@@ -59,9 +62,17 @@ public class ProductController {
             Optional<User> userOpt =
                     userRepository.findByUsername((String) session.getAttribute("username"));
             user = userOpt.isPresent() ? userOpt.get() : null;
+
+            if (user != null && product.get().getOwner().getId() == user.getId()) {
+                reviewDtoList.addAll(
+                        product.get().getReviews().stream().map(ReviewReplyDto::new).toList());
+            }
         }
         model.addAttribute("isCustomer",
                            user != null ? user.getType() == User.Type.CUSTOMER : false);
+        model.addAttribute("isProductOwner",
+                           user != null ? user.getId() == product.get().getOwner().getId() : false);
+        model.addAttribute("reviewReplyDtoList", !reviewDtoList.isEmpty() ? reviewDtoList : null);
         model.addAttribute("product", product.get());
         model.addAttribute("reviewId", review != null ? review.getId() : null);
         model.addAttribute("reviewDto", review != null ? new ReviewDto(review) : new ReviewDto());
