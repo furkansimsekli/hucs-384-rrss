@@ -54,16 +54,16 @@
                             <b th:text="${review.getTitle()}" />
                             <span th:text="${review.getBody()}" />
                             <span th:text="${review.getAuthor().getUsername()}" style="color: gray; font-size: 12px;" />
-                            <span style="font-size: 14px;"><span style="margin-right: 10px; margin-top: 2px; color: var(--primary-color); font-size: 18px;">&hookleftarrow;</span>Reply as Merchant A</span>
+                            <span th:if="${review.getMerchantReplyBody() != null}" style="font-size: 14px;"><span style="margin-right: 10px; margin-top: 2px; color: var(--primary-color); font-size: 18px;">&hookleftarrow;</span><span th:text="'Reply as ' + ${product.getOwner().getUsername()}" /></span>
                         </div>
                         <a href="like" style="color: gray;">Like (51)</a>
                         <a href="share" style="color: gray;">Share</a>
                     </div>
-                    <div class="column-container" style="margin-left: 20px; gap: 20px; border-left: 5px solid var(--primary-color); padding-left: 20px;">
+                    <div th:if="${review.getMerchantReplyBody() != null}" class="column-container" style="margin-left: 20px; gap: 20px; border-left: 5px solid var(--primary-color); padding-left: 20px;">
                         <img src="" width="64px" height="64px" />
                         <div class="row-container">
-                            <span>Rerum eius et iste nihil.</span>
-                            <span style="color: gray; font-size: 12px;">Brutus</span>
+                            <span th:text="${review.getMerchantReplyBody()}"/>
+                            <span th:text="${product.getOwner().getUsername()}" style="color: gray; font-size: 12px;" />
                         </div>
                         <a href="like" style="color: gray;">Like (3)</a>
                         <a href="share" style="color: gray;">Share</a>
