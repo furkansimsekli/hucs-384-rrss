@@ -24,10 +24,10 @@ You can immediately run the application with the command below:
 ```
 
 If you would like to make the program hot-reload i.e. restart everytime there is a change in the codebase, then you can
-use this command:
+run this command in addition to the one above:
 
 ```sh
-./gradlew compileJava
+./gradlew build --continuous -x test
 ```
 
 The website should be accessible from `localhost:8080`
