@@ -6,7 +6,9 @@
     </head>
     <body class="row-container">
         <main>
-            <img src="/logo.webp" width="48px" style="display: block; margin: 10px auto;"/>
+            <a th:href="@{/}" style="text-decoration: inherit; color: inherit; display: block; margin: 10px auto; width: fit-content;">
+                <img src="/logo.webp" width="48px" />
+            </a>
             <form class="row-container auth-form" method="post" th:object="${userDto}">
                 <div class="column-container" style="justify-content: space-between;">
                     <h2>Sign Up</h2>

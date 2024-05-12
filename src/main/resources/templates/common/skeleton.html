@@ -6,10 +6,12 @@
     </head>
     <body class="row-container">
         <nav class="column-container" style="align-items: center; gap: 20px;">
-            <span class="column-container">
-                <img src="/logo.webp" width="40px"/>
-                <h3>ShopSmart</h3>
-            </span>
+            <a th:href="@{/}" style="text-decoration: inherit; color: inherit">
+                <span class="column-container">
+                    <img src="/logo.webp" width="40px"/>
+                    <h3>ShopSmart</h3>
+                </span>
+            </a>
             <input type="text" name="query" placeholder="Search" style="width: 50%; margin: 0 auto;"/>
             <a class="buttonish-link" th:href="@{/community}"><span class="emoji-icon">&#x1F4AC;</span>Community</a>
             <a th:if="${#strings.isEmpty(#ctx.session.username)}" class="buttonish-link" th:href="@{/login}">
