@@ -65,6 +65,7 @@
                             <span th:text="${review.getMerchantReplyBody()}"/>
                             <span th:text="${product.getOwner().getUsername()}" style="color: gray; font-size: 12px;" />
                         </div>
+                        <a th:if="${isProductOwner}" th:href="@{/reviews/{reviewId}/delete-reply(reviewId=${review.getId()})}" style="color: gray;">Delete Reply</a>
                         <a href="like" style="color: gray;">Like (3)</a>
                         <a href="share" style="color: gray;">Share</a>
                     </div>
