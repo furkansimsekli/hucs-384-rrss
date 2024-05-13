@@ -1,0 +1,57 @@
+package com.fosskeeters.rrss.controllers;
+
+import com.fosskeeters.rrss.models.Topic;
+import com.fosskeeters.rrss.models.User;
+import com.fosskeeters.rrss.repositories.EntryRepository;
+import com.fosskeeters.rrss.repositories.TopicRepository;
+import com.fosskeeters.rrss.repositories.UserRepository;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.GetMapping;
+
+
+@Controller
+@RequestMapping("/community")
+public class CommunityController {
+    private final UserRepository userRepository;
+    private final TopicRepository topicRepository;
+    private final EntryRepository entryRepository;
+
+    public CommunityController(UserRepository userRepository, TopicRepository topicRepository,
+            EntryRepository entryRepository) {
+        this.userRepository = userRepository;
+        this.topicRepository = topicRepository;
+        this.entryRepository = entryRepository;
+    }
+
+    @GetMapping("/topics")
+    public String getTopicsHandler(HttpSession session, Model model) {
+        var allTopics = topicRepository.findAll();
+        var discussions = allTopics.stream().filter(topic -> topic.getType() == Topic.Type.DISCUSSION).toList();
+        var tutorials = allTopics.stream().filter(topic -> topic.getType() == Topic.Type.TUTORIAL).toList();
+        var qna = allTopics.stream().filter(topic -> topic.getType() == Topic.Type.QNA).toList();
+        
+        var topicsMap = new LinkedHashMap<String, List<Topic>>();
+        topicsMap.put("All Topics", allTopics);
+        topicsMap.put("Discussions", discussions);
+        topicsMap.put("Tutorials", tutorials);
+        topicsMap.put("Q&A", qna);
+        model.addAttribute("topicsMap", topicsMap);
+
+        var currentUser = userRepository.findByUsername((String)session.getAttribute("username"));
+        if (currentUser.isPresent()) {
+            var user = currentUser.get();
+            if (user.getType() == User.Type.ADMIN || user.getType() == User.Type.COMMUNITY_MOD) {
+                model.addAttribute("isModOrAdmin", true);
+            }
+        }
+
+        return "community/topics";
+    }
+}
