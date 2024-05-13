@@ -6,15 +6,17 @@ import com.fosskeeters.rrss.repositories.EntryRepository;
 import com.fosskeeters.rrss.repositories.TopicRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/community")
@@ -34,15 +36,25 @@ public class CommunityController {
     public String indexRedirect() {
         return "redirect:/community/topics";
     }
-    
 
     @GetMapping("/topics")
     public String getTopicsHandler(HttpSession session, Model model) {
         var allTopics = topicRepository.findAll();
-        var discussions = allTopics.stream().filter(topic -> topic.getType() == Topic.Type.DISCUSSION).toList();
-        var tutorials = allTopics.stream().filter(topic -> topic.getType() == Topic.Type.TUTORIAL).toList();
-        var qna = allTopics.stream().filter(topic -> topic.getType() == Topic.Type.QNA).toList();
-        
+        Collections.sort(allTopics, Comparator.comparing(Topic::getCreatedAt));
+
+        var discussions = allTopics.stream()
+                                  .filter(topic -> topic.getType() == Topic.Type.DISCUSSION)
+                                  .sorted(Comparator.comparing(Topic::getCreatedAt))
+                                  .toList();
+        var tutorials = allTopics.stream()
+                                .filter(topic -> topic.getType() == Topic.Type.TUTORIAL)
+                                .sorted(Comparator.comparing(Topic::getCreatedAt))
+                                .toList();
+        var qna = allTopics.stream()
+                          .filter(topic -> topic.getType() == Topic.Type.QNA)
+                          .sorted(Comparator.comparing(Topic::getCreatedAt))
+                          .toList();
+
         var topicsMap = new LinkedHashMap<String, List<Topic>>();
         topicsMap.put("All Topics", allTopics);
         topicsMap.put("Discussions", discussions);
@@ -50,7 +62,7 @@ public class CommunityController {
         topicsMap.put("Q&A", qna);
         model.addAttribute("topicsMap", topicsMap);
 
-        var currentUser = userRepository.findByUsername((String)session.getAttribute("username"));
+        var currentUser = userRepository.findByUsername((String) session.getAttribute("username"));
         if (currentUser.isPresent()) {
             var user = currentUser.get();
             if (user.getType() == User.Type.ADMIN || user.getType() == User.Type.COMMUNITY_MOD) {
