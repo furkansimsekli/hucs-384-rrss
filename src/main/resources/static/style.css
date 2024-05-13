@@ -118,6 +118,13 @@ input[type="submit"] {
     padding: 1em 2em;
 }
 
+.truncate-one-line {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 /* ============= NAV BAR ========== */
 
 nav {
