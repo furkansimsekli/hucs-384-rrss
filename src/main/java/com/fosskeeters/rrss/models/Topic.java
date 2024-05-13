@@ -9,6 +9,8 @@ import jakarta.persistence.*;
 
 @Entity
 public class Topic {
+    public enum Type { DISCUSSION, TUTORIAL, QNA }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -25,6 +27,9 @@ public class Topic {
 
     @CreatedDate
     private LocalDateTime createdAt;
+
+    @Column
+    private Type type;
 
     public long getId() {
         return id;
@@ -64,5 +69,13 @@ public class Topic {
 
     public void setEntries(List<Entry> entries) {
         this.entries = entries;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }
