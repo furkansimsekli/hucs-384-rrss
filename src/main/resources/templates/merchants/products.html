@@ -6,7 +6,7 @@
         <div class="column-container list-header">
             <h2>Your Products</h2>
             <div class="spacer"></div>
-            <a class="mini-button" th:href="@{/merchants/{username}/products/create(username=${user.username})}"><span style="font-family: Inika-bold;">&#x2b;</span> New Product</a>
+            <a class="mini-button" th:href="@{/products/create}"><span style="font-family: Inika-bold;">&#x2b;</span> New Product</a>
         </div>
         <div th:each="product : ${user.products}"  class="column-container list-cell">
             <a th:href="@{/products/{productId}(productId=${product.id})}" ><img src="/filler-product.png" width="50" height="60"></img></a> <!-- To be changed after imageId implementation -->
@@ -16,20 +16,18 @@
                 <span th:text="'Published at ' + ${#temporals.format(product.createdAt, 'dd/MM/yyyy')}"></span>
             </a>
             <div class="spacer"></div>
-            <a th:href="@{/merchants/{username}/products/{productId}/update(username=${product.owner.username}, productId=${product.id})}" class="mini-button"><span>Edit</span></a>
+            <a th:href="@{/products/{productId}/update(productId=${product.id})}" class="mini-button"><span>Edit</span></a>
             <a th:href="'#delete-modal-' + ${product.id}" class="red-button">Delete</a>
             <div th:id="'delete-modal-' + ${product.id}" class="modal">
                 <div class="modal-content">
                     <h2 style="margin-top: 10px;">Product Deletion</h2>
                     <p style="margin-bottom: 40px;">This action will delete your product from the system. Do you confirm?</p>
-                    <a th:href="@{/merchants/{username}/products/{productId}/delete(username=${product.owner.username}, productId=${product.id})}" class="red-button">Confirm</a>
+                    <a th:href="@{/products/{productId}/delete(productId=${product.id})}" class="red-button">Confirm</a>
                     <a href="#" class="mini-button">Back</a>
                 </div>
             </div>
         </div>
     </div>
-
-    
 </main>
 </body>
 
