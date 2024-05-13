@@ -12,7 +12,7 @@
             </div>
             <div class="row-container" style="padding-top: 8px; margin-left: auto;">
                 <span style="margin-left: auto; color: var(--primary-color); font-size: 24;" th:with="starCount = ${T(java.lang.Math).round(new java.lang.Double(#aggregates.avg(product.getReviews().![#this.getScore])))}" th:text="${#strings.repeat('&starf;', starCount != null ? starCount : 0)} + ${#strings.repeat('&star;', starCount != null ? 5 - starCount : 5)}" />
-                <span style="margin-left: auto; color: gray; font-size: 12;">197 ratings</span>
+                <span style="margin-left: auto; color: gray; font-size: 12;" th:text="${product.getReviews().size()} + ' reviews'" />
                 <a class="buttonish-link" style="margin-top: 10px;" href="wishlist"><span class="emoji-icon">&#x1F90D; </span>Add to wishlist</a>
             </div>
         </div>
