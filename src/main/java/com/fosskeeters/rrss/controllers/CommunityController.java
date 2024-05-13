@@ -30,6 +30,12 @@ public class CommunityController {
         this.entryRepository = entryRepository;
     }
 
+    @GetMapping("")
+    public String indexRedirect() {
+        return "redirect:/community/topics";
+    }
+    
+
     @GetMapping("/topics")
     public String getTopicsHandler(HttpSession session, Model model) {
         var allTopics = topicRepository.findAll();
