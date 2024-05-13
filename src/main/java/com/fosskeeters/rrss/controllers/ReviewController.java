@@ -16,6 +16,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpSession;
@@ -80,6 +82,8 @@ public class ReviewController {
             model.addAttribute("reviewId", null);
             model.addAttribute("reviewDto", reviewDto);
             model.addAttribute("hasErrors", true);
+            model.addAttribute("isProductOwner", false);
+            model.addAttribute("reviewReplyDtoList", null);
 
             // This should not be needed as we're returning FORBIDDEN for non-customer users above
             // but in a real codebase this would be a trap waiting for someone to move the check
@@ -140,6 +144,8 @@ public class ReviewController {
             model.addAttribute("reviewDto", reviewDto);
             model.addAttribute("hasErrors", true);
             model.addAttribute("isCustomer", true);
+            model.addAttribute("isProductOwner", false);
+            model.addAttribute("reviewReplyDtoList", null);
             return "product";
         }
 
@@ -187,7 +193,7 @@ public class ReviewController {
     @PostMapping("/{reviewId}/reply")
     public String replyReview(HttpSession session, @PathVariable long reviewId,
                               @Valid @ModelAttribute ReviewReplyDto reviewReplyDto,
-                              BindingResult bindingResult) {
+                              BindingResult bindingResult, Model model) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -205,25 +211,38 @@ public class ReviewController {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
+        Product product = review.get().getProduct();
+
         // Merchant must be the owner of the product in order to reply
-        if (review.get().getProduct().getOwner().getId() != user.get().getId()) {
+        if (product.getOwner().getId() != user.get().getId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
         if (bindingResult.hasErrors()) {
             System.out.println(bindingResult);
+            List<ReviewReplyDto> reviewReplyDtoList = new ArrayList<>(
+                    product.getReviews().stream().map(ReviewReplyDto::new).toList());
+
+            model.addAttribute("product", product);
+            model.addAttribute("reviewId", review.get().getId());
+            model.addAttribute("reviewDto", null);
+            model.addAttribute("hasErrors", true);
+            model.addAttribute("isCustomer", false);
+            model.addAttribute("isProductOwner", true);
+            model.addAttribute("reviewReplyDtoList", reviewReplyDtoList);
+            model.addAttribute("erroredReviewId", reviewId);
             return "product";
         }
 
         review.get().setFromReviewReplyDto(reviewReplyDto);
         reviewRepository.save(review.get());
-        return "redirect:/products/" + review.get().getProduct().getId();
+        return "redirect:/products/" + product.getId();
     }
 
     @PostMapping("/{reviewId}/update-reply")
     public String updateReviewReply(HttpSession session, @PathVariable long reviewId,
                                     @Valid @ModelAttribute ReviewReplyDto reviewReplyDto,
-                                    BindingResult bindingResult) {
+                                    BindingResult bindingResult, Model model) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -236,8 +255,10 @@ public class ReviewController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
+        Product product = review.get().getProduct();
+
         // Merchant must be the owner of the product in order to update the reply
-        if (review.get().getProduct().getOwner().getId() != user.get().getId()) {
+        if (product.getOwner().getId() != user.get().getId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -247,12 +268,23 @@ public class ReviewController {
 
         if (bindingResult.hasErrors()) {
             System.out.println(bindingResult);
+            List<ReviewReplyDto> reviewReplyDtoList = new ArrayList<>(
+                    product.getReviews().stream().map(ReviewReplyDto::new).toList());
+
+            model.addAttribute("product", product);
+            model.addAttribute("reviewId", review.get().getId());
+            model.addAttribute("reviewDto", null);
+            model.addAttribute("hasErrors", true);
+            model.addAttribute("isCustomer", false);
+            model.addAttribute("isProductOwner", true);
+            model.addAttribute("reviewReplyDtoList", reviewReplyDtoList);
+            model.addAttribute("erroredReviewId", reviewId);
             return "product";
         }
 
         review.get().setFromReviewReplyDto(reviewReplyDto);
         reviewRepository.save(review.get());
-        return "redirect:/products/" + review.get().getProduct().getId();
+        return "redirect:/products/" + product.getId();
     }
 
     @GetMapping("/{reviewId}/delete-reply")
