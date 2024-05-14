@@ -59,6 +59,16 @@
                         <a href="like" style="color: gray;">Like (51)</a>
                         <a href="share" style="color: gray;">Share</a>
                     </div>
+                    <div th:if="${isProductOwner}" th:with="replyDto = ${reviewReplyDtoList != null ? reviewReplyDtoList[reviewStat.index] : null}">
+                        <input type="checkbox" class="buttonish-checkbox" th:id="reply-review- + ${review.getId()}" th:checked="${erroredReviewId == review.getId()}"/>
+                        <label class="buttonish-checkbox-label hidden-on-edit" th:for="reply-review- + ${review.getId()}" th:text="${review.getMerchantReplyBody() == null ? 'Reply' : 'Update Reply'}" />
+                        <form class="shown-on-edit row-container" th:action="${review.getMerchantReplyBody() == null} ? @{/reviews/{reviewId}/reply(reviewId=${review.getId()})} : @{/reviews/{reviewId}/update-reply(reviewId=${review.getId()})}" method="POST" style="width: fit-content;">
+                            <textarea th:classappend="${erroredReviewId == review.getId()} ? error-input : ''" name="merchantReplyBody" style="height: 10em;" placeholder="reply" th:text="${reviewReplyDtoList[reviewStat.index].merchantReplyBody}"></textarea>
+                            <label class="error-text" for="merchantReplyBody" th:if="${erroredReviewId == review.getId()}">Reply length must be between 10-4096 characters.</label>
+                            <input type="submit" value="Submit" style="padding: 5px;" />
+                        </form>
+                        <label class="buttonish-checkbox-label shown-on-edit" th:for="reply-review- + ${review.getId()}" style="height: fit-content;">Cancel</label>
+                    </div>
                     <div th:if="${review.getMerchantReplyBody() != null}" class="column-container" style="margin-left: 20px; gap: 20px; border-left: 5px solid var(--primary-color); padding-left: 20px;">
                         <img src="" width="64px" height="64px" />
                         <div class="row-container">
