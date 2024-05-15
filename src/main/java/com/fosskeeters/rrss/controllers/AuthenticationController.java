@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -41,8 +42,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public String signupPostHandler(HttpSession session, @Valid @ModelAttribute UserDto userDto,
-                                    BindingResult bindingResult, Model model) {
+    public String signupPostHandler(@Valid @ModelAttribute UserDto userDto,
+                                    BindingResult bindingResult, Model model,
+                                    RedirectAttributes redirectAttrs) {
         validateSignup(userDto, bindingResult);
         model.addAttribute("userDto", userDto);
 
@@ -54,7 +56,9 @@ public class AuthenticationController {
         String encodedPassword = encoder.encode(userDto.getPassword1());
         User user = new User(userDto, encodedPassword);
         userRepository.save(user);
-        session.setAttribute("username", userDto.getUsername());
+        redirectAttrs.addFlashAttribute(
+                "notification",
+                "Sign up request has been made, please wait for the approval and thanks for the patience in advance!");
         return "redirect:/";
     }
 
@@ -70,10 +74,17 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public String loginPostHandler(@RequestParam String username, @RequestParam String password,
-                                   HttpSession session, Model model) {
+                                   HttpSession session, Model model,
+                                   RedirectAttributes redirectAttrs) {
         Optional<User> user = userRepository.findByUsername(username.trim().toLowerCase());
 
         if (user.isPresent()) {
+            if (!user.get().isApproved()) {
+                redirectAttrs.addFlashAttribute(
+                        "notification",
+                        "We have high volume of applications, approval might take 1-2 days!");
+                return "redirect:/login";
+            }
             if (encoder.matches(password, user.get().getPassword())) {
                 session.setAttribute("username", user.get().getUsername());
                 return "redirect:/";
