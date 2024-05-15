@@ -8,6 +8,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class ReviewDto {
+    @NotNull(message = "Product id cannot be null!")
+    private long productId;
+
     @NotNull
     @Size(min = 3, max = 32, message = "Review title length must be between 3-32 characters")
     private String title;
@@ -22,10 +25,22 @@ public class ReviewDto {
 
     public ReviewDto() {}
 
+    public ReviewDto(long productId) {
+        this.productId = productId;
+    }
+
     public ReviewDto(Review review) {
         this.title = review.getTitle();
         this.body = review.getBody();
         this.score = review.getScore();
+    }
+
+    public long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(long productId) {
+        this.productId = productId;
     }
 
     public String getTitle() {
