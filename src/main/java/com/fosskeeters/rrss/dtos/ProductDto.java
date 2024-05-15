@@ -14,6 +14,7 @@ public class ProductDto {
     private String description;
 
     @NotNull(message = "Price can not be empty!")
+    @Min(value = 0, message = "Product can be free, but can not have a negative price!")
     private double price;
 
     public ProductDto() {}

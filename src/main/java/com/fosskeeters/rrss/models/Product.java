@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 
 @Entity
 public class Product {
@@ -24,6 +25,7 @@ public class Product {
 
     @Column
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
+    @Min(0)
     private double price;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
