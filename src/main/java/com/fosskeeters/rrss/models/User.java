@@ -49,6 +49,9 @@ public class User {
     @Column
     private String profileImagePath;
 
+    @Column
+    private boolean isApproved;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -86,6 +89,7 @@ public class User {
         this.address = "";
         this.profileImagePath = "path/to/default/image";
         this.dateOfBirth = LocalDate.of(1970, 1, 1);
+        this.isApproved = false;
     }
 
     public User() {
@@ -93,6 +97,7 @@ public class User {
         this.address = "";
         this.profileImagePath = "path/to/default/image";
         this.dateOfBirth = LocalDate.of(1970, 1, 1);
+        this.isApproved = false;
     }
 
     public User(UserDto userDto, String encodedPassword) {
@@ -108,6 +113,7 @@ public class User {
         this.profileImagePath = "path/to/default/image";
         this.dateOfBirth = LocalDate.of(1970, 1, 1);
         this.password = encodedPassword;
+        this.isApproved = false;
     }
 
     public void setFromUserUpdateDto(UserUpdateDto userUpdateDto) {
@@ -206,6 +212,14 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public boolean isApproved() {
+        return isApproved;
+    }
+
+    public void setApproved(boolean approved) {
+        isApproved = approved;
     }
 
     public LocalDateTime getCreatedAt() {
