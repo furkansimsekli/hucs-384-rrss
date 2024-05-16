@@ -1,5 +1,6 @@
 package com.fosskeeters.rrss.controllers;
 
+import com.fosskeeters.rrss.dtos.PasswordRecoveryDto;
 import com.fosskeeters.rrss.dtos.UserDto;
 import com.fosskeeters.rrss.models.PasswordRecovery;
 import com.fosskeeters.rrss.models.User;
@@ -13,10 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -142,6 +140,47 @@ public class AuthenticationController {
         redirectAttrs.addFlashAttribute(
                 "notification",
                 "Password reset link has been sent your email address, please check your spam folder just in case!");
+        return "redirect:/login";
+    }
+
+    @GetMapping("/new-password/{token}")
+    public String newPasswordGetHandler(@PathVariable String token, Model model) {
+        Optional<PasswordRecovery> passwordRecovery = passwordRecoveryRepository.findByToken(token);
+
+        if (passwordRecovery.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        model.addAttribute("passwordRecoveryDto", new PasswordRecoveryDto());
+        return "new_password";
+    }
+
+    @PostMapping("/new-password/{token}")
+    public String newPasswordPostHandler(@PathVariable String token,
+                                         @Valid
+                                         @ModelAttribute PasswordRecoveryDto passwordRecoveryDto,
+                                         BindingResult bindingResult) {
+        Optional<PasswordRecovery> passwordRecovery = passwordRecoveryRepository.findByToken(token);
+
+        if (passwordRecovery.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        if (!Objects.equals(passwordRecoveryDto.getNewPassword1(),
+                            passwordRecoveryDto.getNewPassword2())) {
+            bindingResult.addError(new FieldError("passwordRecoveryDto", "newPassword1",
+                                                  "Passwords do not match!"));
+        }
+
+        if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult);
+            return "new_password";
+        }
+
+        User user = passwordRecovery.get().getUser();
+        user.setPassword(encoder.encode(passwordRecoveryDto.getNewPassword1()));
+        userRepository.save(user);
+        passwordRecoveryRepository.delete(passwordRecovery.get());
         return "redirect:/login";
     }
 
