@@ -1,0 +1,33 @@
+<html layout:decorate="~{common/skeleton}">
+
+<body>
+<main layout:fragment="content">
+    <div class="row-container list">
+        <div class="column-container list-header">
+            <h2>These Users Await Your Approval</h2>
+            <div class="spacer"></div>
+        </div>
+        <div th:each="awaitingUser : ${awaitingUserList}"  class="column-container list-cell">
+            <a th:href="@{/users/{username}(username=${username})}" ><img src="/filler-user.png" width="50" height="60"></img></a> <!-- To be changed after profile picture implementation -->
+            <a th:href="@{/users/{username}(username=${username})}" class="row-container" style="text-decoration: none; color: inherit;">
+                <h3 th:text="@{${awaitingUser.firstName} + ' ' + ${awaitingUser.lastName}}" style="margin: 0px;"></h3>
+                <span th:text="@{'@' + ${awaitingUser.username}}"></span>
+                <span th:text="'Signed up at ' + ${#temporals.format(awaitingUser.createdAt, 'dd/MM/yyyy')}"></span>
+            </a>
+            <div class="spacer"></div>
+            <a th:href="@{/admin/{username}/approve(username=${awaitingUser.username})}" class="mini-button"><span>Approve</span></a>
+            <a th:href="'#delete-modal-' + ${awaitingUser.username}" class="red-button">Delete</a>
+            <div th:id="'delete-modal-' + ${awaitingUser.username}" class="modal">
+                <div class="modal-content">
+                    <h2 style="margin-top: 10px;">Sign Up Rejection</h2>
+                    <p style="margin-bottom: 40px;">Are you sure you want to reject this sign up request? You can't bring this user back ever again!</p>
+                    <a th:href="@{/admin/{username}/reject(username=${awaitingUser.username})}" class="red-button">Confirm</a>
+                    <a href="#" class="mini-button">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+
+</html>
