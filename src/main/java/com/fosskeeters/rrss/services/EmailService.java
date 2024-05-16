@@ -3,6 +3,7 @@ package com.fosskeeters.rrss.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import jakarta.mail.MessagingException;
@@ -20,13 +21,16 @@ public class EmailService {
     }
 
     /**
-     * Sends an email with the specified recipient, subject, and content.
+     * Sends an email with the specified recipient, subject, and content asynchronously. This method
+     * will be executed in a separate thread, allowing the calling thread to continue processing
+     * without being blocked.
      *
      * @param to      The email address of the recipient
      * @param subject The subject of the email
      * @param content The content of the email
      * @throws MessagingException If any messaging error occurs during the sending process
      */
+    @Async
     public void send(String to, String subject, String content) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, /*multipart=*/true);

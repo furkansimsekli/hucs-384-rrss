@@ -133,8 +133,7 @@ public class AuthenticationController {
         if (user.getEmail().endsWith("@example.com")) {
             System.out.println(body);
             redirectAttrs.addFlashAttribute(
-                    "notification",
-                    "Password reset link has been printed out to standard output!");
+                    "notification", "Password reset link has been printed out to standard output!");
             return "redirect:/login";
         }
 
