@@ -17,8 +17,20 @@
                 <input name="username" placeholder="Username" type="text"/>
                 <input name="password" placeholder="Password" type="password"/>
                 <label class="error-text" th:if="${error}">Incorrect username or password.</label>
+                <a href="#forgot-password-modal">Forgot your password?</a>
                 <input value="Log In" type="submit"/>
             </form>
+            <div id="forgot-password-modal" class="modal">
+                    <div class="modal-content">
+                        <h2 style="margin-top: 10px;">Password Recovery</h2>
+                        <form class="form" method="post" action="/password-recovery">
+                            <p style="margin-bottom: 40px;">Calm down, you didn't lose your account. We will send a password reset link to your email address.</p>
+                            <input name="email" placeholder="Your email address" type="email"/>
+                            <button class="mini-button" type="submit" style="font-size: 18px">Send</button>
+                            <a href="#" class="mini-button">Back</a>
+                        </form>
+                    </div>
+                </div>
         </main>
         <footer style="margin: auto auto; margin-bottom: 0; padding-top: 5vh;">
             (C) FOSSkeeters, 2024
