@@ -129,6 +129,15 @@ public class AuthenticationController {
         String body = "Click the link below to reset your password: <br/>"
                 + "http://localhost:8080/new-password/" + token;
 
+        // DEBUG
+        if (user.getEmail().endsWith("@example.com")) {
+            System.out.println(body);
+            redirectAttrs.addFlashAttribute(
+                    "notification",
+                    "Password reset link has been printed out to standard output!");
+            return "redirect:/login";
+        }
+
         try {
             emailService.send(/*to=*/user.getEmail(), /*subject=*/"Password Recovery",
                               /*content=*/body);
