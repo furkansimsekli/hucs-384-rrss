@@ -13,8 +13,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -61,6 +68,7 @@ public class UserController {
         // Logged-in user is either an admin or the displayed user.
         UserUpdateDto userUpdateDto = new UserUpdateDto(displayedUser.get());
         model.addAttribute("userUpdateDto", userUpdateDto);
+        model.addAttribute("user", displayedUser.get());
         return "user/profile";
     }
 
@@ -68,7 +76,7 @@ public class UserController {
     public String userUpdateHandler(Model model, @PathVariable String usernameParam,
                                     HttpSession session,
                                     @Valid @ModelAttribute UserUpdateDto userUpdateDto,
-                                    BindingResult bindingResult) {
+                                    BindingResult bindingResult) throws IOException {
         Optional<User> displayedUser = userRepository.findByUsername(usernameParam);
 
         if (displayedUser.isEmpty()) {
@@ -89,10 +97,23 @@ public class UserController {
             return "user/profile";
         }
 
+        if (!userUpdateDto.getProfileImageFile().isEmpty()) {
+            MultipartFile image = userUpdateDto.getProfileImageFile();
+            String storageFileName = LocalDateTime.now() + "_" + image.getOriginalFilename();
+            String storagePathStr = "/profile-images/" + storageFileName;
+
+            try (InputStream inputStream = image.getInputStream()) {
+                Files.copy(inputStream, Paths.get("public" + storagePathStr),
+                           StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            displayedUser.get().setProfileImagePath(storagePathStr);
+        }
+
         displayedUser.get().setFromUserUpdateDto(userUpdateDto);
         userRepository.save(displayedUser.get());
         model.addAttribute("updatedSuccessfully", "true");
-        return "user/profile";
+        return "redirect:/user/" + displayedUser.get().getUsername();
     }
 
     @GetMapping("/{usernameParam}/change-password")
