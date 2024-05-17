@@ -122,7 +122,6 @@ public class User {
         this.email = userUpdateDto.getEmail();
         this.phoneNumber = userUpdateDto.getPhoneNumber();
         this.address = userUpdateDto.getAddress();
-        this.profileImagePath = userUpdateDto.getProfileImagePath();
         this.dateOfBirth = userUpdateDto.getDateOfBirth();
     }
 

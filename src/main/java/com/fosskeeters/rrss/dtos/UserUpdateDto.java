@@ -3,6 +3,7 @@ package com.fosskeeters.rrss.dtos;
 import com.fosskeeters.rrss.models.User;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -32,8 +33,7 @@ public class UserUpdateDto {
     @Size(min = 0, max = 256, message = "Address must be 256 characters at most!")
     private String address;
 
-    @NotNull
-    private String profileImagePath;
+    private MultipartFile profileImageFile;
 
     public UserUpdateDto() {}
 
@@ -44,7 +44,6 @@ public class UserUpdateDto {
         this.phoneNumber = user.getPhoneNumber();
         this.dateOfBirth = user.getDateOfBirth();
         this.address = user.getAddress();
-        this.profileImagePath = user.getProfileImagePath();
     }
 
     public String getFirstName() {
@@ -95,12 +94,12 @@ public class UserUpdateDto {
         this.address = address;
     }
 
-    public String getProfileImagePath() {
-        return profileImagePath;
+    public MultipartFile getProfileImageFile() {
+        return profileImageFile;
     }
 
-    public void setProfileImagePath(String profileImagePath) {
-        this.profileImagePath = profileImagePath;
+    public void setProfileImageFile(MultipartFile profileImageFile) {
+        this.profileImageFile = profileImageFile;
     }
 
     // TODO: move to a global utils library
