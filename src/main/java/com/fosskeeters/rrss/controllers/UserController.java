@@ -40,6 +40,16 @@ public class UserController {
 
         // FIXME: This should be variable instead of hardcoded.
         Files.createDirectories(Paths.get("public", "profile-images"));
+
+        // FIXME: Temporary fix for default user images being set a weird value on the db.
+        System.out.println("Applying temporary default user image path correction...");
+        for (User user : userRepository.findAll()) {
+            System.out.println(user.getProfileImagePath());
+            if (user.getProfileImagePath().equals("path/to/default/image")) {
+                user.setProfileImagePath("/filler-user.png");
+                userRepository.save(user);
+            }
+        }
     }
 
     @GetMapping({"", "/"})
