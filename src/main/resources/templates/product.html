@@ -50,7 +50,7 @@
             <div class="row-container" style="gap: 30px;">
                 <div th:each="review : ${product.getReviews()}" class="row-container" style="gap: 20px;">
                     <div class="column-container" style="gap: 20px;">
-                        <img src="" width="64px" height="64px" />
+                        <img th:src="${review.author.profileImagePath}" width="64px" height="64px" />
                         <div class="row-container">
                             <span><span style="margin-right: 0.5em; color: var(--primary-color); font-size: 20;" th:text="${#strings.repeat('&starf;', review.getScore())} + ${#strings.repeat('&star;', 5 - review.getScore())}" /><b th:text="${review.getTitle()}" /></span>
                             <span th:text="${review.getBody()}" />
@@ -70,7 +70,7 @@
                         <label class="buttonish-checkbox-label shown-on-edit" th:for="reply-review- + ${review.getId()}" style="height: fit-content;">Cancel</label>
                     </div>
                     <div th:if="${review.getMerchantReplyBody() != null}" class="column-container" style="margin-left: 20px; gap: 20px; border-left: 5px solid var(--primary-color); padding-left: 20px;">
-                        <img src="" width="64px" height="64px" />
+                        <img th:src="${product.owner.profileImagePath}" width="64px" height="64px" />
                         <div class="row-container">
                             <span th:text="${review.getMerchantReplyBody()}"/>
                             <span th:text="${product.getOwner().getUsername()}" style="color: gray; font-size: 12px;" />
