@@ -9,7 +9,8 @@
             <a class="mini-button" th:href="@{/products/create}"><span style="font-family: Inika-bold;">&#x2b;</span> New Product</a>
         </div>
         <div th:each="product : ${user.products}"  class="column-container list-cell">
-            <a th:href="@{/products/{productId}(productId=${product.id})}" ><img src="/filler-product.png" width="50" height="60"></img></a> <!-- To be changed after imageId implementation -->
+            <a th:unless="${product.images.size() > 0}" th:href="@{/products/{productId}(productId=${product.id})}" ><img src="/filler-product.png" width="50" height="60"></img></a>
+            <a th:if="${product.images.size() > 0}" th:href="@{/products/{productId}(productId=${product.id})}" ><img th:src="${product.images[0].imagePath}" width="50" height="60"></img></a>
             <a th:href="@{/products/{productId}(productId=${product.id})}" class="row-container" style="text-decoration: none; color: inherit;">
                 <h3 th:text="${product.name}" style="margin: 0px;"></h3>
                 <span th:text="@{${product.price} + '$'}"></span>

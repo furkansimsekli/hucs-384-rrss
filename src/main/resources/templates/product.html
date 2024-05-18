@@ -3,7 +3,8 @@
 <body>
     <main class="row-container" style="padding: 0 10vw; gap: 50px;" layout:fragment="content">
         <div class="column-container" style="gap: 50px; flex-wrap: wrap;">
-            <img src="" width="160px" height="160px" />
+            <img th:unless="${product.images.size() > 0}" src="/filler-product.png" width="160px" height="160px"/>
+            <img th:if="${product.images.size() > 0}" th:src="${product.images[0].imagePath}" width="160px" height="160px"/>
             <div class="row-container">
                 <h2 th:text="${product.getName()}" style="margin: 0; margin-top: 10px;">Product Untitled</h2>
                 <span th:text="${product.getOwner().getUsername()}" style="color: gray;">from <a href="merchant.html" style="color: grey">Merchant A</a></span>
