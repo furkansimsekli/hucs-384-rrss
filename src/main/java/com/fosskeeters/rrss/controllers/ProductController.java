@@ -3,6 +3,7 @@ package com.fosskeeters.rrss.controllers;
 import com.fosskeeters.rrss.dtos.ProductDto;
 import com.fosskeeters.rrss.dtos.ReviewDto;
 import com.fosskeeters.rrss.dtos.ReviewReplyDto;
+import com.fosskeeters.rrss.models.BrowsingHistory;
 import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.ProductImage;
 import com.fosskeeters.rrss.models.ProductKeyword;
@@ -88,6 +89,10 @@ public class ProductController {
             if (user != null && product.get().getOwner().getId() == user.getId()) {
                 reviewReplyDtoList.addAll(
                         product.get().getReviews().stream().map(ReviewReplyDto::new).toList());
+            }
+
+            if (user != null) {
+                browsingHistoryRepository.save(new BrowsingHistory(product.get(), user));
             }
         }
         model.addAttribute("isCustomer",
