@@ -11,6 +11,17 @@ public class ProductKeyword {
     @Column(length = 256)
     private String keyword;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn
+    private Product product;
+
+    public ProductKeyword() {}
+
+    public ProductKeyword(String keyword, Product product) {
+        this.keyword = keyword;
+        this.product = product;
+    }
+
     public long getId() {
         return id;
     }
