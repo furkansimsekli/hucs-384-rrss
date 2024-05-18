@@ -8,6 +8,7 @@ import com.fosskeeters.rrss.models.ProductImage;
 import com.fosskeeters.rrss.models.Review;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.ProductImageRepository;
+import com.fosskeeters.rrss.repositories.ProductKeywordRepository;
 import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
@@ -37,14 +38,17 @@ import jakarta.validation.Valid;
 public class ProductController {
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
+    private final ProductKeywordRepository productKeywordRepository;
     private final UserRepository userRepository;
 
     public ProductController(ProductRepository productRepository,
                              ProductImageRepository productImageRepository,
+                             ProductKeywordRepository productKeywordRepository,
                              UserRepository userRepository) throws IOException {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.productImageRepository = productImageRepository;
+        this.productKeywordRepository = productKeywordRepository;
 
         // FIXME: This should be variable instead of hardcoded.
         Files.createDirectories(Paths.get("public", "product-images"));
