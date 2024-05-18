@@ -40,6 +40,22 @@ public class ReviewController {
     @PostMapping("/create")
     public String createReview(HttpSession session, @Valid @ModelAttribute ReviewDto reviewDto,
                                BindingResult bindingResult, Model model) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        if (user.get().getType() != User.Type.CUSTOMER) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
         if (bindingResult.hasFieldErrors("productId")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -49,26 +65,6 @@ public class ReviewController {
 
         if (product.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-
-        // Check authentication
-        if (session.getAttribute("username") == null) {
-            return "redirect:/login";
-        }
-
-        String username = session.getAttribute("username").toString();
-        Optional<User> user = userRepository.findByUsername(username);
-
-        if (user.isEmpty()) {
-            // Maybe we should throw 500, because being authenticated but not being in db is not OK
-            // Need to handle the authentication/authorization somewhere else. It's repeating over
-            // and over.
-            return "redirect:/login";
-        }
-
-        // Only customers can do review
-        if (user.get().getType() != User.Type.CUSTOMER) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
         // Every customer can have at most one review
@@ -108,7 +104,6 @@ public class ReviewController {
     public String updateReview(HttpSession session, @PathVariable long reviewId,
                                @Valid @ModelAttribute ReviewDto reviewDto,
                                BindingResult bindingResult, Model model) {
-        // Check authentication
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -117,9 +112,7 @@ public class ReviewController {
         Optional<User> user = userRepository.findByUsername(username);
 
         if (user.isEmpty()) {
-            // Maybe we should throw 500, because being authenticated but not being in db is not OK
-            // Need to handle the authentication/authorization somewhere else. It's repeating over
-            // and over.
+            session.removeAttribute("username");
             return "redirect:/login";
         }
 
@@ -158,7 +151,6 @@ public class ReviewController {
 
     @GetMapping("/{reviewId}/delete")
     public String deleteReview(HttpSession session, @PathVariable long reviewId, Model model) {
-        // Check authentication
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -167,9 +159,7 @@ public class ReviewController {
         Optional<User> user = userRepository.findByUsername(username);
 
         if (user.isEmpty()) {
-            // Maybe we should throw 500, because being authenticated but not being in db is not OK
-            // Need to handle the authentication/authorization somewhere else. It's repeating over
-            // and over.
+            session.removeAttribute("username");
             return "redirect:/login";
         }
 
@@ -179,8 +169,9 @@ public class ReviewController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        // Don't let other users whose not the author herself delete the review
-        if (review.get().getAuthor().getId() != user.get().getId()) {
+        // Don't let other users whose not the author herself or admin delete the review
+        if (review.get().getAuthor().getId() != user.get().getId()
+            && user.get().getType() != User.Type.ADMIN) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -202,7 +193,12 @@ public class ReviewController {
         Optional<User> user = userRepository.findByUsername(username);
         Optional<Review> review = reviewRepository.findById(reviewId);
 
-        if (user.isEmpty() || review.isEmpty()) {
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        if (review.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
@@ -251,7 +247,12 @@ public class ReviewController {
         Optional<User> user = userRepository.findByUsername(username);
         Optional<Review> review = reviewRepository.findById(reviewId);
 
-        if (user.isEmpty() || review.isEmpty()) {
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        if (review.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
@@ -297,12 +298,19 @@ public class ReviewController {
         Optional<User> user = userRepository.findByUsername(username);
         Optional<Review> review = reviewRepository.findById(reviewId);
 
-        if (user.isEmpty() || review.isEmpty()) {
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        if (review.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        // Merchant must be the owner of the product in order to delete the reply
-        if (review.get().getProduct().getOwner().getId() != user.get().getId()) {
+        User owner = review.get().getProduct().getOwner();
+
+        // User must be the owner of the product in order to delete the reply or admin.
+        if (owner.getId() != user.get().getId() && user.get().getType() != User.Type.ADMIN) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 

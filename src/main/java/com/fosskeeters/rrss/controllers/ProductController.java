@@ -89,7 +89,12 @@ public class ProductController {
                 userRepository.findByUsername(session.getAttribute("username").toString());
 
         if (user.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        if (user.get().getType() != User.Type.MERCHANT) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
         model.addAttribute("productDto", new ProductDto());
@@ -112,7 +117,12 @@ public class ProductController {
         Optional<User> user = userRepository.findByUsername(username);
 
         if (user.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        if (user.get().getType() != User.Type.MERCHANT) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
         Product product = new Product(user.get(), productDto);
@@ -131,7 +141,12 @@ public class ProductController {
                 userRepository.findByUsername(session.getAttribute("username").toString());
         Optional<Product> product = productRepository.findById(productId);
 
-        if (user.isEmpty() || product.isEmpty()) {
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        if (product.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
@@ -160,7 +175,12 @@ public class ProductController {
         Optional<User> user = userRepository.findByUsername(username);
         Optional<Product> product = productRepository.findById(productId);
 
-        if (user.isEmpty() || product.isEmpty()) {
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        if (product.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
@@ -183,15 +203,21 @@ public class ProductController {
         Optional<User> user = userRepository.findByUsername(username);
         Optional<Product> product = productRepository.findById(productId);
 
-        if (user.isEmpty() || product.isEmpty()) {
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        if (product.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        if (product.get().getOwner().getId() != user.get().getId()) {
+        if (product.get().getOwner().getId() != user.get().getId()
+            && user.get().getType() != User.Type.ADMIN) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
         productRepository.delete(product.get());
-        return "redirect:/merchants/" + username;
+        return "redirect:/merchants/" + product.get().getOwner().getUsername();
     }
 }
