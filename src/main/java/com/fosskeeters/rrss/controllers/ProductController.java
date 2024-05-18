@@ -149,6 +149,8 @@ public class ProductController {
             int displayOrder = 1;
 
             for (MultipartFile image : productDto.getImages()) {
+                if (image.isEmpty()) continue;
+
                 String storageFileName = LocalDateTime.now() + "_" + image.getOriginalFilename();
                 String storagePathStr = "/product-images/" + storageFileName;
 
@@ -232,6 +234,8 @@ public class ProductController {
             int displayOrder = 1;
 
             for (MultipartFile image : productDto.getImages()) {
+                if (image.isEmpty()) continue;
+
                 String storageFileName = LocalDateTime.now() + "_" + image.getOriginalFilename();
                 String storagePathStr = "/product-images/" + storageFileName;
 
