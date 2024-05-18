@@ -41,10 +41,13 @@ public class ProductController {
 
     public ProductController(ProductRepository productRepository,
                              ProductImageRepository productImageRepository,
-                             UserRepository userRepository) {
+                             UserRepository userRepository) throws IOException {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.productImageRepository = productImageRepository;
+
+        // FIXME: This should be variable instead of hardcoded.
+        Files.createDirectories(Paths.get("public", "product-images"));
     }
 
     @GetMapping("/{id}")

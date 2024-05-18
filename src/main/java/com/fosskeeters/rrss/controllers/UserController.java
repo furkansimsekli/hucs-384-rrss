@@ -34,9 +34,12 @@ public class UserController {
     private final UserRepository userRepository;
     private final Argon2PasswordEncoder encoder;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository) throws IOException {
         this.userRepository = userRepository;
         this.encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+
+        // FIXME: This should be variable instead of hardcoded.
+        Files.createDirectories(Paths.get("public", "profile-images"));
     }
 
     @GetMapping({"", "/"})
