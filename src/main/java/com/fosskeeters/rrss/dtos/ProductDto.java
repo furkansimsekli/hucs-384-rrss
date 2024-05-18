@@ -2,6 +2,10 @@ package com.fosskeeters.rrss.dtos;
 
 import com.fosskeeters.rrss.models.Product;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
 import jakarta.validation.constraints.*;
 
 public class ProductDto {
@@ -16,6 +20,8 @@ public class ProductDto {
     @NotNull(message = "Price can not be empty!")
     @Min(value = 0, message = "Product can be free, but can not have a negative price!")
     private double price;
+
+    private List<MultipartFile> images;
 
     public ProductDto() {}
 
@@ -47,5 +53,13 @@ public class ProductDto {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public List<MultipartFile> getImages() {
+        return images;
+    }
+
+    public void setImages(List<MultipartFile> images) {
+        this.images = images;
     }
 }
