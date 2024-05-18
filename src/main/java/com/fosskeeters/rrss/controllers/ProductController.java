@@ -142,6 +142,7 @@ public class ProductController {
         }
 
         Product product = new Product(user.get(), productDto);
+        productRepository.save(product);
 
         if (!productDto.getImages().isEmpty()) {
             List<ProductImage> productImages = new ArrayList<>();
@@ -165,7 +166,6 @@ public class ProductController {
             productImageRepository.saveAll(productImages);
         }
 
-        productRepository.save(product);
         return "redirect:/merchants/" + username;
     }
 
