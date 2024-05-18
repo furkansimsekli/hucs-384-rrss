@@ -5,6 +5,7 @@ import com.fosskeeters.rrss.dtos.ReviewDto;
 import com.fosskeeters.rrss.dtos.ReviewReplyDto;
 import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.ProductImage;
+import com.fosskeeters.rrss.models.ProductKeyword;
 import com.fosskeeters.rrss.models.Review;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.ProductImageRepository;
@@ -262,6 +263,7 @@ public class ProductController {
 
         product.get().setFromProductDto(productDto);
         productRepository.save(product.get());
+
         return "redirect:/merchants/" + username;
     }
 

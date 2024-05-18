@@ -1,6 +1,7 @@
 package com.fosskeeters.rrss.dtos;
 
 import com.fosskeeters.rrss.models.Product;
+import com.fosskeeters.rrss.models.ProductKeyword;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,12 +25,24 @@ public class ProductDto {
     @Size(max = 9, message = "You can choose at most 9 images for a product!")
     private List<MultipartFile> images;
 
+    // Comma separated list of tags.
+    private String csvKeywords;
+
     public ProductDto() {}
 
     public ProductDto(Product product) {
         this.name = product.getName();
         this.description = product.getDescription();
         this.price = product.getPrice();
+
+        List<ProductKeyword> keywords = product.getKeywords();
+        String[] strKeywords = new String[keywords.size()];
+
+        for (int i = 0; i < keywords.size(); ++i) {
+            strKeywords[i] = keywords.get(i).getKeyword();
+        }
+
+        this.setKeywords(strKeywords);
     }
 
     public String getName() {
@@ -62,5 +75,23 @@ public class ProductDto {
 
     public void setImages(List<MultipartFile> images) {
         this.images = images;
+    }
+
+    public String getCsvKeywords() {
+        return this.csvKeywords;
+    }
+
+    public void setCsvKeywords(String csvKeywords) {
+        this.csvKeywords = csvKeywords;
+    }
+
+    public String[] getKeywords() {
+        return this.csvKeywords != null && this.csvKeywords.length() > 0
+                ? this.csvKeywords.split(",")
+                : new String[0];
+    }
+
+    public void setKeywords(String[] keywords) {
+        this.csvKeywords = String.join(",", keywords);
     }
 }

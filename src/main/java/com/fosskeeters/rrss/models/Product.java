@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.NumberFormat;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -41,6 +42,10 @@ public class Product {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductImage> images;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL,
+               orphanRemoval = true)
+    private List<ProductKeyword> keywords = new ArrayList<>();
+
     public Product() {}
 
     public Product(User owner, ProductDto productDto) {
@@ -49,12 +54,21 @@ public class Product {
         this.description = productDto.getDescription();
         this.price = productDto.getPrice();
         this.createdAt = LocalDateTime.now();
+
+        for (String keyword : productDto.getKeywords()) {
+            keywords.add(new ProductKeyword(keyword, this));
+        }
     }
 
     public void setFromProductDto(ProductDto productDto) {
         this.name = productDto.getName();
         this.description = productDto.getDescription();
         this.price = productDto.getPrice();
+
+        setKeywords(new ArrayList<>());
+        for (String keyword : productDto.getKeywords()) {
+            keywords.add(new ProductKeyword(keyword, this));
+        }
     }
 
     public long getId() {
@@ -119,5 +133,14 @@ public class Product {
 
     public void setImages(List<ProductImage> images) {
         this.images = images;
+    }
+
+    public List<ProductKeyword> getKeywords() {
+        return this.keywords;
+    }
+
+    public void setKeywords(List<ProductKeyword> keywords) {
+        this.keywords.clear();
+        this.keywords.addAll(keywords);
     }
 }
