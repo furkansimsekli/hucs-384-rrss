@@ -26,13 +26,33 @@ public class MerchantController {
     @GetMapping("/{username}")
     public String getMerchantProducts(HttpSession session, @PathVariable String username,
                                       Model model) {
-        Optional<User> user = userRepository.findByUsername(username);
-
-        if (!Objects.equals(username, session.getAttribute("username")) || user.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
         }
 
-        model.addAttribute("user", user.get());
+        Optional<User> authenticatedUser =
+                userRepository.findByUsername((String) session.getAttribute("username"));
+        Optional<User> targetUser = userRepository.findByUsername(username);
+
+        if (authenticatedUser.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        if (targetUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        if (!Objects.equals(username, session.getAttribute("username"))
+            && authenticatedUser.get().getType() != User.Type.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        if (targetUser.get().getType() != User.Type.MERCHANT) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        model.addAttribute("user", targetUser.get());
         return "merchants/products";
     }
 }
