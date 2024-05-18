@@ -21,6 +21,7 @@ public class ProductDto {
     @Min(value = 0, message = "Product can be free, but can not have a negative price!")
     private double price;
 
+    @Size(max = 9, message = "You can choose at most 9 images for a product!")
     private List<MultipartFile> images;
 
     public ProductDto() {}

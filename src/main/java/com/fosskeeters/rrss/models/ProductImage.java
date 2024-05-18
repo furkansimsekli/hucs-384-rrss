@@ -18,7 +18,6 @@ public class ProductImage {
     private Product product;
 
     @Column
-    @Range(max = 9)
     private int displayOrder;
 
     @Column(length = 128)
