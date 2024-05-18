@@ -38,3 +38,6 @@ out/
 ### Database file ###
 data/
 *.sqlite
+
+### Static files ###
+public/

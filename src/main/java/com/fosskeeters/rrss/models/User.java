@@ -87,7 +87,7 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.createdAt = LocalDateTime.now();
         this.address = "";
-        this.profileImagePath = "path/to/default/image";
+        this.profileImagePath = "/filler-user.png";
         this.dateOfBirth = LocalDate.of(1970, 1, 1);
         this.isApproved = false;
     }
@@ -95,7 +95,7 @@ public class User {
     public User() {
         this.createdAt = LocalDateTime.now();
         this.address = "";
-        this.profileImagePath = "path/to/default/image";
+        this.profileImagePath = "/filler-user.png";
         this.dateOfBirth = LocalDate.of(1970, 1, 1);
         this.isApproved = false;
     }
@@ -110,7 +110,7 @@ public class User {
         this.phoneNumber = userDto.getPhoneNumber();
         this.createdAt = LocalDateTime.now();
         this.address = "";
-        this.profileImagePath = "path/to/default/image";
+        this.profileImagePath = "/filler-user.png";
         this.dateOfBirth = LocalDate.of(1970, 1, 1);
         this.password = encodedPassword;
         this.isApproved = false;
@@ -122,7 +122,6 @@ public class User {
         this.email = userUpdateDto.getEmail();
         this.phoneNumber = userUpdateDto.getPhoneNumber();
         this.address = userUpdateDto.getAddress();
-        this.profileImagePath = userUpdateDto.getProfileImagePath();
         this.dateOfBirth = userUpdateDto.getDateOfBirth();
     }
 

@@ -4,8 +4,10 @@ import com.fosskeeters.rrss.dtos.ProductDto;
 import com.fosskeeters.rrss.dtos.ReviewDto;
 import com.fosskeeters.rrss.dtos.ReviewReplyDto;
 import com.fosskeeters.rrss.models.Product;
+import com.fosskeeters.rrss.models.ProductImage;
 import com.fosskeeters.rrss.models.Review;
 import com.fosskeeters.rrss.models.User;
+import com.fosskeeters.rrss.repositories.ProductImageRepository;
 import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
@@ -14,8 +16,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,11 +36,18 @@ import jakarta.validation.Valid;
 @RequestMapping("/products/")
 public class ProductController {
     private final ProductRepository productRepository;
+    private final ProductImageRepository productImageRepository;
     private final UserRepository userRepository;
 
-    public ProductController(ProductRepository productRepository, UserRepository userRepository) {
+    public ProductController(ProductRepository productRepository,
+                             ProductImageRepository productImageRepository,
+                             UserRepository userRepository) throws IOException {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.productImageRepository = productImageRepository;
+
+        // FIXME: This should be variable instead of hardcoded.
+        Files.createDirectories(Paths.get("public", "product-images"));
     }
 
     @GetMapping("/{id}")
@@ -103,7 +119,7 @@ public class ProductController {
 
     @PostMapping("/create")
     public String createProduct(HttpSession session, @Valid @ModelAttribute ProductDto productDto,
-                                BindingResult bindingResult) {
+                                BindingResult bindingResult) throws IOException {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -126,6 +142,29 @@ public class ProductController {
         }
 
         Product product = new Product(user.get(), productDto);
+
+        if (!productDto.getImages().isEmpty()) {
+            List<ProductImage> productImages = new ArrayList<>();
+            int displayOrder = 1;
+
+            for (MultipartFile image : productDto.getImages()) {
+                String storageFileName = LocalDateTime.now() + "_" + image.getOriginalFilename();
+                String storagePathStr = "/product-images/" + storageFileName;
+
+                try (InputStream inputStream = image.getInputStream()) {
+                    Files.copy(inputStream, Paths.get("public" + storagePathStr),
+                               StandardCopyOption.REPLACE_EXISTING);
+                }
+
+                ProductImage productImage =
+                        new ProductImage(product, displayOrder, "", storagePathStr);
+                productImages.add(productImage);
+                displayOrder++;
+            }
+
+            productImageRepository.saveAll(productImages);
+        }
+
         productRepository.save(product);
         return "redirect:/merchants/" + username;
     }
@@ -162,7 +201,7 @@ public class ProductController {
     @PostMapping("/{productId}/update")
     public String updateProduct(HttpSession session, @PathVariable long productId,
                                 @Valid @ModelAttribute ProductDto productDto,
-                                BindingResult bindingResult) {
+                                BindingResult bindingResult) throws IOException {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -186,6 +225,29 @@ public class ProductController {
 
         if (product.get().getOwner().getId() != user.get().getId()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        if (!productDto.getImages().isEmpty()) {
+            List<ProductImage> productImages = new ArrayList<>();
+            int displayOrder = 1;
+
+            for (MultipartFile image : productDto.getImages()) {
+                String storageFileName = LocalDateTime.now() + "_" + image.getOriginalFilename();
+                String storagePathStr = "/product-images/" + storageFileName;
+
+                try (InputStream inputStream = image.getInputStream()) {
+                    Files.copy(inputStream, Paths.get("public" + storagePathStr),
+                               StandardCopyOption.REPLACE_EXISTING);
+                }
+
+                ProductImage productImage =
+                        new ProductImage(product.get(), displayOrder, "", storagePathStr);
+                productImages.add(productImage);
+                displayOrder++;
+            }
+
+            productImageRepository.deleteAllByProduct(product.get());
+            productImageRepository.saveAll(productImages);
         }
 
         product.get().setFromProductDto(productDto);

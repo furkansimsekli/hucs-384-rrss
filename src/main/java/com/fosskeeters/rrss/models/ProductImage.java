@@ -18,7 +18,6 @@ public class ProductImage {
     private Product product;
 
     @Column
-    @Range(max = 9)
     private int displayOrder;
 
     @Column(length = 128)
@@ -29,6 +28,16 @@ public class ProductImage {
 
     @CreatedDate
     private LocalDateTime createdAt;
+
+    public ProductImage() {}
+
+    public ProductImage(Product product, int displayOrder, String caption, String imagePath) {
+        this.product = product;
+        this.displayOrder = displayOrder;
+        this.caption = caption;
+        this.imagePath = imagePath;
+        this.createdAt = LocalDateTime.now();
+    }
 
     public long getId() {
         return id;

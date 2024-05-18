@@ -25,7 +25,7 @@
                         th:href="@{/logout}"><span style="margin-right: 10px;">&#11013;</span>Log Out</a>
                 </div>
             </div>
-            <form class="row-container shown-on-edit" style="gap: 10px;" method="post" th:object="${userUpdateDto}">
+            <form class="row-container shown-on-edit" style="gap: 10px;" method="post" enctype="multipart/form-data" th:object="${userUpdateDto}">
                 <div class="row-container">
                     <div class="row-container">
                         <p th:if="${#fields.hasErrors('firstName')}" th:errorclass="text-danger"
@@ -58,10 +58,10 @@
                     th:errors="${userUpdateDto.address}"></p>
                 <textarea name="address" rows="4" placeholder="Address" th:field="${userUpdateDto.address}" />
 
-                <input hidden th:field="${userUpdateDto.profileImagePath}" />
+                <input name="profileImageFile" type="file" accept="image/*" th:field="${userUpdateDto.profileImageFile}" />
                 <input type="submit" value="Save" style="padding: 5px;" />
             </form>
-            <img th:src="${userUpdateDto.getProfileImagePath()}" width="64px" height="64px" />
+            <img th:src="${user.profileImagePath}" width="64px" height="64px" />
         </div>
     </main>
 </body>
