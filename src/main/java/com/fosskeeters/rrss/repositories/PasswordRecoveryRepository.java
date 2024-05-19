@@ -11,4 +11,6 @@ public interface PasswordRecoveryRepository extends JpaRepository<PasswordRecove
     Optional<PasswordRecovery> findByToken(String token);
 
     List<PasswordRecovery> findAllByIsEmailSentIsFalseOrderByCreatedAtAsc();
+
+    Optional<PasswordRecovery> findByIdAndIsEmailSentIsFalse(long passwordRecoveryId);
 }
