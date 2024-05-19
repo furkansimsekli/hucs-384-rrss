@@ -19,6 +19,9 @@ public class PasswordRecovery {
     @JoinColumn
     private User user;
 
+    @Column
+    private boolean isEmailSent;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -52,6 +55,14 @@ public class PasswordRecovery {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public boolean isEmailSent() {
+        return isEmailSent;
+    }
+
+    public void setEmailSent(boolean emailSent) {
+        isEmailSent = emailSent;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -120,34 +120,17 @@ public class AuthenticationController {
             // Don't let them know if the email exist in the system
             redirectAttrs.addFlashAttribute(
                     "notification",
-                    "Password reset link has been sent your email address, please check your spam folder just in case!");
+                    "After the admin approval, an email will be sent to your email address. Please check your spam folder just in case!");
             return "redirect:/login";
         }
 
-        User user = userOptional.get();
-        String token = generateToken(/*length=*/16);
-        String body = "Click the link below to reset your password: <br/>"
-                + "http://localhost:8080/new-password/" + token;
-
-        // DEBUG
-        if (user.getEmail().endsWith("@example.com")) {
-            System.out.println(body);
-            redirectAttrs.addFlashAttribute(
-                    "notification", "Password reset link has been printed out to standard output!");
-            return "redirect:/login";
-        }
-
-        try {
-            emailService.send(/*to=*/user.getEmail(), /*subject=*/"Password Recovery",
-                              /*content=*/body);
-            passwordRecoveryRepository.save(new PasswordRecovery(user, token));
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
+        PasswordRecovery passwordRecovery =
+                new PasswordRecovery(userOptional.get(), generateToken(16));
+        passwordRecoveryRepository.save(passwordRecovery);
 
         redirectAttrs.addFlashAttribute(
                 "notification",
-                "Password reset link has been sent your email address, please check your spam folder just in case!");
+                "After the admin approval, an email will be sent to your email address. Please check your spam folder just in case!");
         return "redirect:/login";
     }
 
