@@ -250,8 +250,10 @@ public class ProductController {
                 displayOrder++;
             }
 
-            productImageRepository.deleteAllByProduct(product.get());
-            productImageRepository.saveAll(productImages);
+            if (!productImages.isEmpty()) {
+                productImageRepository.deleteAllByProduct(product.get());
+                productImageRepository.saveAll(productImages);
+            }
         }
 
         product.get().setFromProductDto(productDto);
