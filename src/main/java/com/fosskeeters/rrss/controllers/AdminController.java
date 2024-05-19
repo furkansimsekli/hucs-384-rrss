@@ -1,6 +1,8 @@
 package com.fosskeeters.rrss.controllers;
 
+import com.fosskeeters.rrss.models.PasswordRecovery;
 import com.fosskeeters.rrss.models.User;
+import com.fosskeeters.rrss.repositories.PasswordRecoveryRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
 import org.springframework.http.HttpStatus;
@@ -20,9 +22,12 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/admin")
 public class AdminController {
     private final UserRepository userRepository;
+    private final PasswordRecoveryRepository passwordRecoveryRepository;
 
-    public AdminController(UserRepository userRepository) {
+    public AdminController(UserRepository userRepository,
+                           PasswordRecoveryRepository passwordRecoveryRepository) {
         this.userRepository = userRepository;
+        this.passwordRecoveryRepository = passwordRecoveryRepository;
     }
 
     @GetMapping("/signup-requests")
@@ -101,5 +106,29 @@ public class AdminController {
 
         userRepository.delete(awaitingUser.get());
         return "redirect:/admin/signup-requests";
+    }
+
+    @GetMapping("/password-recovery-requests")
+    public String passwordRecoveryRequests(HttpSession session, Model model) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        if (user.get().getType() != User.Type.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        List<PasswordRecovery> recoveryRequests =
+                passwordRecoveryRepository.findAllByIsEmailSentIsFalseOrderByCreatedAtAsc();
+        model.addAttribute("recoveryRequests", recoveryRequests);
+        return "admin/password_recovery_requests";
     }
 }
