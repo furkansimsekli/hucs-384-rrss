@@ -1,22 +1,26 @@
 package com.fosskeeters.rrss.controllers;
 
+import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.Topic;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.EntryRepository;
 import com.fosskeeters.rrss.repositories.TopicRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.servlet.http.HttpSession;
+
 
 @Controller
 @RequestMapping("/community")
@@ -72,4 +76,17 @@ public class CommunityController {
 
         return "community/topics";
     }
+
+    @GetMapping("/topics/{topicId}")
+    public String getEntriesHandler(HttpSession session, Model model, @PathVariable long topicId) {
+        Optional<Topic> topic = topicRepository.findById(topicId);
+
+        if (topic.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        model.addAttribute("topic", topic.get());
+
+        return "community/entries";
+    }
+    
 }
