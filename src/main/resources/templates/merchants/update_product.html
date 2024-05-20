@@ -29,6 +29,12 @@
             <p class="error-text" th:if="${#fields.hasErrors('images')}" th:errorclass="text-danger" th:errors="${productDto.images}"></p>
         </div>
 
+        <div class="row-container">
+            <label>Keywords (comma separated)</label>
+            <input type="text" th:field="${productDto.csvKeywords}">
+            <p class="error-text" th:if="${#fields.hasErrors('csvKeywords')}" th:errorclass="text-danger" th:errors="${productDto.csvKeywords}"></p>
+        </div>
+
         <div style="margin: 10 auto; width: 100%;">
             <button class="mini-button" type="submit" style="width: 100%; border-radius: 5px;">Submit</button>
         </div>
