@@ -1,0 +1,201 @@
+#!/usr/bin/env python3
+
+import argparse
+import gzip
+import json
+import shutil
+import sqlite3
+import random
+from collections import namedtuple
+from pathlib import Path
+from sys import exit
+from typing import Union
+
+import requests
+try:
+    from tqdm import tqdm
+except ModuleNotFoundError:
+    print("[WARN] tqdm is not installed, install tqdm to show progress bars.")
+
+    def tqdm(iter_, **kwargs):
+        return iter_
+
+
+User = namedtuple("User", "username first_name last_name type")
+
+USERS: list[User] = [
+    User("admin", "Marion", "Wheeler", "customer"), # Admin is set later in db.
+
+    User("user", "Emily", "Johnson", "customer"),
+    User("user2", "Michael", "Williams", "customer"),
+    User("user3", "Jessica", "Brown", "customer"),
+    User("user4", "Alice", "Johnson", "customer"),
+    User("user5", "Bob", "White", "customer"),
+    User("user6", "Lily", "Martinez", "customer"),
+    User("user7", "Harper", "King", "customer"),
+    User("user8", "Victoria"," Scott", "customer"),
+    User("user9", "David", "Flores", "customer"),
+    User("user10", "Maya", "Garcia", "customer"),
+
+    User("merchant", "Mia", "Hernandez", "merchant"),
+    User("merchant2", "Emma","Davis", "merchant"),
+    User("merchant3", "Grace","Wilson", "merchant"),
+    User("merchant4", "Matthew","Miller", "merchant"),
+    User("merchant5", "Sarah", "Wilson", "merchant"),
+    User("merchant6", "Christopher", "Jones", "merchant"),
+    User("merchant7", "Amanda", "Davis", "merchant"),
+    User("merchant8", "John", "Doe", "merchant"),
+    User("merchant9", "Gabriel", "Lopez", "merchant"),
+    User("merchant10", "Michael", "Oliver", "merchant"),
+]
+
+
+def ensure_file(path: Union[str, Path], url: str):
+    path: Path = Path(path)
+    if path.is_file():
+        return
+
+    print(f"{path} is missing, downloading from {url}...")
+
+    r = requests.get(url, stream=True)
+    full_size = int(r.headers.get('content-length') or 0)
+
+    try:
+        r.raise_for_status()
+
+        with path.open(mode='wb') as f:
+            for chunk in tqdm(r.iter_content(chunk_size=1024 * 1024), total=int((full_size / (1024 * 1024)) + 1)):
+                if chunk:
+                    f.write(chunk)
+                    f.flush()
+    except (KeyboardInterrupt, Exception) as e:
+        print("[ERROR] Download failed, deleting file. err:", e)
+        path.unlink(missing_ok=True)
+        exit(1)
+
+    if url.endswith(".gz") and not path.suffix == ".gz":
+        compressed: Path = path.rename(path.with_suffix(path.suffix + ".gz"))
+
+        try:
+            with gzip.open(compressed) as src, path.open(mode="wb") as dst:
+                shutil.copyfileobj(src, dst)
+        except (KeyboardInterrupt, Exception) as e:
+            print("[ERROR] Unpack failed, deleting file. err:", e)
+            path.unlink(missing_ok=True)
+        finally:
+            compressed.unlink(missing_ok=True)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        prog="seed_database",
+        description="Seeds database using the 2023 Amazon review dataset."
+    )
+
+    parser.add_argument('-d', '--dataset', default="Appliances", help="The dataset to use. Default is Appliances. See https://amazon-reviews-2023.github.io/#grouped-by-category")
+    parser.add_argument('-p', '--product-count', default=20_000, help="Number of products to use. Defaults to 20000.")
+    parser.add_argument('-i', '--image-count', default=20, help="Number of images to use. Defaults to 20.")
+    parser.add_argument('-y', '--confirm', action='store_true', help="Confirms every prompt without waiting for user interaction.")
+
+    args = parser.parse_args()
+
+    ensure_file(f"{args.dataset}.jsonl", f"https://datarepo.eng.ucsd.edu/mcauley_group/data/amazon_2023/raw/meta_categories/{args.dataset}.jsonl.gz")
+    ensure_file(f"meta_{args.dataset}.jsonl", f"https://datarepo.eng.ucsd.edu/mcauley_group/data/amazon_2023/raw/meta_categories/meta_{args.dataset}.jsonl.gz")
+
+    conn = sqlite3.connect("rrss.sqlite")
+    try:
+        conn.execute("SELECT 1 FROM product LIMIT 1;")
+    except sqlite3.OperationalError:
+        print("[ERROR] Database tables are not initialized, please initialize the database by running the application.")
+        exit(1)
+
+    if not args.confirm and input("Deleting all users, products, keywords, images. Are you sure? [y/N]").lower() != "y":
+        print("Operation aborted, exiting.")
+
+    print("Deleting rows from database...")
+    conn.execute("DELETE FROM product;")
+    conn.execute("DELETE FROM product_image;")
+    conn.execute("DELETE FROM product_keyword;")
+    conn.execute("DELETE FROM user;")
+    conn.commit()
+    print("Deleted rows from database.")
+
+    print("Loading products...")
+    products: list[dict[str, str]] = []
+    with open(f"meta_{args.dataset}.jsonl") as f:
+        for line in f:
+            products.append(json.loads(line))
+    print(f"Loaded {len(products)} products, truncating to {args.product_count}.")
+    random.shuffle(products)
+    products = products[:args.product_count]
+
+    asin_map: dict[str, dict[str, str]] = {}
+    name_map: dict[str, dict[str, str]] = {}
+    for product in products:
+        name_map[product["title"]] = product
+        asin_map[product["parent_asin"]] = product
+
+    print("Creating users...")
+    for user in tqdm(USERS):
+        # firstName=\2\&lastName=\3\&username=\1\&email=\1%40example.com\&phoneNumber=%2B90\1\&password1=\1\&password2=\1\&accountType=customer;g'
+        r = requests.post("http://localhost:8080/signup", data={
+            "firstName": user.first_name,
+            "lastName": user.last_name,
+            "username": user.username,
+            "email": f"{user.username}@example.com",
+            "phoneNumber": f"+90{user.username}",
+            "password1": user.username,
+            "password2": user.username,
+            "accountType": user.type,
+        })
+        r.raise_for_status()
+
+    print("Approving users...")
+    conn.execute("UPDATE user SET is_approved = true;")
+    conn.commit()
+
+    print("Downloading images...")
+    for i, product in enumerate(products[:args.image_count]):
+        ensure_file(f"public/product-images/picture{i}.jpg", product["images"][0]["large"])
+
+    print("Inserting products to database...")
+    conn.executemany('INSERT INTO product(created_at, name, description, price, owner_id) VALUES(unixepoch(), ?, ?, ?, ?)', map(lambda p: (p["title"], p["description"][0] if p["description"] else "", p["price"] or 0.0, random.randint(12, 21)), products))
+    conn.commit()
+    print("Inserted products into database.")
+
+    print("Setting pictures...")
+    conn.execute(f"INSERT INTO product_image(caption, created_at, display_order, image_path, product_id) SELECT '', unixepoch(), 0, '/product-images/picture' || cast(abs(random() % {args.image_count}) as text) || '.jpg', id FROM product;")
+    conn.commit()
+    print("Setted images.")
+
+    id_map: dict[str, str] = {}
+    curr = conn.execute("SELECT name, id FROM product;")
+    for name, id in curr.fetchall():
+        id_map[name] = id
+
+    print("Setting tags...")
+    for product in tqdm(products):
+        for category in product["categories"]:
+            conn.execute("INSERT INTO product_keyword(keyword, product_id) VALUES(?, ?);", (category, id_map[product["title"]]))
+    conn.commit()
+
+    print("Loading reviews...")
+    reviews: list[dict[str, str]] = []
+    with open(f"{args.dataset}.jsonl") as f:
+        for line in f:
+            reviews.append(json.loads(line))
+    print(f"Loaded {len(reviews)} reviews.")
+
+    print("Adding reviews...")
+    for review in tqdm(reviews):
+        try:
+            product: dict[str, str] = asin_map[review["parent_asin"]]
+            sql_id: int = id_map[product["title"]]
+            conn.execute("INSERT INTO review(title, body, created_at, score, author_id, product_id) VALUES(?, ?, unixepoch(), ?, ?, ?);", (review["title"], review["text"], int(review["rating"]), random.randint(1, 11), sql_id))
+        except KeyError:
+            pass
+    conn.commit()
+    print("Finished.")
+
+if __name__ == "__main__":
+    main()
