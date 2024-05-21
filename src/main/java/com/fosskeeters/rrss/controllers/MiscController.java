@@ -8,15 +8,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class IndexController {
+public class MiscController {
     private final ProductRepository productRepository;
 
-    public IndexController(ProductRepository productRepository) {
+    public MiscController(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
