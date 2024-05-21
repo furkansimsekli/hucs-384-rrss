@@ -24,7 +24,7 @@ public class IndexController {
     public String indexGetController(Model model, HttpSession session){
         Optional<List<Product>> latestProducts = productRepository.findTop10ByOrderByCreatedAtDesc();
 
-        if (session.getAttribute("username") == null) {
+        if (!session.getAttribute("username") == null) {
             // TODO : Use recommendation algorithm here.
         }
 
