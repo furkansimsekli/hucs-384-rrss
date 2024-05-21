@@ -140,20 +140,48 @@ nav * {
 
 /* ============= MAIN PAGE ========== */
 
-.slideshow {
-    padding: 0 30%;
-    overflow-x: scroll;
-    scrollbar-width: none;
-    scroll-behavior: smooth;
-    scroll-snap-type: x mandatory;
-    gap: 20px;
-    mask-image: linear-gradient(270deg, rgba(255, 255, 255, 0.0), 10%, rgba(255, 255, 255, 1.0), 90%, rgba(255, 255, 255, 0.0));
+#index-carousel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.slideshow > * {
-    transform-origin: center center;
-    transform: scale(1);
-    scroll-snap-align: center;
+#index-carousel div > * {
+    display: inline-block;
+}
+
+#index-carousel div input {
+    display: none;
+}
+
+#index-carousel div input + label, #index-carousel div input + label + a {
+    height: 270px;
+    margin: 5px;
+    border-radius: 15px;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+}
+
+#index-carousel div input + label {
+    width: 40px;
+    transition: width 0.05s ease-in;
+    transition-delay: 0.25s;
+}
+
+#index-carousel div input + label + a {
+    width: 0px;
+    transition: width 0.3s ease-in;
+}
+
+#index-carousel div input:checked + label {
+    width: 0px;
+    transition-delay: 0s;
+}
+
+#index-carousel div input:checked + label + a {
+    width: 500px;
+    transition: width 0.3s ease-in;
 }
 
 /* ============= AUTH FORM ========== */
