@@ -1,4 +1,5 @@
 <html layout:decorate="~{common/skeleton}">
+
 <body>
     <main class="row-container" layout:fragment="content">
         <div class="slideshow column-container" style="max-height: 200px;">
@@ -12,12 +13,18 @@
             <a href="#slide3"><input name="current-slide" type="radio" checked="" /></a>
         </div>
         <h2 style="margin-left: 5vw;">Latest Products</h2>
-        <div th:if="${latestProducts.isPresent()}" class="column-container" style="gap: 20px; margin-left: 5vw; overflow-x: auto;">
+        <div th:if="${latestProducts.isPresent()}" class="column-container"
+            style="gap: 20px; margin-left: 5vw; overflow-x: auto;">
             <div th:each="product : ${latestProducts.get()}" class="list-cell row-container">
-                <a th:href="@{/products/{productId}(productId=${product.id})}" style="text-decoration: none; color: black; gap: 3px;">
-                    <img th:unless="${product.images.size() > 0}" src="/filler-product.png" style="max-width: 75px; max-height: 100px;"></img>
-                    <img th:if="${product.images.size() > 0}" th:src="${product.images[0].imagePath}" style="max-width: 75px; max-height: 100px;"></img>
-                    <h3 th:text="${product.name}" style="margin: 0px; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "></h3>
+                <a th:href="@{/products/{productId}(productId=${product.id})}"
+                    style="text-decoration: none; color: black; gap: 3px;">
+                    <img th:unless="${product.images.size() > 0}" src="/filler-product.png"
+                        style="max-width: 75px; max-height: 100px;"></img>
+                    <img th:if="${product.images.size() > 0}" th:src="${product.images[0].imagePath}"
+                        style="max-width: 75px; max-height: 100px;"></img>
+                    <h3 th:text="${product.name}"
+                        style="margin: 0px; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
+                    </h3>
                     <span th:text="${product.getDescription()}"></span>
                     <span th:text="@{'$' + ${product.getPrice()}}"></span>
                 </a>
@@ -25,12 +32,18 @@
         </div>
         <h2 style="margin-left: 5vw;">You Might Like</h2>
         <!-- Change latestProducts to the recommendation list object for this section. -->
-        <div th:if="${latestProducts.isPresent()}" class="column-container" style="gap: 20px; margin-left: 5vw; overflow-x: auto;">
+        <div th:if="${latestProducts.isPresent()}" class="column-container"
+            style="gap: 20px; margin-left: 5vw; overflow-x: auto;">
             <div th:each="product : ${latestProducts.get()}" class="list-cell row-container">
-                <a th:href="@{/products/{productId}(productId=${product.id})}" style="text-decoration: none; color: black; gap: 3px;">
-                    <img th:unless="${product.images.size() > 0}" src="/filler-product.png" style="max-width: 75px; max-height: 100px;"></img>
-                    <img th:if="${product.images.size() > 0}" th:src="${product.images[0].imagePath}" style="max-width: 75px; max-height: 100px;"></img>
-                    <h3 th:text="${product.name}" style="margin: 0px; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "></h3>
+                <a th:href="@{/products/{productId}(productId=${product.id})}"
+                    style="text-decoration: none; color: black; gap: 3px;">
+                    <img th:unless="${product.images.size() > 0}" src="/filler-product.png"
+                        style="max-width: 75px; max-height: 100px;"></img>
+                    <img th:if="${product.images.size() > 0}" th:src="${product.images[0].imagePath}"
+                        style="max-width: 75px; max-height: 100px;"></img>
+                    <h3 th:text="${product.name}"
+                        style="margin: 0px; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
+                    </h3>
                     <span th:text="${product.getDescription()}"></span>
                     <span th:text="@{'$' + ${product.getPrice()}}"></span>
                 </a>
