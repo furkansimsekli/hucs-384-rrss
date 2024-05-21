@@ -1,23 +1,28 @@
 package com.fosskeeters.rrss.controllers;
 
+import com.fosskeeters.rrss.dtos.PasswordRecoveryDto;
 import com.fosskeeters.rrss.dtos.UserDto;
+import com.fosskeeters.rrss.models.PasswordRecovery;
 import com.fosskeeters.rrss.models.User;
+import com.fosskeeters.rrss.repositories.PasswordRecoveryRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
+import com.fosskeeters.rrss.services.EmailService;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.SecureRandom;
 import java.util.Objects;
 import java.util.Optional;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -25,10 +30,15 @@ import jakarta.validation.Valid;
 public class AuthenticationController {
     private final UserRepository userRepository;
     private final Argon2PasswordEncoder encoder;
+    private final EmailService emailService;
+    private final PasswordRecoveryRepository passwordRecoveryRepository;
 
-    public AuthenticationController(UserRepository userRepository) {
+    public AuthenticationController(UserRepository userRepository, EmailService emailService,
+                                    PasswordRecoveryRepository passwordRecoveryRepository) {
         this.userRepository = userRepository;
         this.encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+        this.emailService = emailService;
+        this.passwordRecoveryRepository = passwordRecoveryRepository;
     }
 
     @GetMapping("/signup")
@@ -101,6 +111,70 @@ public class AuthenticationController {
         return "redirect:/";
     }
 
+    @PostMapping("/password-recovery")
+    public String passwordRecoveryGetHandler(@RequestParam String email,
+                                             RedirectAttributes redirectAttrs) {
+        Optional<User> userOptional = userRepository.findByEmail(email.trim().toLowerCase());
+
+        if (userOptional.isEmpty()) {
+            // Don't let them know if the email exist in the system
+            redirectAttrs.addFlashAttribute(
+                    "notification",
+                    "After the admin approval, an email will be sent to your email address. Please check your spam folder just in case!");
+            return "redirect:/login";
+        }
+
+        PasswordRecovery passwordRecovery =
+                new PasswordRecovery(userOptional.get(), generateToken(16));
+        passwordRecoveryRepository.save(passwordRecovery);
+
+        redirectAttrs.addFlashAttribute(
+                "notification",
+                "After the admin approval, an email will be sent to your email address. Please check your spam folder just in case!");
+        return "redirect:/login";
+    }
+
+    @GetMapping("/new-password/{token}")
+    public String newPasswordGetHandler(@PathVariable String token, Model model) {
+        Optional<PasswordRecovery> passwordRecovery = passwordRecoveryRepository.findByToken(token);
+
+        if (passwordRecovery.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        model.addAttribute("passwordRecoveryDto", new PasswordRecoveryDto());
+        return "new_password";
+    }
+
+    @PostMapping("/new-password/{token}")
+    public String newPasswordPostHandler(@PathVariable String token,
+                                         @Valid
+                                         @ModelAttribute PasswordRecoveryDto passwordRecoveryDto,
+                                         BindingResult bindingResult) {
+        Optional<PasswordRecovery> passwordRecovery = passwordRecoveryRepository.findByToken(token);
+
+        if (passwordRecovery.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        if (!Objects.equals(passwordRecoveryDto.getNewPassword1(),
+                            passwordRecoveryDto.getNewPassword2())) {
+            bindingResult.addError(new FieldError("passwordRecoveryDto", "newPassword1",
+                                                  "Passwords do not match!"));
+        }
+
+        if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult);
+            return "new_password";
+        }
+
+        User user = passwordRecovery.get().getUser();
+        user.setPassword(encoder.encode(passwordRecoveryDto.getNewPassword1()));
+        userRepository.save(user);
+        passwordRecoveryRepository.delete(passwordRecovery.get());
+        return "redirect:/login";
+    }
+
     /**
      * Validates the data provided in a UserDto object for user registration.
      * This method checks for the following conflicts and adds error messages to the provided
@@ -147,5 +221,30 @@ public class AuthenticationController {
             bindingResult.addError(
                     new FieldError("userDto", "password1", "Passwords do not match!"));
         }
+    }
+
+    /**
+     * Generates a random token of the specified length.
+     * <p>
+     * This method uses a {@link SecureRandom} instance to generate a random byte array of the given
+     * length. Each byte in the array is then converted to a two-character hexadecimal string
+     * representation using zero-padding. Finally, all the hexadecimal strings are concatenated and
+     * returned as a single String.
+     *
+     * @param length the desired length of the token (in bytes)
+     * @return a random token string of the specified length, or null if an error occurs during
+     *         generation
+     * @throws IllegalArgumentException if the provided length is less than or equal to zero
+     */
+    private String generateToken(int length) {
+        byte[] bytes = new byte[length];
+        new SecureRandom().nextBytes(bytes);
+        StringBuilder token = new StringBuilder(length * 2);
+
+        for (byte b : bytes) {
+            token.append(String.format("%02x", b));
+        }
+
+        return token.toString();
     }
 }
