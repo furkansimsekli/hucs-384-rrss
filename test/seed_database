@@ -95,6 +95,7 @@ def main() -> None:
     parser.add_argument('-d', '--dataset', default="Appliances", help="The dataset to use. Default is Appliances. See https://amazon-reviews-2023.github.io/#grouped-by-category")
     parser.add_argument('-p', '--product-count', default=20_000, help="Number of products to use. Defaults to 20000.")
     parser.add_argument('-i', '--image-count', default=20, help="Number of images to use. Defaults to 20.")
+    parser.add_argument('-z', '--skip-zero-price', action="store_true", help="Skip products with 0 or null price.")
     parser.add_argument('-y', '--confirm', action='store_true', help="Confirms every prompt without waiting for user interaction.")
 
     args = parser.parse_args()
@@ -125,6 +126,11 @@ def main() -> None:
     products: list[dict[str, str]] = []
     with open(f"meta_{args.dataset}.jsonl") as f:
         for line in f:
+            product: dict[str, str] = json.loads(line)
+
+            if args.skip_zero_price and product["price"] is None or product["price"] == 0:
+                continue
+
             products.append(json.loads(line))
     print(f"Loaded {len(products)} products, truncating to {args.product_count}.")
     random.shuffle(products)
