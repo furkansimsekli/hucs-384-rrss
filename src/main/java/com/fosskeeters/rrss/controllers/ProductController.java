@@ -3,22 +3,19 @@ package com.fosskeeters.rrss.controllers;
 import com.fosskeeters.rrss.dtos.ProductDto;
 import com.fosskeeters.rrss.dtos.ReviewDto;
 import com.fosskeeters.rrss.dtos.ReviewReplyDto;
-<<<<<<< HEAD
+import com.fosskeeters.rrss.models.*;
 import com.fosskeeters.rrss.models.BrowsingHistory;
 import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.ProductImage;
 import com.fosskeeters.rrss.models.ProductKeyword;
 import com.fosskeeters.rrss.models.Review;
 import com.fosskeeters.rrss.models.User;
+import com.fosskeeters.rrss.repositories.*;
 import com.fosskeeters.rrss.repositories.BrowsingHistoryRepository;
 import com.fosskeeters.rrss.repositories.ProductImageRepository;
 import com.fosskeeters.rrss.repositories.ProductKeywordRepository;
 import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
-=======
-import com.fosskeeters.rrss.models.*;
-import com.fosskeeters.rrss.repositories.*;
->>>>>>> e47f9e2 (backend: handle wish and unwish)
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -57,8 +54,7 @@ public class ProductController {
                              ProductKeywordRepository productKeywordRepository,
                              UserRepository userRepository,
                              BrowsingHistoryRepository browsingHistoryRepository,
-                             WishRepository wishRepository)
-            throws IOException {
+                             WishRepository wishRepository) throws IOException {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.productImageRepository = productImageRepository;
@@ -80,6 +76,7 @@ public class ProductController {
 
         User user = null;
         Review review = null;
+        Wish wish = null;
         List<ReviewReplyDto> reviewReplyDtoList = new ArrayList<>();
         if (session.getAttribute("username") != null) {
             review = product.get()
@@ -102,10 +99,16 @@ public class ProductController {
 
             if (user != null) {
                 browsingHistoryRepository.save(new BrowsingHistory(product.get(), user));
+                Optional<Wish> wishOpt = wishRepository.findByProductAndOwner(product.get(), user);
+
+                if (wishOpt.isPresent()) {
+                    wish = wishOpt.get();
+                }
             }
         }
         model.addAttribute("isCustomer",
                            user != null ? user.getType() == User.Type.CUSTOMER : false);
+        model.addAttribute("isInWishlist", wish != null);
         model.addAttribute("isProductOwner",
                            user != null ? user.getId() == product.get().getOwner().getId() : false);
         model.addAttribute("reviewReplyDtoList",
