@@ -3,6 +3,7 @@ package com.fosskeeters.rrss.controllers;
 import com.fosskeeters.rrss.dtos.ProductDto;
 import com.fosskeeters.rrss.dtos.ReviewDto;
 import com.fosskeeters.rrss.dtos.ReviewReplyDto;
+<<<<<<< HEAD
 import com.fosskeeters.rrss.models.BrowsingHistory;
 import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.ProductImage;
@@ -14,6 +15,10 @@ import com.fosskeeters.rrss.repositories.ProductImageRepository;
 import com.fosskeeters.rrss.repositories.ProductKeywordRepository;
 import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
+=======
+import com.fosskeeters.rrss.models.*;
+import com.fosskeeters.rrss.repositories.*;
+>>>>>>> e47f9e2 (backend: handle wish and unwish)
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -22,6 +27,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,18 +50,21 @@ public class ProductController {
     private final ProductKeywordRepository productKeywordRepository;
     private final UserRepository userRepository;
     private final BrowsingHistoryRepository browsingHistoryRepository;
+    private final WishRepository wishRepository;
 
     public ProductController(ProductRepository productRepository,
                              ProductImageRepository productImageRepository,
                              ProductKeywordRepository productKeywordRepository,
                              UserRepository userRepository,
-                             BrowsingHistoryRepository browsingHistoryRepository)
+                             BrowsingHistoryRepository browsingHistoryRepository,
+                             WishRepository wishRepository)
             throws IOException {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.productImageRepository = productImageRepository;
         this.productKeywordRepository = productKeywordRepository;
         this.browsingHistoryRepository = browsingHistoryRepository;
+        this.wishRepository = wishRepository;
 
         // FIXME: This should be variable instead of hardcoded.
         Files.createDirectories(Paths.get("public", "product-images"));
@@ -303,5 +312,72 @@ public class ProductController {
 
         productRepository.delete(product.get());
         return "redirect:/merchants/" + product.get().getOwner().getUsername();
+    }
+
+    @GetMapping("/{productId}/wish")
+    public String addWish(HttpSession session, @PathVariable long productId,
+                          RedirectAttributes redirectAttrs) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String username = (String) session.getAttribute("username");
+        Optional<User> user = userRepository.findByUsername(username);
+        Optional<Product> product = productRepository.findById(productId);
+
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        if (user.get().getType() != User.Type.CUSTOMER) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+
+        if (product.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        if (wishRepository.existsByProductAndOwner(product.get(), user.get())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+
+        wishRepository.save(new Wish(product.get(), user.get()));
+        redirectAttrs.addFlashAttribute("notification",
+                                        "This item has been successfully added to your wishlist!");
+        return "redirect:/products/" + productId;
+    }
+
+    @GetMapping("/{productId}/unwish")
+    public String deleteWish(HttpSession session, @PathVariable long productId,
+                             RedirectAttributes redirectAttrs) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String username = (String) session.getAttribute("username");
+        Optional<User> user = userRepository.findByUsername(username);
+        Optional<Product> product = productRepository.findById(productId);
+
+        if (user.isEmpty()) {
+            System.out.println("Here-4");
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        if (product.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        Optional<Wish> wish = wishRepository.findByProductAndOwner(product.get(), user.get());
+
+        if (wish.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        wishRepository.delete(wish.get());
+        redirectAttrs.addFlashAttribute(
+                "notification", "This item has been successfully removed from your wishlist!");
+        return "redirect:/products/" + productId;
     }
 }
