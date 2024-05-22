@@ -36,7 +36,7 @@ public class CommunityController {
     private final EntryRepository entryRepository;
 
     public CommunityController(UserRepository userRepository, TopicRepository topicRepository,
-            EntryRepository entryRepository) {
+                               EntryRepository entryRepository) {
         this.userRepository = userRepository;
         this.topicRepository = topicRepository;
         this.entryRepository = entryRepository;
@@ -126,7 +126,7 @@ public class CommunityController {
 
     @PostMapping("/topics/create")
     public String postTopicCreate(HttpSession session, @Valid @ModelAttribute TopicDto topicDto,
-            BindingResult bindingResult, Model model) {
+                                  BindingResult bindingResult, Model model) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -174,8 +174,8 @@ public class CommunityController {
 
         // Only admins, mods and the topic owner can delete the topic
         if (user.get().getId() != topic.get().getOwner().getId()
-                && user.get().getType() != User.Type.ADMIN
-                && user.get().getType() != User.Type.COMMUNITY_MOD) {
+            && user.get().getType() != User.Type.ADMIN
+            && user.get().getType() != User.Type.COMMUNITY_MOD) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -205,8 +205,8 @@ public class CommunityController {
 
         // Only admins, mods and the topic owner can update the topic
         if (user.get().getId() != topic.get().getOwner().getId()
-                && user.get().getType() != User.Type.ADMIN
-                && user.get().getType() != User.Type.COMMUNITY_MOD) {
+            && user.get().getType() != User.Type.ADMIN
+            && user.get().getType() != User.Type.COMMUNITY_MOD) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -219,7 +219,8 @@ public class CommunityController {
 
     @PostMapping("/topics/{topicId}/update")
     public String postUpdateTopic(HttpSession session, @Valid @ModelAttribute TopicDto topicDto,
-            BindingResult bindingResult, Model model, @PathVariable long topicId) {
+                                  BindingResult bindingResult, Model model,
+                                  @PathVariable long topicId) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -240,8 +241,8 @@ public class CommunityController {
 
         // Only admins, mods and the topic owner can delete the topic
         if (user.get().getId() != topic.getOwner().getId()
-                && user.get().getType() != User.Type.ADMIN
-                && user.get().getType() != User.Type.COMMUNITY_MOD) {
+            && user.get().getType() != User.Type.ADMIN
+            && user.get().getType() != User.Type.COMMUNITY_MOD) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -261,7 +262,7 @@ public class CommunityController {
 
     @GetMapping("/topics/{topicId}/entries/{entryId}/update")
     public String getEntryUpdate(HttpSession session, @PathVariable long topicId,
-            @PathVariable long entryId, Model model) {
+                                 @PathVariable long entryId, Model model) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -291,8 +292,8 @@ public class CommunityController {
 
         // Only admins, mods and the entry owner can update the entry
         if (user.get().getId() != entry.get().getAuthor().getId()
-                && user.get().getType() != User.Type.ADMIN
-                && user.get().getType() != User.Type.COMMUNITY_MOD) {
+            && user.get().getType() != User.Type.ADMIN
+            && user.get().getType() != User.Type.COMMUNITY_MOD) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -305,8 +306,8 @@ public class CommunityController {
 
     @PostMapping("/topics/{topicId}/entries/{entryId}/update")
     public String postEntryUpdate(HttpSession session, @Valid @ModelAttribute EntryDto entryDto,
-            BindingResult bindingResult, Model model, @PathVariable long topicId,
-            @PathVariable long entryId) {
+                                  BindingResult bindingResult, Model model,
+                                  @PathVariable long topicId, @PathVariable long entryId) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -338,8 +339,8 @@ public class CommunityController {
 
         // Only admins, mods and the entry owner can update the entry
         if (user.get().getId() != entry.getAuthor().getId()
-                && user.get().getType() != User.Type.ADMIN
-                && user.get().getType() != User.Type.COMMUNITY_MOD) {
+            && user.get().getType() != User.Type.ADMIN
+            && user.get().getType() != User.Type.COMMUNITY_MOD) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -359,8 +360,8 @@ public class CommunityController {
 
     @GetMapping("/topics/{topicId}/entries/{entryId}/delete")
     public String deleteEntry(HttpSession session, @Valid @ModelAttribute EntryDto entryDto,
-            BindingResult bindingResult, Model model, @PathVariable long topicId,
-            @PathVariable long entryId) {
+                              BindingResult bindingResult, Model model, @PathVariable long topicId,
+                              @PathVariable long entryId) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -392,8 +393,8 @@ public class CommunityController {
 
         // Only admins, mods and the entry owner can delete the entry
         if (user.get().getId() != entry.getAuthor().getId()
-                && user.get().getType() != User.Type.ADMIN
-                && user.get().getType() != User.Type.COMMUNITY_MOD) {
+            && user.get().getType() != User.Type.ADMIN
+            && user.get().getType() != User.Type.COMMUNITY_MOD) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -408,7 +409,8 @@ public class CommunityController {
 
     @GetMapping("/topics/{topicId}/entries/create")
     public String createEntry(HttpSession session, @Valid @ModelAttribute EntryDto entryDto,
-            BindingResult bindingResult, Model model, @PathVariable long topicId) {
+                              BindingResult bindingResult, Model model,
+                              @PathVariable long topicId) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
