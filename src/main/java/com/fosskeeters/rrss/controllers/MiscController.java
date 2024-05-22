@@ -1,36 +1,56 @@
 package com.fosskeeters.rrss.controllers;
 
-import com.fosskeeters.rrss.models.Product;
+import com.fosskeeters.rrss.models.User;
+import com.fosskeeters.rrss.repositories.BrowsingHistoryRepository;
 import com.fosskeeters.rrss.repositories.ProductRepository;
+import com.fosskeeters.rrss.repositories.UserRepository;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class MiscController {
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
+    private final BrowsingHistoryRepository browsingHistoryRepository;
 
-    public MiscController(ProductRepository productRepository) {
+    public MiscController(ProductRepository productRepository, UserRepository userRepository,
+                          BrowsingHistoryRepository browsingHistoryRepository) {
         this.productRepository = productRepository;
+        this.userRepository = userRepository;
+        this.browsingHistoryRepository = browsingHistoryRepository;
     }
 
     @GetMapping("/")
     public String indexGetController(Model model, HttpSession session) {
-        // TODO: get trending products from browsing history (last 24h maybe)
-        List<Product> trendingProducts = productRepository.findTop10ByOrderByCreatedAtDesc();
-        List<Product> latestProducts = productRepository.findTop10ByOrderByCreatedAtDesc();
+        model.addAttribute("trendingProducts",
+                           browsingHistoryRepository.findMostViewedProduct(
+                                   LocalDateTime.now().minusDays(7), PageRequest.of(0, 10)));
+        model.addAttribute("latestProducts", productRepository.findTop10ByOrderByCreatedAtDesc());
 
         if (session.getAttribute("username") != null) {
-            // TODO : Use recommendation algorithm here.
-        }
+            Optional<User> user =
+                    userRepository.findByUsername((String) session.getAttribute("username"));
 
-        model.addAttribute("carouselProducts", trendingProducts);
-        model.addAttribute("latestProducts", latestProducts);
+            if (user.isEmpty()) {
+                session.removeAttribute("username");
+                return "redirect:/login";
+            }
+
+            model.addAttribute("recommendations",
+                               browsingHistoryRepository.findRecommendedForUser(user.get()));
+        } else {
+            model.addAttribute("recommendations",
+                               browsingHistoryRepository.findMostViewedProduct(
+                                       LocalDateTime.now().minusDays(7), PageRequest.of(0, 30)));
+        }
 
         return "index";
     }
