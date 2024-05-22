@@ -1,0 +1,91 @@
+<html layout:decorate="~{common/skeleton}">
+
+<body>
+    <main class="row-container" style="padding: 0 10vw; gap: 50px;" layout:fragment="content">
+        <div class="column-container" style="gap: 50px; flex-wrap: wrap;">
+            <img th:src="${topic.owner.profileImagePath}" width="100px" height="100px" />
+            <div class="row-container">
+                <span th:text="'At ' + ${#temporals.format(topic.createdAt, 'hh:mm - dd MMM yyyy')} + ','"
+                    style="color: gray;"></span>
+                <span th:text="${topic.owner.username} + ' asked: '"
+                    style="margin-top: 10px; font-weight: 300; font-size: 20;">0</span>
+                <h2 th:text="${topic.title}" style="margin: 0; margin-top: 10px;">Topic Untitled</h2>
+            </div>
+            <div class="spacer"></div>
+            <div th:if="${isModOrAdmin != null || topic.owner.username.equals(#ctx.session.username)}"
+                class="row-container" style="gap: 10px;">
+                <a th:href="@{/community/topics/{id}/update(id=${topic.id})}" class="mini-button">
+                    Edit
+                </a>
+                <a th:href="'#delete-modal-' + ${topic.id}" class="red-button">
+                    Delete
+                </a>
+                <div th:id="'delete-modal-' + ${topic.id}" class="modal">
+                    <div class="modal-content">
+                        <h2 style="margin-top: 10px;">Post Deletion</h2>
+                        <p style="margin-bottom: 40px;">
+                            This action will delete this post from the system. Do you confirm?
+                        </p>
+                        <a th:href="@{/community/topics/{id}/delete(id=${topic.id})}" class="red-button">Confirm</a>
+                        <a href="#" class="mini-button">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-container" style="gap: 10px;">
+            <h2>Replies</h2>
+            <div class="row-container" style="gap: 30px;">
+                <div th:each="entry : ${topic.entries}" class="row-container" style="gap: 20px;">
+                    <div class="column-container" style="gap: 20px;">
+                        <img th:src="${entry.author.profileImagePath}" width="64px" height="64px" />
+                        <div class="row-container">
+                            <div>
+                                <span
+                                    th:text="'At ' + ${#temporals.format(entry.createdAt, 'hh:mm - dd MMM yyyy')} + ','"
+                                    style="color: gray; font-size:13"></span>
+                                <span th:text="${entry.author.username} + ' replied: '"
+                                    style="margin-right: 20px; font-weight: 300; font-size: 15; color: rgb(58, 58, 58)"/>
+                                <span th:if="${isModOrAdmin != null || entry.author.username.equals(#ctx.session.username)}">
+                                    <a th:href="@{/community/topics/{topicId}/entries/{entryId}/update(topicId=${topic.id},entryId=${entry.id})}">
+                                        <img th:src="@{/edit.svg}" height="16" style="margin-right: 5px;" />
+                                    </a>
+                                    <a th:href="'#delete-modal-entry-' + ${entry.id}">
+                                        <img th:src="@{/trash.svg}" height="16" />
+                                    </a>
+                                </span>
+                                <div th:id="'delete-modal-entry-' + ${entry.id}" class="modal">
+                                    <div class="modal-content">
+                                        <h2 style="margin-top: 10px;">Post Deletion</h2>
+                                        <p style="margin-bottom: 40px;">
+                                            This action will delete this post from the system. Do you confirm?
+                                        </p>
+                                        <a th:href="@{/community/topics/{topicId}/entries/{entryId}/delete(topicId=${topic.id},entryId=${entry.id})}" class="red-button">Confirm</a>
+                                        <a href="#" class="mini-button">Back</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span th:text="${entry.body}" style="margin-top: 5px; font-weight: 500; font-size: 18"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="column-container" style="gap: 1vw;" th:if="${true}">
+                    <input type="checkbox" class="buttonish-checkbox" id="new-entry"/>
+                    <label class="buttonish-checkbox-label hidden-on-edit" for="new-entry">New Entry</label>
+                    <form class="row-container shown-on-edit" style="gap: 10px; width: 30em;" method="get"
+                        th:action="@{/community/topics/{topicId}/entries/create(topicId=${topic.id})}"
+                        th:object="${entryDto}">
+                        <textarea th:errorclass="error-input" name="body" style="height: 10em;" placeholder="Body"
+                            th:field="${entryDto.body}"></textarea>
+                        <label class="error-text" for="body" th:if="${#fields.hasErrors('body')}"
+                            th:errors="${entryDto.body}" />
+                        <input type="submit" value="Submit" style="padding: 5px;" />
+                    </form>
+                    <label class="buttonish-checkbox-label shown-on-edit" for="new-entry"
+                        style="height: fit-content;">Cancel</label>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
