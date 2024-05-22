@@ -3,11 +3,13 @@ package com.fosskeeters.rrss.controllers;
 import com.fosskeeters.rrss.dtos.ProductDto;
 import com.fosskeeters.rrss.dtos.ReviewDto;
 import com.fosskeeters.rrss.dtos.ReviewReplyDto;
+import com.fosskeeters.rrss.models.BrowsingHistory;
 import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.ProductImage;
 import com.fosskeeters.rrss.models.ProductKeyword;
 import com.fosskeeters.rrss.models.Review;
 import com.fosskeeters.rrss.models.User;
+import com.fosskeeters.rrss.repositories.BrowsingHistoryRepository;
 import com.fosskeeters.rrss.repositories.ProductImageRepository;
 import com.fosskeeters.rrss.repositories.ProductKeywordRepository;
 import com.fosskeeters.rrss.repositories.ProductRepository;
@@ -41,15 +43,19 @@ public class ProductController {
     private final ProductImageRepository productImageRepository;
     private final ProductKeywordRepository productKeywordRepository;
     private final UserRepository userRepository;
+    private final BrowsingHistoryRepository browsingHistoryRepository;
 
     public ProductController(ProductRepository productRepository,
                              ProductImageRepository productImageRepository,
                              ProductKeywordRepository productKeywordRepository,
-                             UserRepository userRepository) throws IOException {
+                             UserRepository userRepository,
+                             BrowsingHistoryRepository browsingHistoryRepository)
+            throws IOException {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.productImageRepository = productImageRepository;
         this.productKeywordRepository = productKeywordRepository;
+        this.browsingHistoryRepository = browsingHistoryRepository;
 
         // FIXME: This should be variable instead of hardcoded.
         Files.createDirectories(Paths.get("public", "product-images"));
@@ -83,6 +89,10 @@ public class ProductController {
             if (user != null && product.get().getOwner().getId() == user.getId()) {
                 reviewReplyDtoList.addAll(
                         product.get().getReviews().stream().map(ReviewReplyDto::new).toList());
+            }
+
+            if (user != null) {
+                browsingHistoryRepository.save(new BrowsingHistory(product.get(), user));
             }
         }
         model.addAttribute("isCustomer",
