@@ -72,7 +72,8 @@ public class ErrorController implements Filter {
             filterChain.doFilter(request, response);
         } catch (Exception ex) {
             if (ex.getCause() instanceof TemplateEngineException) {
-                printException(ex.getCause().getCause());
+                printException(ex.getCause().getCause() != null ? ex.getCause().getCause()
+                                                                : ex.getCause());
             }
 
             RequestDispatcher error = request.getRequestDispatcher("error");
