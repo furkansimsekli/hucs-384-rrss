@@ -4,7 +4,7 @@
     <main class="row-container" layout:fragment="content">
         <h2 style="margin-left: 5vw;">Featured Products</h2>
         <div id="index-carousel">
-            <div th:each="product : ${carouselProducts}">
+            <div th:each="product : ${trendingProducts}">
                 <input type="radio" name="carousel" th:id="radio + ${productStat.index}">
                 <label th:for="radio + ${productStat.index}"
                     th:style="'background-image: url(' + ${product.images.size() > 0 ? product.images[0].imagePath : '/filler-product.png'} + ');'"></label>
@@ -37,8 +37,8 @@
             </div>
         </div>
         <h2 style="margin-left: 5vw;">You Might Like</h2>
-        <div th:if="${trendingProducts}" class="column-container" style="gap: 20px; margin-left: 5vw; overflow-x: auto;">
-            <div th:each="product : ${trendingProducts}" class="list-cell row-container" style="max-width: 80px;">
+        <div th:if="${recommendations}" class="column-container" style="gap: 20px; margin-left: 5vw; overflow-x: auto;">
+            <div th:each="product : ${recommendations}" class="list-cell row-container" style="max-width: 80px;">
                 <a th:href="@{/products/{productId}(productId=${product.id})}"
                     style="text-decoration: none; color: black; gap: 3px;">
                     <img th:unless="${product.images.size() > 0}" src="/filler-product.png"

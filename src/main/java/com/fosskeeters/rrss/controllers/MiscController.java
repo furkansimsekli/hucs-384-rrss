@@ -1,6 +1,5 @@
 package com.fosskeeters.rrss.controllers;
 
-import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.BrowsingHistoryRepository;
 import com.fosskeeters.rrss.repositories.ProductRepository;
@@ -12,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpSession;
@@ -32,9 +30,10 @@ public class MiscController {
 
     @GetMapping("/")
     public String indexGetController(Model model, HttpSession session) {
-        // TODO: get trending products from browsing history (last 24h maybe)
-        List<Product> trendingProducts = productRepository.findTop10ByOrderByCreatedAtDesc();
-        List<Product> latestProducts = productRepository.findTop10ByOrderByCreatedAtDesc();
+        model.addAttribute("trendingProducts",
+                           browsingHistoryRepository.findMostViewedProduct(
+                                   LocalDateTime.now().minusDays(7), PageRequest.of(0, 10)));
+        model.addAttribute("latestProducts", productRepository.findTop10ByOrderByCreatedAtDesc());
 
         if (session.getAttribute("username") != null) {
             Optional<User> user =
@@ -45,16 +44,13 @@ public class MiscController {
                 return "redirect:/login";
             }
 
-            model.addAttribute("trendingProducts",
+            model.addAttribute("recommendations",
                                browsingHistoryRepository.findRecommendedForUser(user.get()));
         } else {
-            model.addAttribute("trendingProducts",
+            model.addAttribute("recommendations",
                                browsingHistoryRepository.findMostViewedProduct(
-                                       LocalDateTime.now().minusDays(7), PageRequest.of(0, 10)));
+                                       LocalDateTime.now().minusDays(7), PageRequest.of(0, 30)));
         }
-
-        model.addAttribute("carouselProducts", trendingProducts);
-        model.addAttribute("latestProducts", latestProducts);
 
         return "index";
     }
