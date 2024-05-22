@@ -26,6 +26,8 @@ User = namedtuple("User", "username first_name last_name type")
 USERS: list[User] = [
     User("admin", "Marion", "Wheeler", "customer"), # Admin is set later in db.
 
+    User("mod", "Jack", "Bright", "customer"), # Mod is set later in db.
+
     User("user", "Emily", "Johnson", "customer"),
     User("user2", "Michael", "Williams", "customer"),
     User("user3", "Jessica", "Brown", "customer"),
@@ -163,6 +165,7 @@ def main() -> None:
 
     print("Approving users...")
     conn.execute("UPDATE user SET type = 2 WHERE username = 'admin';")
+    conn.execute("UPDATE user SET type = 3 WHERE username = 'mod';")
     conn.execute("UPDATE user SET is_approved = true;")
     conn.commit()
 
