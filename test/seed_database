@@ -162,6 +162,7 @@ def main() -> None:
         r.raise_for_status()
 
     print("Approving users...")
+    conn.execute("UPDATE user SET type = 2 WHERE username = 'admin';")
     conn.execute("UPDATE user SET is_approved = true;")
     conn.commit()
 
