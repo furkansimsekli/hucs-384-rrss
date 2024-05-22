@@ -3,6 +3,7 @@ package com.fosskeeters.rrss.controllers;
 import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.BrowsingHistoryRepository;
+import com.fosskeeters.rrss.repositories.ProductImageRepository;
 import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
@@ -22,12 +23,15 @@ public class MiscController {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final BrowsingHistoryRepository browsingHistoryRepository;
+    private final ProductImageRepository productImageRepository;
 
     public MiscController(ProductRepository productRepository, UserRepository userRepository,
-                          BrowsingHistoryRepository browsingHistoryRepository) {
+                          BrowsingHistoryRepository browsingHistoryRepository,
+                          ProductImageRepository productImageRepository) {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.browsingHistoryRepository = browsingHistoryRepository;
+        this.productImageRepository = productImageRepository;
     }
 
     @GetMapping("/")
@@ -58,11 +62,26 @@ public class MiscController {
     }
 
     @GetMapping("/search")
-    public String searchProduct(@RequestParam String query, Model model) {
-        List<Product> foundProducts =
-                productRepository.findByNameContainingOrDescriptionContainingAllIgnoreCase(query,
-                                                                                           query);
-        model.addAttribute("products", foundProducts);
+    public String searchProduct(@RequestParam String query,
+                                @RequestParam(required = false) String sort, Model model) {
+        List<Product> results;
+
+        if (sort != null && sort.equals("priceAsc")) {
+            results =
+                    productRepository
+                            .findByNameContainingOrDescriptionContainingAllIgnoreCaseOrderByPriceAsc(
+                                    query, query);
+        } else if (sort != null && sort.equals("priceDesc")) {
+            results =
+                    productRepository
+                            .findByNameContainingOrDescriptionContainingAllIgnoreCaseOrderByPriceDesc(
+                                    query, query);
+        } else {
+            results = productRepository.findByNameContainingOrDescriptionContainingAllIgnoreCase(
+                    query, query);
+        }
+
+        model.addAttribute("products", results);
         return "search";
     }
 }
