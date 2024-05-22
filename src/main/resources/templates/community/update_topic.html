@@ -1,0 +1,46 @@
+<html layout:decorate="~{common/skeleton}">
+
+<body>
+    <main layout:fragment="content">
+        <form class="row-container auth-form" method="post" enctype="multipart/form-data" th:object="${topicDto}">
+            <h2 th:text="${newTopic ? 'Create New Post' : 'Edit Your Post'}" />
+            <div class="row-container">
+                <label>Title</label>
+                <input type="text" th:field="${topicDto.title}">
+                <p class="error-text" th:if="${#fields.hasErrors('title')}" th:errorclass="text-danger"
+                    th:errors="${topicDto.title}"></p>
+            </div>
+
+            <div class="row-container">
+                <label>Post Type</label>
+                <div class="column-container" style="margin-top: 5px;">
+                    <span>
+                        <input id="discussion" name="topicType" value="discussion" type="radio"
+                            th:checked="${topicDto.topicType == 'discussion'}" />
+                        <label for="discussion">Discussion</label>
+                    </span>
+                    <span>
+                        <input id="tutorial" name="topicType" value="tutorial" type="radio"
+                            th:checked="${topicDto.topicType == 'tutorial'}" />
+                        <label for="tutorial">Tutorial</label>
+                    </span>
+                    <span>
+                        <input id="qna" name="topicType" value="qna" type="radio"
+                            th:checked="${topicDto.topicType == 'qna'}" />
+                        <label for="qna">Q&amp;A</label>
+                    </span>
+                </div>
+                <p class="error-text" th:if="${#fields.hasErrors('topicType')}" th:errorclass="text-danger"
+                    th:errors="${topicDto.topicType}"></p>
+            </div>
+
+            <div class="row-container" style="margin: 10 auto; width: 100%; gap: 10px;">
+                <button class="mini-button" type="submit" style="width: 100%; border-radius: 5px;">Submit</button>
+                <a th:href="@{/community/topics}" class="buttonish-link"
+                    style="border-radius: 5px; height: 37px; padding: 0; text-align: center; align-content: center;">Cancel</a>
+            </div>
+        </form>
+    </main>
+</body>
+
+</html>
