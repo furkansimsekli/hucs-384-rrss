@@ -23,6 +23,14 @@ public class Wish {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    public Wish() {}
+
+    public Wish(Product product, User owner) {
+        this.product = product;
+        this.owner = owner;
+        this.createdAt = LocalDateTime.now();
+    }
+
     public long getId() {
         return id;
     }
