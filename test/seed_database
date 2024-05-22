@@ -96,6 +96,7 @@ def main() -> None:
     parser.add_argument('-p', '--product-count', default=20_000, help="Number of products to use. Defaults to 20000.")
     parser.add_argument('-i', '--image-count', default=20, help="Number of images to use. Defaults to 20.")
     parser.add_argument('-z', '--skip-zero-price', action="store_true", help="Skip products with 0 or null price.")
+    parser.add_argument('-e', '--skip-no-description', action="store_true", help="Skip products with no description.")
     parser.add_argument('-y', '--confirm', action='store_true', help="Confirms every prompt without waiting for user interaction.")
 
     args = parser.parse_args()
@@ -129,6 +130,9 @@ def main() -> None:
             product: dict[str, str] = json.loads(line)
 
             if args.skip_zero_price and product["price"] is None or product["price"] == 0:
+                continue
+
+            if args.skip_no_description and not product["description"]:
                 continue
 
             products.append(json.loads(line))
