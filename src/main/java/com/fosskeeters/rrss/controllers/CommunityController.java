@@ -2,6 +2,7 @@ package com.fosskeeters.rrss.controllers;
 
 import com.fosskeeters.rrss.dtos.EntryDto;
 import com.fosskeeters.rrss.dtos.TopicDto;
+import com.fosskeeters.rrss.models.Entry;
 import com.fosskeeters.rrss.models.Topic;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.EntryRepository;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -90,6 +92,14 @@ public class CommunityController {
         }
         model.addAttribute("topic", topic.get());
         model.addAttribute("entryDto", new EntryDto());
+
+        var currentUser = userRepository.findByUsername((String) session.getAttribute("username"));
+        if (currentUser.isPresent()) {
+            var user = currentUser.get();
+            if (user.getType() == User.Type.ADMIN || user.getType() == User.Type.COMMUNITY_MOD) {
+                model.addAttribute("isModOrAdmin", true);
+            }
+        }
 
         return "community/entries";
     }
@@ -247,5 +257,194 @@ public class CommunityController {
         topicRepository.save(topic);
         model.addAttribute("notificationMessage", "Voila! Your post has been updated.");
         return "redirect:/community/topics";
+    }
+
+    @GetMapping("/topics/{topicId}/entries/{entryId}/update")
+    public String getEntryUpdate(HttpSession session, @PathVariable long topicId,
+            @PathVariable long entryId, Model model) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        Optional<Topic> topic = topicRepository.findById(topicId);
+        if (topic.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        Optional<Entry> entry = entryRepository.findById(entryId);
+        if (entry.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        // If the entry doesn't belong to the given topic
+        if (topic.get().getEntries().stream().allMatch(e -> e.getId() != entryId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        // Only admins, mods and the entry owner can update the entry
+        if (user.get().getId() != entry.get().getAuthor().getId()
+                && user.get().getType() != User.Type.ADMIN
+                && user.get().getType() != User.Type.COMMUNITY_MOD) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        EntryDto entryDto = new EntryDto(entry.get());
+        model.addAttribute("entryDto", entryDto);
+        model.addAttribute("topic", topic.get());
+
+        return "community/update_entry";
+    }
+
+    @PostMapping("/topics/{topicId}/entries/{entryId}/update")
+    public String postEntryUpdate(HttpSession session, @Valid @ModelAttribute EntryDto entryDto,
+            BindingResult bindingResult, Model model, @PathVariable long topicId,
+            @PathVariable long entryId) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        Optional<Topic> topicOpt = topicRepository.findById(topicId);
+        if (topicOpt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Topic topic = topicOpt.get();
+
+        Optional<Entry> entryOpt = entryRepository.findById(entryId);
+        if (entryOpt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Entry entry = entryOpt.get();
+
+        // If the entry doesn't belong to the given topic
+        if (topic.getEntries().stream().allMatch(e -> e.getId() != entryId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        // Only admins, mods and the entry owner can update the entry
+        if (user.get().getId() != entry.getAuthor().getId()
+                && user.get().getType() != User.Type.ADMIN
+                && user.get().getType() != User.Type.COMMUNITY_MOD) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("entryDto", entryDto);
+            model.addAttribute("hasErrors", true);
+            model.addAttribute("topic", topic);
+
+            return "community/update_entry";
+        }
+
+        entry.setBody(entryDto.getBody());
+        topicRepository.save(topic);
+        model.addAttribute("notificationMessage", "Voila! Your entry has been updated.");
+        return "redirect:/community/topics/" + topic.getId();
+    }
+
+    @GetMapping("/topics/{topicId}/entries/{entryId}/delete")
+    public String deleteEntry(HttpSession session, @Valid @ModelAttribute EntryDto entryDto,
+            BindingResult bindingResult, Model model, @PathVariable long topicId,
+            @PathVariable long entryId) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        Optional<Topic> topicOpt = topicRepository.findById(topicId);
+        if (topicOpt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Topic topic = topicOpt.get();
+
+        Optional<Entry> entryOpt = entryRepository.findById(entryId);
+        if (entryOpt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Entry entry = entryOpt.get();
+
+        // If the entry doesn't belong to the given topic
+        if (topic.getEntries().stream().allMatch(e -> e.getId() != entryId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        // Only admins, mods and the entry owner can delete the entry
+        if (user.get().getId() != entry.getAuthor().getId()
+                && user.get().getType() != User.Type.ADMIN
+                && user.get().getType() != User.Type.COMMUNITY_MOD) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        var entries = topic.getEntries();
+        entries.remove(entry);
+        topic.setEntries(entries);
+        topicRepository.save(topic);
+        entryRepository.delete(entry);
+        model.addAttribute("notificationMessage", "Oh no! Where did your entry go?");
+        return "redirect:/community/topics/" + topic.getId();
+    }
+
+    @GetMapping("/topics/{topicId}/entries/create")
+    public String createEntry(HttpSession session, @Valid @ModelAttribute EntryDto entryDto,
+            BindingResult bindingResult, Model model, @PathVariable long topicId) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+
+        Optional<Topic> topicOpt = topicRepository.findById(topicId);
+        if (topicOpt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Topic topic = topicOpt.get();
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("entryDto", entryDto);
+            model.addAttribute("hasErrors", true);
+            model.addAttribute("topic", topic);
+
+            return "community/topics/" + topic.getId();
+        }
+        Entry entry = new Entry();
+        entry.setAuthor(user.get());
+        entry.setBody(entryDto.getBody());
+        entry.setCreatedAt(LocalDateTime.now());
+        entry.setTopic(topic);
+        var entries = topic.getEntries();
+        entries.add(entry);
+        topic.setEntries(entries);
+
+        entryRepository.save(entry);
+        model.addAttribute("notificationMessage", "Voila! Your entry has been submitted.");
+        return "redirect:/community/topics/" + topic.getId();
     }
 }
