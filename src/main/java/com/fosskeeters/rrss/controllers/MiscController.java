@@ -1,5 +1,6 @@
 package com.fosskeeters.rrss.controllers;
 
+import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.BrowsingHistoryRepository;
 import com.fosskeeters.rrss.repositories.ProductRepository;
@@ -11,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpSession;
@@ -53,5 +55,14 @@ public class MiscController {
         }
 
         return "index";
+    }
+
+    @GetMapping("/search")
+    public String searchProduct(@RequestParam String query, Model model) {
+        List<Product> foundProducts =
+                productRepository.findByNameContainingOrDescriptionContainingAllIgnoreCase(query,
+                                                                                           query);
+        model.addAttribute("products", foundProducts);
+        return "search";
     }
 }

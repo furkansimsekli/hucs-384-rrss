@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findTop10ByOrderByCreatedAtDesc();
+
+    List<Product> findByNameContainingOrDescriptionContainingAllIgnoreCase(String name,
+                                                                           String description);
 }
