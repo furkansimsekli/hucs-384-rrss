@@ -91,6 +91,15 @@ public class MiscController {
                     productRepository
                             .findByNameContainingOrDescriptionContainingAllIgnoreCaseOrderByCreatedAtDesc(
                                     query, query);
+        } else if (sort != null && sort.equals("bestScored")) {
+            results =
+                    productRepository
+                            .findByNameContainingOrDescriptionContainingAllIgnoreCase(query, query)
+                            .stream()
+                            .sorted((p1, p2)
+                                            -> Double.compare(p2.getAverageScore(),
+                                                              p1.getAverageScore()))
+                            .collect(Collectors.toList());
         } else {
             results = productRepository.findByNameContainingOrDescriptionContainingAllIgnoreCase(
                     query, query);
