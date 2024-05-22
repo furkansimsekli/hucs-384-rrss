@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -75,6 +76,20 @@ public class MiscController {
             results =
                     productRepository
                             .findByNameContainingOrDescriptionContainingAllIgnoreCaseOrderByPriceDesc(
+                                    query, query);
+        } else if (sort != null && sort.equals("mostReviewed")) {
+            results =
+                    productRepository
+                            .findByNameContainingOrDescriptionContainingAllIgnoreCase(query, query)
+                            .stream()
+                            .sorted((p1, p2)
+                                            -> Integer.compare(p2.getReviews().size(),
+                                                               p1.getReviews().size()))
+                            .collect(Collectors.toList());
+        } else if (sort != null && sort.equals("mostRecent")) {
+            results =
+                    productRepository
+                            .findByNameContainingOrDescriptionContainingAllIgnoreCaseOrderByCreatedAtDesc(
                                     query, query);
         } else {
             results = productRepository.findByNameContainingOrDescriptionContainingAllIgnoreCase(
