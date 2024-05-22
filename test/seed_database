@@ -111,6 +111,7 @@ def main() -> None:
 
     if not args.confirm and input("Deleting all users, products, keywords, images. Are you sure? [y/N]").lower() != "y":
         print("Operation aborted, exiting.")
+        exit(2)
 
     print("Deleting rows from database...")
     conn.execute("DELETE FROM product;")
