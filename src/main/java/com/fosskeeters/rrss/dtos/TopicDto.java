@@ -9,7 +9,7 @@ public class TopicDto {
     @Size(min = 1, max = 64, message = "Title can not be longer than 64 characters!")
     private String title;
 
-    @NotBlank(message = "Topic type is required!")
+    @NotBlank(message = "Post type is required!")
     private String topicType;
 
     public TopicDto() {}
