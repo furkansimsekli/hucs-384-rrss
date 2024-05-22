@@ -68,7 +68,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="column-container" style="gap: 1vw;" th:if="${true}">
+                <div th:unless="${#strings.isEmpty(#ctx.session.username)}" class="column-container" style="gap: 1vw;" th:if="${true}">
                     <input type="checkbox" class="buttonish-checkbox" id="new-entry"/>
                     <label class="buttonish-checkbox-label hidden-on-edit" for="new-entry">New Entry</label>
                     <form class="row-container shown-on-edit" style="gap: 10px; width: 30em;" method="get"
