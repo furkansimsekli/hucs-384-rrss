@@ -1,8 +1,11 @@
 package com.fosskeeters.rrss.models;
 
+import com.fosskeeters.rrss.dtos.TopicDto;
+
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -30,6 +33,29 @@ public class Topic {
 
     @Column
     private Type type;
+
+    public Topic() {
+        this.createdAt = LocalDateTime.now();
+        this.entries = new ArrayList<>();
+    }
+
+    public Topic(TopicDto topicDto, User owner) {
+        this.title = topicDto.getTitle();
+        switch (topicDto.getTopicType()) {
+            case "discussion":
+                this.type = Type.DISCUSSION;
+                break;
+            case "tutorial":
+                this.type = Type.TUTORIAL;
+                break;
+            case "qna":
+                this.type = Type.QNA;
+                break;
+        }
+        this.entries = new ArrayList<>();
+        this.owner = owner;
+        this.createdAt = LocalDateTime.now();
+    }
 
     public long getId() {
         return id;
@@ -68,7 +94,8 @@ public class Topic {
     }
 
     public void setEntries(List<Entry> entries) {
-        this.entries = entries;
+        this.entries.clear();
+        this.entries.addAll(entries);
     }
 
     public Type getType() {
@@ -77,5 +104,20 @@ public class Topic {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public void updateFromDto(TopicDto topicDto) {
+        this.title = topicDto.getTitle();
+        switch (topicDto.getTopicType()) {
+            case "discussion":
+                this.type = Type.DISCUSSION;
+                break;
+            case "tutorial":
+                this.type = Type.TUTORIAL;
+                break;
+            case "qna":
+                this.type = Type.QNA;
+                break;
+        }
     }
 }
