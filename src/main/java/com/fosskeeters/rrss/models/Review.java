@@ -139,7 +139,7 @@ public class Review {
         int likeCount = 0;
         int dislikeCount = 0;
         if (votes != null) {
-            for(Vote vote : votes) {
+            for (Vote vote : votes) {
                 if (vote.isValue()) {
                     likeCount++;
                 } else {

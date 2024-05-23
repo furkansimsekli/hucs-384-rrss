@@ -51,5 +51,7 @@ public class Vote {
         this.value = value;
     }
 
-    public boolean getValue() { return value; }
+    public boolean getValue() {
+        return value;
+    }
 }
