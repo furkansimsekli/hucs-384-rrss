@@ -2,7 +2,6 @@ package com.fosskeeters.rrss.controllers;
 
 import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.User;
-import com.fosskeeters.rrss.models.Wish;
 import com.fosskeeters.rrss.repositories.BrowsingHistoryRepository;
 import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
@@ -18,8 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpSession;
@@ -75,9 +72,12 @@ public class MerchantController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        if (!Objects.equals(username, session.getAttribute("username"))
-            && authenticatedUser.get().getType() != User.Type.ADMIN) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (authenticatedUser.get().getId() == targetUser.get().getId()) {
+            model.addAttribute("isOwner", true);
+        }
+
+        if (authenticatedUser.get().getType() == User.Type.ADMIN) {
+            model.addAttribute("isAdmin", true);
         }
 
         if (targetUser.get().getType() != User.Type.MERCHANT) {
@@ -108,7 +108,7 @@ public class MerchantController {
 
         model.addAttribute("stats", stats);
         model.addAttribute("products", userProducts);
-        model.addAttribute("merchantUsername", username);
+        model.addAttribute("owner", targetUser.get());
         return "merchants/products";
     }
 }
