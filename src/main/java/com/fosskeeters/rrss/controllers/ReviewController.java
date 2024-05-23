@@ -123,8 +123,9 @@ public class ReviewController {
             return "redirect:/login?next=/products/" + productId;
         }
 
-        // Don't let other users whose not the author herself update the review
-        if (review.get().getAuthor().getId() != user.get().getId()) {
+        // Don't let other users whose not the author herself or admin update the review
+        if (review.get().getAuthor().getId() != user.get().getId()
+            && user.get().getType() != User.Type.ADMIN) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 

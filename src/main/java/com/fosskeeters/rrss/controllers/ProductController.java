@@ -213,7 +213,8 @@ public class ProductController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        if (product.get().getOwner().getId() != user.get().getId()) {
+        if (product.get().getOwner().getId() != user.get().getId()
+            && user.get().getType() != User.Type.ADMIN) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
@@ -247,7 +248,8 @@ public class ProductController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        if (product.get().getOwner().getId() != user.get().getId()) {
+        if (product.get().getOwner().getId() != user.get().getId()
+            && user.get().getType() != User.Type.ADMIN) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
