@@ -140,6 +140,18 @@ a {
     box-shadow: 0 0 3px gray;
 }
 
+.profile-picture {
+    width: 5vw;
+    height: 5vw;
+    border-radius: 50%;
+}
+
+.profile-picture-big {
+    width: 10vw;
+    height: 10vw;
+    border-radius: 50%;
+}
+
 /* ============= NAV BAR ========== */
 
 nav {

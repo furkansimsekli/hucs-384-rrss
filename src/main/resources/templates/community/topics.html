@@ -27,8 +27,7 @@
                         <div class="column-container" style="gap: 10px;">
                             <a th:href="@{/community/topics/{topicId}(topicId=${topic.id})}"
                                 style="text-decoration: none; margin-right: 10px;">
-                                <img th:src="@{{path}(path=${topic.owner.profileImagePath})}" width="50"
-                                    height="50"></img>
+                                <img class="profile-picture" th:src="@{{path}(path=${topic.owner.profileImagePath})}"></img>
                             </a>
                             <div class="row-container">
                                 <a th:href="@{/community/topics/{topicId}(topicId=${topic.id})}"

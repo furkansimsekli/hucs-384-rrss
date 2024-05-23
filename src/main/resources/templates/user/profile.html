@@ -61,7 +61,7 @@
                 <input name="profileImageFile" type="file" accept="image/*" th:field="${userUpdateDto.profileImageFile}" />
                 <input type="submit" value="Save" style="padding: 5px;" />
             </form>
-            <img th:src="${user.profileImagePath}" width="64px" height="64px" />
+            <img class="profile-picture-big" th:src="${user.profileImagePath}" />
         </div>
     </main>
 </body>

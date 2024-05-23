@@ -3,7 +3,7 @@
 <body>
     <main class="row-container" style="padding: 0 10vw; gap: 50px;" layout:fragment="content">
         <div class="column-container" style="gap: 50px; flex-wrap: wrap;">
-            <img th:src="${topic.owner.profileImagePath}" width="100px" height="100px" />
+            <img class="profile-picture-big" th:src="${topic.owner.profileImagePath}" />
             <div class="row-container">
                 <span th:text="'At ' + ${#temporals.format(topic.createdAt, 'hh:mm - dd MMM yyyy')} + ','"
                     style="color: gray;"></span>
@@ -37,7 +37,7 @@
             <div class="row-container" style="gap: 30px;">
                 <div th:each="entry : ${topic.entries}" class="row-container" style="gap: 20px;">
                     <div class="column-container" style="gap: 20px;">
-                        <img th:src="${entry.author.profileImagePath}" width="64px" height="64px" />
+                        <img class="profile-picture" th:src="${entry.author.profileImagePath}" />
                         <div class="row-container">
                             <div>
                                 <span
