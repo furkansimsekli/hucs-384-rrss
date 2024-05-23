@@ -57,7 +57,16 @@
                             <span th:text="${review.getBody()}" />
                             <span th:text="${review.getAuthor().getUsername()}" style="color: gray; font-size: 12px;" />
                         </div>
-                        <a href="like" style="color: gray;">Like (51)</a>
+                        <div class="row-container">
+                            <form th:action="@{/reviews/{reviewId}/vote(reviewId=${review.id})}" method="post">
+                                <input type="hidden" name="value" value="true">
+                                <button type="submit" style="color: gray;">👍 (<span th:text="${review.getLikeCount}">0</span>)</button>
+                            </form>
+                            <form th:action="@{/reviews/{reviewId}/vote(reviewId=${review.id})}" method="post">
+                                <input type="hidden" name="value" value="false">
+                                <button type="submit" style="color: gray;">👎 (<span th:text="${review.getDislikeCount}">0</span>)</button>
+                            </form>
+                        </div>
                         <a href="share" style="color: gray;">Share</a>
                     </div>
                     <div th:if="${isProductOwner}" th:with="replyDto = ${reviewReplyDtoList != null ? reviewReplyDtoList[reviewStat.index] : null}">

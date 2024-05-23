@@ -5,9 +5,11 @@ import com.fosskeeters.rrss.dtos.ReviewReplyDto;
 import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.Review;
 import com.fosskeeters.rrss.models.User;
+import com.fosskeeters.rrss.models.Vote;
 import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.ReviewRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
+import com.fosskeeters.rrss.repositories.VoteRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -30,12 +32,14 @@ public class ReviewController {
     private final ProductRepository productRepository;
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
+    private final VoteRepository voteRepository;
 
     public ReviewController(ProductRepository productRepository, ReviewRepository reviewRepository,
-                            UserRepository userRepository) {
+                            UserRepository userRepository, VoteRepository voteRepository) {
         this.productRepository = productRepository;
         this.reviewRepository = reviewRepository;
         this.userRepository = userRepository;
+        this.voteRepository = voteRepository;
     }
 
     @PostMapping("/create")
@@ -188,6 +192,47 @@ public class ReviewController {
         reviewRepository.delete(review.get());
         redirectAttrs.addFlashAttribute("notification",
                                         "success:Voila! Successfully deleted review.");
+        return "redirect:/products/" + review.get().getProduct().getId();
+    }
+
+    @PostMapping("/{reviewId}/vote")
+    public String voteReview(HttpSession session, @PathVariable long reviewId,
+                             @RequestParam boolean value) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login";
+        }
+        User currentUser = user.get();
+
+        Optional<Review> review = reviewRepository.findById(reviewId);
+
+        if (review.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        Optional<Vote> existingVote = voteRepository.findByReviewAndUser(review.get(), user);
+        if (existingVote.isPresent()) {
+            if (existingVote.get().getValue() == value) {
+                voteRepository.delete(existingVote.get());
+            } else {
+                existingVote.get().setValue(value);
+                voteRepository.save(existingVote.get());
+            }
+        } else {
+            Vote vote = new Vote();
+            vote.setUser(currentUser);
+            vote.setReview(review.get());
+            vote.setValue(value);
+            voteRepository.save(vote);
+        }
+
         return "redirect:/products/" + review.get().getProduct().getId();
     }
 
