@@ -4,9 +4,12 @@ import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.models.Wish;
 import com.fosskeeters.rrss.repositories.BrowsingHistoryRepository;
+import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 import com.fosskeeters.rrss.repositories.WishRepository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,13 +30,15 @@ public class MerchantController {
     private final UserRepository userRepository;
     private final BrowsingHistoryRepository browsingHistoryRepository;
     private final WishRepository wishRepository;
+    private final ProductRepository productRepository;
 
     public MerchantController(UserRepository userRepository,
                               BrowsingHistoryRepository browsingHistoryRepository,
-                              WishRepository wishRepository) {
+                              WishRepository wishRepository, ProductRepository productRepository) {
         this.userRepository = userRepository;
         this.browsingHistoryRepository = browsingHistoryRepository;
         this.wishRepository = wishRepository;
+        this.productRepository = productRepository;
     }
 
     @GetMapping({"", "/"})
@@ -49,7 +55,8 @@ public class MerchantController {
     }
 
     @GetMapping("/{username}")
-    public String getMerchantProducts(HttpSession session, @PathVariable String username,
+    public String getMerchantProducts(@RequestParam(required = false, defaultValue = "0") int page,
+                                      HttpSession session, @PathVariable String username,
                                       Model model) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/merchants/" + username;
@@ -76,17 +83,32 @@ public class MerchantController {
         if (targetUser.get().getType() != User.Type.MERCHANT) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        List<Product> userProducts = targetUser.get().getProducts();
+
+        Page<Product> userProducts =
+                productRepository.findByOwner(targetUser.get(), PageRequest.of(page, 20));
+        HashMap<Long, HashMap<String, Integer>> stats = new HashMap<>();
+
         for (Product product : userProducts) {
-            product.setViewsLastWeek(browsingHistoryRepository.findViewCountOfProduct(
-                    product, LocalDateTime.now().minusDays(7), LocalDateTime.now()));
-            product.setViewsLastMonth(browsingHistoryRepository.findViewCountOfProduct(
-                    product, LocalDateTime.now().minusDays(30), LocalDateTime.now()));
-            product.setAllViews(browsingHistoryRepository.findViewCountOfProduct(
-                    product, product.getCreatedAt(), LocalDateTime.now()));
-            product.setWishCount(wishRepository.countByProduct(product));
+            HashMap<String, Integer> stat = new HashMap<>();
+
+            int lastWeekViewCount = browsingHistoryRepository.findViewCountOfProduct(
+                    product, LocalDateTime.now().minusDays(7), LocalDateTime.now());
+            int lastMonthViewCount = browsingHistoryRepository.findViewCountOfProduct(
+                    product, LocalDateTime.now().minusDays(30), LocalDateTime.now());
+            int allViewCount = browsingHistoryRepository.findViewCountOfProduct(
+                    product, product.getCreatedAt(), LocalDateTime.now());
+            int wishCount = wishRepository.countByProduct(product);
+
+            stat.put("lastWeekViewCount", lastWeekViewCount);
+            stat.put("lastMonthViewCount", lastMonthViewCount);
+            stat.put("allViewCount", allViewCount);
+            stat.put("wishCount", wishCount);
+            stats.put(product.getId(), stat);
         }
+
+        model.addAttribute("stats", stats);
         model.addAttribute("products", userProducts);
+        model.addAttribute("merchantUsername", username);
         return "merchants/products";
     }
 }
