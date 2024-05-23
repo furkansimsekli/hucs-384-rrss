@@ -160,7 +160,7 @@ public class Product {
         this.keywords.addAll(keywords);
     }
 
-    public void setViewsLastWeek(int views) {
+public void setViewsLastWeek(int views) {
         this.viewsLastWeek = views;
     }
 
@@ -191,7 +191,7 @@ public class Product {
     public int getWishCount() {
         return wishCount;
     }
-
+  
     public double getAverageScore() {
         if (reviews.isEmpty()) {
             return 0;

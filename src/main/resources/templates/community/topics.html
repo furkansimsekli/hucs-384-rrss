@@ -1,0 +1,71 @@
+<html layout:decorate="~{common/skeleton}">
+
+<body>
+    <main layout:fragment="content">
+        <div class="row-container">
+            <div class="row-container list">
+                <div class="column-container list-header">
+                    <h2>Community</h2>
+                    <div class="spacer"></div>
+                    <a class="mini-button" th:unless="${#strings.isEmpty(#ctx.session.username)}"
+                        th:href="@{/community/topics/create}">
+                        <span style="font-family: Inika-bold;">&#x2b;</span> New Post
+                    </a>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(topicsMap.get('All Topics'))}" class="column-container list-header"
+                style="margin: 20px;">
+                No community post found!
+            </div>
+            <div th:unless="${#lists.isEmpty(topicsMap.get('All Topics'))}">
+                <div class="row-container list" th:each="item : ${topicsMap}">
+                    <div th:unless="${#lists.isEmpty(item.value)}" class="column-container list-header"
+                        style="margin-top: 20px;">
+                        <h3 th:text="${item.key}"></h3>
+                    </div>
+                    <div th:each="topic : ${item.value}" class="list-cell">
+                        <div class="column-container" style="gap: 10px;">
+                            <a th:href="@{/community/topics/{topicId}(topicId=${topic.id})}"
+                                style="text-decoration: none; color: inherit; margin-right: 10px;">
+                                <img th:src="@{{path}(path=${topic.owner.profileImagePath})}" width="50"
+                                    height="50"></img>
+                            </a>
+                            <div class="row-container">
+                                <a th:href="@{/community/topics/{topicId}(topicId=${topic.id})}"
+                                    style="text-decoration: none; color: inherit;">
+                                    <h3 th:text="${topic.title}" class="truncate-one-line" style="margin: 0px;"></h3>
+                                </a>
+                                <div style="color: gray;" class="column-container">
+                                    <span th:text="'👤 ' + ${topic.owner.username}"></span>
+                                    <span style="margin: 0 1vw;"></span>
+                                    <span th:text="'📆 ' + ${#temporals.format(topic.createdAt, 'dd/MM/yyyy')}"></span>
+                                </div>
+                            </div>
+                            </a>
+                            <div class="spacer"></div>
+                            <div th:if="${isModOrAdmin != null || topic.owner.username.equals(#ctx.session.username)}"
+                                class="column-container" style="gap: 10px;">
+                                <a th:href="@{/community/topics/{id}/update(id=${topic.id})}"
+                                    class="mini-button"><span>Edit</span></a>
+                                <a th:href="'#delete-modal-' + ${topic.id}" class="red-button">Delete</a>
+                                <div th:id="'delete-modal-' + ${topic.id}" class="modal">
+                                    <div class="modal-content">
+                                        <h2 style="margin-top: 10px;">Product Deletion</h2>
+                                        <p style="margin-bottom: 40px;">
+                                            This action will delete this post from the system. Do you confirm?
+                                        </p>
+                                        <a th:href="@{/community/topics/{id}/delete(id=${topic.id})}"
+                                            class="red-button">Confirm</a>
+                                        <a href="#" class="mini-button">Back</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

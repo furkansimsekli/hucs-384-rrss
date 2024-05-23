@@ -12,7 +12,23 @@
                     <h3>ShopSmart</h3>
                 </span>
             </a>
-            <input type="text" name="query" placeholder="Search" style="width: 50%; margin: 0 auto;"/>
+            <div class="spacer"></div>
+            <form action="#" th:action="@{/search}" method="get" class="column-container">
+                <input type="text" name="query" placeholder="Search" style="min-width: 40vw;" th:value="${param.query}"/>
+                <button class="search-button" type="submit"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                        width="25" height="25" viewBox="0,0,256,256">
+                        <g fill="#34514c" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                            stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
+                            style="mix-blend-mode: normal">
+                            <g transform="scale(5.12,5.12)">
+                                <path
+                                    d="M21,3c-9.39844,0 -17,7.60156 -17,17c0,9.39844 7.60156,17 17,17c3.35547,0 6.46094,-0.98437 9.09375,-2.65625l12.28125,12.28125l4.25,-4.25l-12.125,-12.09375c2.17969,-2.85937 3.5,-6.40234 3.5,-10.28125c0,-9.39844 -7.60156,-17 -17,-17zM21,7c7.19922,0 13,5.80078 13,13c0,7.19922 -5.80078,13 -13,13c-7.19922,0 -13,-5.80078 -13,-13c0,-7.19922 5.80078,-13 13,-13z">
+                                </path>
+                            </g>
+                        </g>
+                    </svg></button>
+            </form>
+            <div class="spacer"></div>
             <a class="buttonish-link" th:href="@{/community}"><span class="emoji-icon">&#x1F4AC;</span>Community</a>
             <a th:if="${#strings.isEmpty(#ctx.session.username)}" class="buttonish-link" th:href="@{/login}">
                 <span class="emoji-icon">&#x1F464;</span>
@@ -23,6 +39,10 @@
                 <span th:text="${#ctx.session.username}"/>
             </a>
         </nav>
+
+        <div th:if="${notification != null}" th:class="'flash-' + ${#strings.substringBefore(notification, ':')}" th:text="${#strings.substringAfter(notification, ':')}">
+        </div>
+
         <main layout:fragment="content">
             
         </main>

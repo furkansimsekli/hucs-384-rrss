@@ -1,0 +1,36 @@
+<html layout:decorate="~{common/skeleton}">
+
+<body>
+    <main class="row-container" style="padding: 0 10vw; gap: 50px;" layout:fragment="content">
+        <div class="column-container" style="gap: 50px; flex-wrap: wrap;">
+            <img th:src="${topic.owner.profileImagePath}" width="100px" height="100px" />
+            <div class="row-container">
+                <span th:text="'At ' + ${#temporals.format(topic.createdAt, 'hh:mm - dd MMM yyyy')} + ','"
+                    style="color: gray;"></span>
+                <span th:text="${topic.owner.username} + ' asked: '"
+                    style="margin-top: 10px; font-weight: 300; font-size: 20;">0</span>
+                <h2 th:text="${topic.title}" style="margin: 0; margin-top: 10px;">Topic Untitled</h2>
+            </div>
+            <div class="spacer"></div>
+        </div>
+        <div class="row-container" style="gap: 10px;">
+            <h2>Edit Your Entry</h2>
+            <div class="row-container">
+                <form class="row-container" style="gap: 10px; width: 30em;" method="post" th:object="${entryDto}">
+                    <textarea th:errorclass="error-input" name="body" style="height: 10em;" placeholder="Body"
+                        th:field="${entryDto.body}"></textarea>
+                    <label class="error-text" for="body" th:if="${#fields.hasErrors('body')}"
+                        th:errors="${entryDto.body}" />
+                    <div class="row-container" style="margin: 10 auto; width: 100%; gap: 10px;">
+                        <button class="mini-button" type="submit"
+                            style="width: 100%; border-radius: 5px;">Submit</button>
+                        <a th:href="@{/community/topics/{topicId}(topicId=${topic.id})}" class="buttonish-link"
+                            style="border-radius: 5px; height: 37px; padding: 0; text-align: center; align-content: center;">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
