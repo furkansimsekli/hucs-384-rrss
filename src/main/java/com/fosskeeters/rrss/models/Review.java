@@ -134,4 +134,23 @@ public class Review {
     public void setVotes(List<Vote> votes) {
         this.votes = votes;
     }
+
+    public int getLikeCount() {
+        int likeCount = 0;
+        int dislikeCount = 0;
+        if (votes != null) {
+            for(Vote vote : votes) {
+                if (vote.isValue()) {
+                    likeCount++;
+                } else {
+                    dislikeCount++;
+                }
+            }
+        }
+        return likeCount;
+    }
+
+    public int getDislikeCount() {
+        return votes != null ? votes.size() - getLikeCount() : 0;
+    }
 }
