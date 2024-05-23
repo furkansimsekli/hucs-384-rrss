@@ -52,15 +52,15 @@
                                 </g>
                             </g>
                         </svg>
-                        <span th:text="@{'In ' + ${product.getWishCount()} + ' wishlists'}"></span>
+                        <span th:text="'In ' + ${stats.get(product.id).get('wishCount')} + ' wishlists'"></span>
                     </div>
                 </div>
                 <div class="column-container" style="gap: 5px; margin-left: 15px;">
                     <img src="/view.png" width="15px" height="15px" style="margin-top: 3px;">
                     <div class="row-container" style="gap: 3px;">
-                        <span th:text="@{'Views this week: ' + ${product.getViewsLastWeek()}}"></span>
-                        <span th:text="@{'Views this month: ' + ${product.getViewsLastMonth()}}"></span>
-                        <span th:text="@{'All views: ' + ${product.getAllViews()}}"></span>
+                        <span th:text="'Views this week: ' + ${stats.get(product.id).get('lastWeekViewCount')}"></span>
+                        <span th:text="'Views this month: ' + ${stats.get(product.id).get('lastMonthViewCount')}"></span>
+                        <span th:text="'All views: ' + ${stats.get(product.id).get('allViewCount')}"></span>
                     </div>
                 </div>
                 <a th:href="@{/products/{productId}/update(productId=${product.id})}"

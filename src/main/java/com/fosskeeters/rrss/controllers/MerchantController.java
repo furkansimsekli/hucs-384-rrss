@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -76,16 +77,29 @@ public class MerchantController {
         if (targetUser.get().getType() != User.Type.MERCHANT) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+
         List<Product> userProducts = targetUser.get().getProducts();
+        HashMap<Long, HashMap<String, Integer>> stats = new HashMap<>();
+
         for (Product product : userProducts) {
-            product.setViewsLastWeek(browsingHistoryRepository.findViewCountOfProduct(
-                    product, LocalDateTime.now().minusDays(7), LocalDateTime.now()));
-            product.setViewsLastMonth(browsingHistoryRepository.findViewCountOfProduct(
-                    product, LocalDateTime.now().minusDays(30), LocalDateTime.now()));
-            product.setAllViews(browsingHistoryRepository.findViewCountOfProduct(
-                    product, product.getCreatedAt(), LocalDateTime.now()));
-            product.setWishCount(wishRepository.countByProduct(product));
+            HashMap<String, Integer> stat = new HashMap<>();
+
+            int lastWeekViewCount = browsingHistoryRepository.findViewCountOfProduct(
+                    product, LocalDateTime.now().minusDays(7), LocalDateTime.now());
+            int lastMonthViewCount = browsingHistoryRepository.findViewCountOfProduct(
+                    product, LocalDateTime.now().minusDays(30), LocalDateTime.now());
+            int allViewCount = browsingHistoryRepository.findViewCountOfProduct(
+                    product, product.getCreatedAt(), LocalDateTime.now());
+            int wishCount = wishRepository.countByProduct(product);
+
+            stat.put("lastWeekViewCount", lastWeekViewCount);
+            stat.put("lastMonthViewCount", lastMonthViewCount);
+            stat.put("allViewCount", allViewCount);
+            stat.put("wishCount", wishCount);
+            stats.put(product.getId(), stat);
         }
+
+        model.addAttribute("stats", stats);
         model.addAttribute("products", userProducts);
         return "merchants/products";
     }
