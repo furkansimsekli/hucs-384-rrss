@@ -138,6 +138,60 @@ nav * {
     }
 }
 
+/* ============= FLASH NOTIFICATIONS ========== */
+
+.flash-info {
+    color: #007bff;
+    background-color: #e7e2f8;
+    font-weight: bold;
+
+    border: #007bff 0.5px solid;
+    border-radius: 10px;
+
+    padding: 1em;
+    margin: 0 5vw;
+    margin-top: 1em;
+}
+
+.flash-success {
+    color: #28a745;
+    background-color: #b8f7d5;
+    font-weight: bold;
+
+    border: #28a745 0.5px solid;
+    border-radius: 10px;
+
+    padding: 1em;
+    margin: 0 5vw;
+    margin-top: 1em;
+}
+
+.flash-warn {
+    color: #cf9107;
+    background-color: #ffe1c7;
+    font-weight: bold;
+
+    border: #cf9107 0.5px solid;
+    border-radius: 10px;
+
+    padding: 1em;
+    margin: 0 5vw;
+    margin-top: 1em;
+}
+
+.flash-error {
+    color: #cf3221;
+    background-color: #ffd2e1;
+    font-weight: bold;
+
+    border: #cf3221 0.5px solid;
+    border-radius: 10px;
+
+    padding: 1em;
+    margin: 0 5vw;
+    margin-top: 1em;
+}
+
 /* ============= MAIN PAGE ========== */
 
 #index-carousel {
