@@ -80,8 +80,8 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public String loginPostHandler(@RequestParam String username, @RequestParam String password,
-                                   HttpSession session, Model model,
-                                   RedirectAttributes redirectAttrs) {
+                                   @RequestParam(required = false) String next, HttpSession session,
+                                   Model model, RedirectAttributes redirectAttrs) {
         Optional<User> user = userRepository.findByUsername(username.trim().toLowerCase());
 
         if (user.isPresent()) {
@@ -93,6 +93,9 @@ public class AuthenticationController {
             }
             if (encoder.matches(password, user.get().getPassword())) {
                 session.setAttribute("username", user.get().getUsername());
+                if (next != null && !next.isEmpty()) {
+                    return "redirect:" + next;
+                }
                 return "redirect:/";
             }
         }
