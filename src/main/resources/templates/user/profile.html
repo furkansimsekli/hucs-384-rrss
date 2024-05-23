@@ -27,36 +27,36 @@
             </div>
             <form class="row-container shown-on-edit" style="gap: 10px;" method="post" enctype="multipart/form-data" th:object="${userUpdateDto}">
                 <div class="row-container">
-                    <div class="row-container">
-                        <p th:if="${#fields.hasErrors('firstName')}" th:errorclass="text-danger"
-                            th:errors="${userUpdateDto.firstName}"></p>
-                        <p th:if="${#fields.hasErrors('lastName')}" th:errorclass="text-danger"
-                            th:errors="${userUpdateDto.lastName}"></p>
-                    </div>
                     <div class="column-container" style="gap: 10px">
                         <input name="firstname" type="text" placeholder="First Name"
-                            th:field="${userUpdateDto.firstName}" />
+                            th:field="${userUpdateDto.firstName}" th:errorclass="error-input" />
                         <input name="lastname" type="text" placeholder="Last Name"
-                            th:field="${userUpdateDto.lastName}" />
+                            th:field="${userUpdateDto.lastName}" th:errorclass="error-input" />
+                    </div>
+                    <div class="row-container">
+                        <p th:if="${#fields.hasErrors('firstName')}" class="error-text"
+                            th:errors="${userUpdateDto.firstName}"></p>
+                        <p th:if="${#fields.hasErrors('lastName')}" class="error-text"
+                            th:errors="${userUpdateDto.lastName}"></p>
                     </div>
                 </div>
 
-                <p th:if="${#fields.hasErrors('email')}" th:errorclass="text-danger" th:errors="${userUpdateDto.email}">
+                <input name="email" type="email" placeholder="E-mail" th:field="${userUpdateDto.email}" th:errorclass="error-input" />
+                <p th:if="${#fields.hasErrors('email')}" class="error-text" th:errors="${userUpdateDto.email}">
                 </p>
-                <input name="email" type="email" placeholder="E-mail" th:field="${userUpdateDto.email}" />
 
-                <p th:if="${#fields.hasErrors('phoneNumber')}" th:errorclass="text-danger"
-                    th:errors="${userUpdateDto.phoneNumber}"></p>
                 <input name="phonenumber" type="tel" placeholder="Phone Number"
-                    th:field="${userUpdateDto.phoneNumber}" />
+                    th:field="${userUpdateDto.phoneNumber}" th:errorclass="error-input" />
+                <p th:if="${#fields.hasErrors('phoneNumber')}" class="error-text"
+                    th:errors="${userUpdateDto.phoneNumber}"></p>
 
-                <p th:if="${#fields.hasErrors('dateOfBirth')}" th:errorclass="text-danger"
+                <input name="birthday" type="date" placeholder="Birthday" th:field="${userUpdateDto.dateOfBirth}" th:errorclass="error-input" />
+                <p th:if="${#fields.hasErrors('dateOfBirth')}" class="error-text"
                     th:errors="${userUpdateDto.dateOfBirth}"></p>
-                <input name="birthday" type="date" placeholder="Birthday" th:field="${userUpdateDto.dateOfBirth}" />
 
-                <p th:if="${#fields.hasErrors('address')}" th:errorclass="text-danger"
+                <textarea name="address" rows="4" placeholder="Address" th:field="${userUpdateDto.address}" th:errorclass="error-input" />
+                <p th:if="${#fields.hasErrors('address')}" class="error-text"
                     th:errors="${userUpdateDto.address}"></p>
-                <textarea name="address" rows="4" placeholder="Address" th:field="${userUpdateDto.address}" />
 
                 <input name="profileImageFile" type="file" accept="image/*" th:field="${userUpdateDto.profileImageFile}" />
                 <input type="submit" value="Save" style="padding: 5px;" />
