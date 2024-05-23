@@ -6,7 +6,6 @@ import com.fosskeeters.rrss.models.PasswordRecovery;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.PasswordRecoveryRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
-import com.fosskeeters.rrss.services.EmailService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
@@ -22,7 +21,6 @@ import java.security.SecureRandom;
 import java.util.Objects;
 import java.util.Optional;
 
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -30,14 +28,12 @@ import jakarta.validation.Valid;
 public class AuthenticationController {
     private final UserRepository userRepository;
     private final Argon2PasswordEncoder encoder;
-    private final EmailService emailService;
     private final PasswordRecoveryRepository passwordRecoveryRepository;
 
-    public AuthenticationController(UserRepository userRepository, EmailService emailService,
+    public AuthenticationController(UserRepository userRepository,
                                     PasswordRecoveryRepository passwordRecoveryRepository) {
         this.userRepository = userRepository;
         this.encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
-        this.emailService = emailService;
         this.passwordRecoveryRepository = passwordRecoveryRepository;
     }
 

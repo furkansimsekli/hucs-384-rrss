@@ -1,6 +1,5 @@
 package com.fosskeeters.rrss.models;
 
-import org.hibernate.validator.constraints.Range;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
