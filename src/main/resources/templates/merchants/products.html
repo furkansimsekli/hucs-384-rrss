@@ -55,7 +55,7 @@
                         <span th:text="@{'In ' + ${product.getWishCount()} + ' wishlists'}"></span>
                     </div>
                 </div>
-                <div class="column-container" style="gap: 5px; margin-left: 5px;">
+                <div class="column-container" style="gap: 5px; margin-left: 15px;">
                     <img src="/view.png" width="15px" height="15px" style="margin-top: 3px;">
                     <div class="row-container" style="gap: 3px;">
                         <span th:text="@{'Views this week: ' + ${product.getViewsLastWeek()}}"></span>
@@ -63,7 +63,6 @@
                         <span th:text="@{'All views: ' + ${product.getAllViews()}}"></span>
                     </div>
                 </div>
-                <div class="spacer"></div>
                 <a th:href="@{/products/{productId}/update(productId=${product.id})}"
                     class="mini-button"><span>Edit</span></a>
                 <a th:href="'#delete-modal-' + ${product.id}" class="red-button">Delete</a>
