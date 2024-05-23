@@ -149,8 +149,8 @@ public class CommunityController {
 
         Topic topic = new Topic(topicDto, userOpt.get());
         topicRepository.save(topic);
-        redirectAttrs.addFlashAttribute("notificationMessage",
-                                        "Voila! Your post has been submitted.");
+        redirectAttrs.addFlashAttribute("notification",
+                                        "success:Voila! Your post has been submitted.");
         return "redirect:/community/topics";
     }
 
@@ -182,8 +182,8 @@ public class CommunityController {
         }
 
         topicRepository.delete(topic.get());
-        redirectAttrs.addFlashAttribute("notificationMessage",
-                                        "Voila! Your post has been deleted.");
+        redirectAttrs.addFlashAttribute("notification",
+                                        "success:Voila! Your post has been deleted.");
         return "redirect:/community/topics";
     }
 
@@ -259,8 +259,8 @@ public class CommunityController {
 
         topic.updateFromDto(topicDto);
         topicRepository.save(topic);
-        redirectAttrs.addFlashAttribute("notificationMessage",
-                                        "Voila! Your post has been updated.");
+        redirectAttrs.addFlashAttribute("notification",
+                                        "success:Voila! Your post has been updated.");
         return "redirect:/community/topics";
     }
 
@@ -359,8 +359,8 @@ public class CommunityController {
 
         entry.setBody(entryDto.getBody());
         topicRepository.save(topic);
-        redirectAttrs.addFlashAttribute("notificationMessage",
-                                        "Voila! Your entry has been updated.");
+        redirectAttrs.addFlashAttribute("notification",
+                                        "success:Voila! Your entry has been updated.");
         return "redirect:/community/topics/" + topic.getId();
     }
 
@@ -408,8 +408,8 @@ public class CommunityController {
         topic.setEntries(entries);
         topicRepository.save(topic);
         entryRepository.delete(entry);
-        redirectAttrs.addFlashAttribute("notificationMessage",
-                                        "Voila! Your entry has been deleted.");
+        redirectAttrs.addFlashAttribute("notification",
+                                        "success:Voila! Your entry has been deleted.");
         return "redirect:/community/topics/" + topic.getId();
     }
 
@@ -452,8 +452,8 @@ public class CommunityController {
         topic.setEntries(entries);
 
         entryRepository.save(entry);
-        redirectAttrs.addFlashAttribute("notificationMessage",
-                                        "Voila! Your entry has been submitted.");
+        redirectAttrs.addFlashAttribute("notification",
+                                        "success:Voila! Your entry has been submitted.");
         return "redirect:/community/topics/" + topic.getId();
     }
 }
