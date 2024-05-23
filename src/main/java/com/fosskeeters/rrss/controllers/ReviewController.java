@@ -211,9 +211,12 @@ public class ReviewController {
 
         Optional<Vote> existingVote = voteRepository.findByReviewAndUser(review.get(), user);
         if (existingVote.isPresent()) {
-            Vote vote = existingVote.get();
-            vote.setValue(value);
-            voteRepository.save(vote);
+            if (existingVote.get().getValue() == value) {
+                voteRepository.delete(existingVote.get());
+            } else {
+                existingVote.get().setValue(value);
+                voteRepository.save(existingVote.get());
+            }
         } else {
             Vote vote = new Vote();
             vote.setUser(currentUser);
