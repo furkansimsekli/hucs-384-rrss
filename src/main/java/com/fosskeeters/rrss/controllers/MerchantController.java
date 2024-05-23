@@ -40,7 +40,7 @@ public class MerchantController {
     public String getMerchantProducts(HttpSession session, @PathVariable String username,
                                       Model model) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/merchants/" + username;
         }
 
         Optional<User> authenticatedUser =
@@ -49,7 +49,7 @@ public class MerchantController {
 
         if (authenticatedUser.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/merchants/" + username;
         }
 
         if (targetUser.isEmpty()) {

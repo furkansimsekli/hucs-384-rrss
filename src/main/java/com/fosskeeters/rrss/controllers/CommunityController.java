@@ -106,7 +106,7 @@ public class CommunityController {
     @GetMapping("/topics/create")
     public String getTopicCreate(HttpSession session, Model model) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/create";
         }
 
         String username = session.getAttribute("username").toString();
@@ -114,7 +114,7 @@ public class CommunityController {
 
         if (userOpt.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/create";
         }
 
         model.addAttribute("topicDto", new TopicDto());
@@ -128,7 +128,7 @@ public class CommunityController {
                                   BindingResult bindingResult, RedirectAttributes redirectAttrs,
                                   Model model) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/create";
         }
 
         String username = session.getAttribute("username").toString();
@@ -136,7 +136,7 @@ public class CommunityController {
 
         if (userOpt.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/create";
         }
 
         if (bindingResult.hasErrors()) {
@@ -158,7 +158,7 @@ public class CommunityController {
     public String deleteTopic(HttpSession session, @PathVariable long topicId,
                               RedirectAttributes redirectAttrs) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId;
         }
 
         String username = session.getAttribute("username").toString();
@@ -166,7 +166,7 @@ public class CommunityController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId;
         }
 
         Optional<Topic> topic = topicRepository.findById(topicId);
@@ -190,7 +190,7 @@ public class CommunityController {
     @GetMapping("/topics/{topicId}/update")
     public String getUpdateTopic(HttpSession session, @PathVariable long topicId, Model model) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId + "/update";
         }
 
         String username = session.getAttribute("username").toString();
@@ -198,7 +198,7 @@ public class CommunityController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId + "/update";
         }
 
         Optional<Topic> topic = topicRepository.findById(topicId);
@@ -225,7 +225,7 @@ public class CommunityController {
                                   BindingResult bindingResult, RedirectAttributes redirectAttrs,
                                   Model model, @PathVariable long topicId) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId + "/update";
         }
 
         String username = session.getAttribute("username").toString();
@@ -233,7 +233,7 @@ public class CommunityController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId + "/update";
         }
 
         Optional<Topic> topicOpt = topicRepository.findById(topicId);
@@ -268,7 +268,8 @@ public class CommunityController {
     public String getEntryUpdate(HttpSession session, @PathVariable long topicId,
                                  @PathVariable long entryId, Model model) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId + "/entries/" + entryId
+                    + "/update";
         }
 
         String username = session.getAttribute("username").toString();
@@ -276,7 +277,8 @@ public class CommunityController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId + "/entries/" + entryId
+                    + "/update";
         }
 
         Optional<Topic> topic = topicRepository.findById(topicId);
@@ -314,7 +316,8 @@ public class CommunityController {
                                   Model model, @PathVariable long topicId,
                                   @PathVariable long entryId) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId + "/entries/" + entryId
+                    + "/update";
         }
 
         String username = session.getAttribute("username").toString();
@@ -322,7 +325,8 @@ public class CommunityController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId + "/entries/" + entryId
+                    + "/update";
         }
 
         Optional<Topic> topicOpt = topicRepository.findById(topicId);
@@ -368,7 +372,7 @@ public class CommunityController {
     public String deleteEntry(HttpSession session, RedirectAttributes redirectAttrs,
                               @PathVariable long topicId, @PathVariable long entryId) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId;
         }
 
         String username = session.getAttribute("username").toString();
@@ -376,7 +380,7 @@ public class CommunityController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId;
         }
 
         Optional<Topic> topicOpt = topicRepository.findById(topicId);
@@ -418,7 +422,7 @@ public class CommunityController {
                               BindingResult bindingResult, RedirectAttributes redirectAttrs,
                               Model model, @PathVariable long topicId) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId;
         }
 
         String username = session.getAttribute("username").toString();
@@ -426,7 +430,7 @@ public class CommunityController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/community/topics/" + topicId;
         }
 
         Optional<Topic> topicOpt = topicRepository.findById(topicId);

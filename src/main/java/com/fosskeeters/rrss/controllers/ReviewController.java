@@ -40,8 +40,11 @@ public class ReviewController {
     @PostMapping("/create")
     public String createReview(HttpSession session, @Valid @ModelAttribute ReviewDto reviewDto,
                                BindingResult bindingResult, Model model) {
+        long productId = reviewDto.getProductId();
+        Optional<Product> product = productRepository.findById(productId);
+
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId;
         }
 
         String username = session.getAttribute("username").toString();
@@ -49,7 +52,7 @@ public class ReviewController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId;
         }
 
         if (user.get().getType() != User.Type.CUSTOMER) {
@@ -59,9 +62,6 @@ public class ReviewController {
         if (bindingResult.hasFieldErrors("productId")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-
-        long productId = reviewDto.getProductId();
-        Optional<Product> product = productRepository.findById(productId);
 
         if (product.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -104,8 +104,15 @@ public class ReviewController {
     public String updateReview(HttpSession session, @PathVariable long reviewId,
                                @Valid @ModelAttribute ReviewDto reviewDto,
                                BindingResult bindingResult, Model model) {
+        Optional<Review> review = reviewRepository.findById(reviewId);
+        if (review.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        long productId = review.get().getProduct().getId();
+
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId;
         }
 
         String username = session.getAttribute("username").toString();
@@ -113,13 +120,7 @@ public class ReviewController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
-        }
-
-        Optional<Review> review = reviewRepository.findById(reviewId);
-
-        if (review.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            return "redirect:/login?next=/products/" + productId;
         }
 
         // Don't let other users whose not the author herself update the review
@@ -151,8 +152,15 @@ public class ReviewController {
 
     @GetMapping("/{reviewId}/delete")
     public String deleteReview(HttpSession session, @PathVariable long reviewId, Model model) {
+        Optional<Review> review = reviewRepository.findById(reviewId);
+        if (review.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        long productId = review.get().getProduct().getId();
+
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId;
         }
 
         String username = session.getAttribute("username").toString();
@@ -160,13 +168,7 @@ public class ReviewController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
-        }
-
-        Optional<Review> review = reviewRepository.findById(reviewId);
-
-        if (review.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            return "redirect:/login?next=/products/" + productId;
         }
 
         // Don't let other users whose not the author herself or admin delete the review
@@ -185,21 +187,23 @@ public class ReviewController {
     public String replyReview(HttpSession session, @PathVariable long reviewId,
                               @Valid @ModelAttribute ReviewReplyDto reviewReplyDto,
                               BindingResult bindingResult, Model model) {
+        Optional<Review> review = reviewRepository.findById(reviewId);
+        if (review.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        long productId = review.get().getProduct().getId();
+
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId;
         }
 
         String username = session.getAttribute("username").toString();
         Optional<User> user = userRepository.findByUsername(username);
-        Optional<Review> review = reviewRepository.findById(reviewId);
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
-        }
-
-        if (review.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            return "redirect:/login?next=/products/" + productId;
         }
 
         // Only one reply can be made
@@ -239,21 +243,23 @@ public class ReviewController {
     public String updateReviewReply(HttpSession session, @PathVariable long reviewId,
                                     @Valid @ModelAttribute ReviewReplyDto reviewReplyDto,
                                     BindingResult bindingResult, Model model) {
+        Optional<Review> review = reviewRepository.findById(reviewId);
+        if (review.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        long productId = review.get().getProduct().getId();
+
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId;
         }
 
         String username = session.getAttribute("username").toString();
         Optional<User> user = userRepository.findByUsername(username);
-        Optional<Review> review = reviewRepository.findById(reviewId);
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
-        }
-
-        if (review.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            return "redirect:/login?next=/products/" + productId;
         }
 
         Product product = review.get().getProduct();
@@ -290,21 +296,23 @@ public class ReviewController {
 
     @GetMapping("/{reviewId}/delete-reply")
     public String deleteReviewReply(HttpSession session, @PathVariable long reviewId) {
+        Optional<Review> review = reviewRepository.findById(reviewId);
+        if (review.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        long productId = review.get().getProduct().getId();
+
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId;
         }
 
         String username = session.getAttribute("username").toString();
         Optional<User> user = userRepository.findByUsername(username);
-        Optional<Review> review = reviewRepository.findById(reviewId);
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
-        }
-
-        if (review.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            return "redirect:/login?next=/products/" + productId;
         }
 
         User owner = review.get().getProduct().getOwner();

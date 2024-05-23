@@ -39,7 +39,7 @@ public class AdminController {
     @GetMapping("/signup-requests")
     public String signupRequests(HttpSession session, Model model) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/admin/signup-requests";
         }
 
         String username = session.getAttribute("username").toString();
@@ -47,7 +47,7 @@ public class AdminController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/admin/signup-requests";
         }
 
         if (user.get().getType() != User.Type.ADMIN) {
@@ -62,7 +62,7 @@ public class AdminController {
     @GetMapping("/{username}/approve")
     public String approveSignupRequest(@PathVariable String username, HttpSession session) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/admin/" + username + "/approve";
         }
 
         String authenticatedUsername = session.getAttribute("username").toString();
@@ -71,7 +71,7 @@ public class AdminController {
 
         if (authenticatedUser.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/admin/" + username + "/approve";
         }
 
         if (awaitingUser.isEmpty()) {
@@ -90,7 +90,7 @@ public class AdminController {
     @GetMapping("/{username}/reject")
     public String rejectSignupRequest(@PathVariable String username, HttpSession session) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/admin/" + username + "/reject";
         }
 
         String authenticatedUsername = session.getAttribute("username").toString();
@@ -99,7 +99,7 @@ public class AdminController {
 
         if (authenticatedUser.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/admin/" + username + "/reject";
         }
 
         if (awaitingUser.isEmpty()) {
@@ -117,7 +117,7 @@ public class AdminController {
     @GetMapping("/password-recovery-requests")
     public String passwordRecoveryRequests(HttpSession session, Model model) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/admin/password-recovery-requests";
         }
 
         String username = session.getAttribute("username").toString();
@@ -125,7 +125,7 @@ public class AdminController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/admin/password-recovery-requests";
         }
 
         if (user.get().getType() != User.Type.ADMIN) {
@@ -142,7 +142,8 @@ public class AdminController {
     public String sendPasswordRecoveryEmail(@PathVariable long passwordRecoveryId,
                                             HttpSession session, RedirectAttributes redirectAttrs) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/admin/" + passwordRecoveryId
+                    + "/send-password-recovery-email";
         }
 
         String authenticatedUsername = session.getAttribute("username").toString();
@@ -152,7 +153,8 @@ public class AdminController {
 
         if (authenticatedUser.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/admin/" + passwordRecoveryId
+                    + "/send-password-recovery-email";
         }
 
         if (awaitingRequest.isEmpty()) {
@@ -196,7 +198,8 @@ public class AdminController {
     public String rejectPasswordRecovery(@PathVariable long passwordRecoveryId, HttpSession session,
                                          RedirectAttributes redirectAttrs) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/admin/" + passwordRecoveryId
+                    + "/reject-password-recovery";
         }
 
         String authenticatedUsername = session.getAttribute("username").toString();
@@ -206,7 +209,8 @@ public class AdminController {
 
         if (authenticatedUser.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/admin/" + passwordRecoveryId
+                    + "/reject-password-recovery";
         }
 
         if (awaitingRequests.isEmpty()) {
