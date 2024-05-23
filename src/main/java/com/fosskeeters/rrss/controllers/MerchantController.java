@@ -4,9 +4,12 @@ import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.models.Wish;
 import com.fosskeeters.rrss.repositories.BrowsingHistoryRepository;
+import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 import com.fosskeeters.rrss.repositories.WishRepository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,13 +30,15 @@ public class MerchantController {
     private final UserRepository userRepository;
     private final BrowsingHistoryRepository browsingHistoryRepository;
     private final WishRepository wishRepository;
+    private final ProductRepository productRepository;
 
     public MerchantController(UserRepository userRepository,
                               BrowsingHistoryRepository browsingHistoryRepository,
-                              WishRepository wishRepository) {
+                              WishRepository wishRepository, ProductRepository productRepository) {
         this.userRepository = userRepository;
         this.browsingHistoryRepository = browsingHistoryRepository;
         this.wishRepository = wishRepository;
+        this.productRepository = productRepository;
     }
 
     @GetMapping({"", "/"})
@@ -50,7 +55,8 @@ public class MerchantController {
     }
 
     @GetMapping("/{username}")
-    public String getMerchantProducts(HttpSession session, @PathVariable String username,
+    public String getMerchantProducts(@RequestParam(required = false, defaultValue = "0") int page,
+                                      HttpSession session, @PathVariable String username,
                                       Model model) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/merchants/" + username;
@@ -78,7 +84,8 @@ public class MerchantController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        List<Product> userProducts = targetUser.get().getProducts();
+        Page<Product> userProducts =
+                productRepository.findByOwner(targetUser.get(), PageRequest.of(page, 20));
         HashMap<Long, HashMap<String, Integer>> stats = new HashMap<>();
 
         for (Product product : userProducts) {
@@ -101,6 +108,7 @@ public class MerchantController {
 
         model.addAttribute("stats", stats);
         model.addAttribute("products", userProducts);
+        model.addAttribute("merchantUsername", username);
         return "merchants/products";
     }
 }

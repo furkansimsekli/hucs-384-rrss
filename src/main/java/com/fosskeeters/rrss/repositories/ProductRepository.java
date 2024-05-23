@@ -1,6 +1,7 @@
 package com.fosskeeters.rrss.repositories;
 
 import com.fosskeeters.rrss.models.Product;
+import com.fosskeeters.rrss.models.User;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+    Page<Product> findByOwner(User owner, Pageable pageable);
+
     List<Product> findTop10ByOrderByCreatedAtDesc();
 
     Page<Product> findByNameContainingOrDescriptionContainingAllIgnoreCase(String name,
