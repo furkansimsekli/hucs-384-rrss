@@ -29,6 +29,22 @@ public class Product {
     @Min(0)
     private double price;
 
+    @Column
+    @Min(0)
+    private Integer viewsLastWeek;
+
+    @Column
+    @Min(0)
+    private Integer viewsLastMonth;
+
+    @Column
+    @Min(0)
+    private Integer allViews;
+
+    @Column
+    @Min(0)
+    private Integer wishCount;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn
     private User owner;
@@ -142,6 +158,38 @@ public class Product {
     public void setKeywords(List<ProductKeyword> keywords) {
         this.keywords.clear();
         this.keywords.addAll(keywords);
+    }
+
+    public void setViewsLastWeek(int views) {
+        this.viewsLastWeek = views;
+    }
+
+    public void setViewsLastMonth(int views) {
+        this.viewsLastMonth = views;
+    }
+
+    public void setAllViews(int views) {
+        this.allViews = views;
+    }
+
+    public void setWishCount(int count) {
+        this.wishCount = count;
+    }
+
+    public int getViewsLastWeek() {
+        return viewsLastWeek;
+    }
+
+    public int getViewsLastMonth() {
+        return viewsLastMonth;
+    }
+
+    public int getAllViews() {
+        return allViews;
+    }
+
+    public int getWishCount() {
+        return wishCount;
     }
 
     public double getAverageScore() {

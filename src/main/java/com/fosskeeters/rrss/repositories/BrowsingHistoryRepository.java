@@ -13,11 +13,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BrowsingHistoryRepository extends JpaRepository<BrowsingHistory, Long> {
-    @Query("SELECT p FROM BrowsingHistory bh INNER JOIN Product p ON p = bh.product WHERE bh.viewedAt > :since GROUP BY p ORDER BY COUNT(p) DESC")
-    public Page<Product> findMostViewedProduct(LocalDateTime since, Pageable pageable);
+    @Query("SELECT p FROM BrowsingHistory bh INNER JOIN Product p ON p = bh.product WHERE "
+           + "bh.viewedAt > :since GROUP BY p ORDER BY COUNT(p) DESC")
+    public Page<Product>
+    findMostViewedProduct(LocalDateTime since, Pageable pageable);
 
-    @Query("SELECT COUNT(bh) FROM BrowsingHistory bh WHERE :product = bh.product AND bh.viewedAt > :since")
-    public long findViewCountOfProduct(Product product, LocalDateTime since);
+    @Query("SELECT COUNT(bh) FROM BrowsingHistory bh WHERE :product = bh.product AND bh.viewedAt > "
+           + ":from AND bh.viewedAt < :to")
+    public int
+    findViewCountOfProduct(Product product, LocalDateTime from, LocalDateTime to);
 
     // clang-format off
     /* Query Explanation:
@@ -44,6 +48,12 @@ public interface BrowsingHistoryRepository extends JpaRepository<BrowsingHistory
      *
      *  */
     // clang-format on
-    @Query("SELECT p FROM Product p LEFT OUTER JOIN BrowsingHistory bh ON bh.product = p AND bh.owner = :customer INNER JOIN ProductKeyword pk ON pk.product = p JOIN (SELECT pk2.keyword as k2, count(keyword) AS kc2 FROM Product p2 INNER JOIN ProductKeyword pk2 ON p2 = pk2.product LEFT OUTER JOIN BrowsingHistory bh2 ON bh2.product = p2 WHERE bh2.owner = :customer GROUP BY pk2.keyword) ON pk.keyword = k2 WHERE bh.owner is null GROUP BY k2 ORDER BY kc2 DESC LIMIT 10")
-    public List<Product> findRecommendedForUser(User customer);
+    @Query("SELECT p FROM Product p LEFT OUTER JOIN BrowsingHistory bh ON bh.product = p AND "
+           + "bh.owner = :customer INNER JOIN ProductKeyword pk ON pk.product = p JOIN (SELECT "
+           + "pk2.keyword as k2, count(keyword) AS kc2 FROM Product p2 INNER JOIN ProductKeyword "
+           + "pk2 ON p2 = pk2.product LEFT OUTER JOIN BrowsingHistory bh2 ON bh2.product = p2 "
+           + "WHERE bh2.owner = :customer GROUP BY pk2.keyword) ON pk.keyword = k2 WHERE bh.owner "
+           + "is null GROUP BY k2 ORDER BY kc2 DESC LIMIT 10")
+    public List<Product>
+    findRecommendedForUser(User customer);
 }
