@@ -9,8 +9,8 @@ import com.fosskeeters.rrss.models.Vote;
 import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.ReviewRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
-
 import com.fosskeeters.rrss.repositories.VoteRepository;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -188,7 +188,8 @@ public class ReviewController {
     }
 
     @PostMapping("/{reviewId}/vote")
-    public String voteReview(HttpSession session, @PathVariable long reviewId, @RequestParam boolean value) {
+    public String voteReview(HttpSession session, @PathVariable long reviewId,
+                             @RequestParam boolean value) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -200,13 +201,13 @@ public class ReviewController {
             session.removeAttribute("username");
             return "redirect:/login";
         }
+        User currentUser = user.get();
 
         Optional<Review> review = reviewRepository.findById(reviewId);
 
         if (review.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-
 
         Optional<Vote> existingVote = voteRepository.findByReviewAndUser(review.get(), user);
         if (existingVote.isPresent()) {
@@ -215,6 +216,7 @@ public class ReviewController {
             voteRepository.save(vote);
         } else {
             Vote vote = new Vote();
+            vote.setUser(currentUser);
             vote.setReview(review.get());
             vote.setValue(value);
             voteRepository.save(vote);
@@ -222,8 +224,6 @@ public class ReviewController {
 
         return "redirect:/products/" + review.get().getProduct().getId();
     }
-
-
 
     @PostMapping("/{reviewId}/reply")
     public String replyReview(HttpSession session, @PathVariable long reviewId,
@@ -372,7 +372,4 @@ public class ReviewController {
         reviewRepository.save(review.get());
         return "redirect:/products/" + review.get().getProduct().getId();
     }
-
-
-
 }
