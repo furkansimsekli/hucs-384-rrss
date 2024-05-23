@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,8 @@ public class ReviewController {
 
     @PostMapping("/create")
     public String createReview(HttpSession session, @Valid @ModelAttribute ReviewDto reviewDto,
-                               BindingResult bindingResult, Model model) {
+                               BindingResult bindingResult, Model model,
+                               RedirectAttributes redirectAttrs) {
         long productId = reviewDto.getProductId();
         Optional<Product> product = productRepository.findById(productId);
 
@@ -96,14 +98,16 @@ public class ReviewController {
         review.setAuthor(user.get());
         review.setProduct(product.get());
         reviewRepository.save(review);
-        model.addAttribute("notificationMessage", "Voila! Your review has been submitted.");
+        redirectAttrs.addFlashAttribute("notification",
+                                        "success:Voila! Your review has been submitted.");
         return "redirect:/products/" + productId;
     }
 
     @PostMapping("/{reviewId}/update")
     public String updateReview(HttpSession session, @PathVariable long reviewId,
                                @Valid @ModelAttribute ReviewDto reviewDto,
-                               BindingResult bindingResult, Model model) {
+                               BindingResult bindingResult, Model model,
+                               RedirectAttributes redirectAttrs) {
         Optional<Review> review = reviewRepository.findById(reviewId);
         if (review.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -146,12 +150,14 @@ public class ReviewController {
         // Save updated review to database
         review.get().setFromReviewDto(reviewDto);
         reviewRepository.save(review.get());
-        model.addAttribute("notificationMessage", "Voila! Your review has been updated!");
+        redirectAttrs.addFlashAttribute("notification",
+                                        "success:Voila! Your review has been updated!");
         return "redirect:/products/" + product.getId();
     }
 
     @GetMapping("/{reviewId}/delete")
-    public String deleteReview(HttpSession session, @PathVariable long reviewId, Model model) {
+    public String deleteReview(HttpSession session, @PathVariable long reviewId, Model model,
+                               RedirectAttributes redirectAttrs) {
         Optional<Review> review = reviewRepository.findById(reviewId);
         if (review.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -179,7 +185,8 @@ public class ReviewController {
 
         // Delete the review from database
         reviewRepository.delete(review.get());
-        model.addAttribute("notificationMessage", "Oh no! Where did your review go?");
+        redirectAttrs.addFlashAttribute("notification",
+                                        "success:Voila! Successfully deleted review.");
         return "redirect:/products/" + review.get().getProduct().getId();
     }
 
