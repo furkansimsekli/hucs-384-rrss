@@ -171,8 +171,8 @@ public class AdminController {
         // DEBUG
         if (user.getEmail().endsWith("@example.com")) {
             System.out.println(body);
-            redirectAttrs.addFlashAttribute("notification",
-                                            "Email body has been printed out to standard output!");
+            redirectAttrs.addFlashAttribute(
+                    "notification", "info:Email body has been printed out to standard output!");
             awaitingRequest.get().setEmailSent(true);
             passwordRecoveryRepository.save(awaitingRequest.get());
             return "redirect:/admin/password-recovery-requests";
@@ -188,7 +188,7 @@ public class AdminController {
         }
 
         redirectAttrs.addFlashAttribute("notification",
-                                        "Password reset link has been sent to the user!");
+                                        "success:Password reset link has been sent to the user!");
         return "redirect:/admin/password-recovery-requests";
     }
 
@@ -218,7 +218,7 @@ public class AdminController {
         }
 
         passwordRecoveryRepository.delete(awaitingRequests.get());
-        redirectAttrs.addFlashAttribute("notification", "Request has been rejected!");
+        redirectAttrs.addFlashAttribute("notification", "success:Request has been rejected!");
         return "redirect:/admin/password-recovery-requests";
     }
 }
