@@ -77,6 +77,13 @@
                     </div>
                 </div>
             </div>
+            <div th:if="${!products.isEmpty()}" style="margin-left: 4%; margin-top: 2em;">
+                <a th:if="${products.hasPrevious()}" th:href="@{/merchants/{username}(username=${merchantUsername}, page=${products.number - 1})}" class="buttonish-link">Previous</a>
+
+                <span>Page <span th:text="${products.number + 1}">1</span> of <span th:text="${products.totalPages}">1</span></span>
+
+                <a th:if="${products.hasNext()}" th:href="@{/merchants/{username}(username=${merchantUsername}, page=${products.number + 1})}" class="buttonish-link">Next</a>
+            </div>
         </div>
     </main>
 </body>
