@@ -67,7 +67,6 @@
                                 <button type="submit" style="color: gray;">👎 (<span th:text="${review.getDislikeCount}">0</span>)</button>
                             </form>
                         </div>
-                        <a href="share" style="color: gray;">Share</a>
                     </div>
                     <div th:if="${isProductOwner}" th:with="replyDto = ${reviewReplyDtoList != null ? reviewReplyDtoList[reviewStat.index] : null}">
                         <input type="checkbox" class="buttonish-checkbox" th:id="reply-review- + ${review.getId()}" th:checked="${erroredReviewId == review.getId()}"/>
