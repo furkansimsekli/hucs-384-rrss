@@ -1,35 +1,83 @@
 <html layout:decorate="~{common/skeleton}">
 
 <body>
-<main layout:fragment="content">
-    <div class="row-container list">
-        <div class="column-container list-header">
-            <h2>Your Products</h2>
-            <div class="spacer"></div>
-            <a class="mini-button" th:href="@{/products/create}"><span style="font-family: Inika-bold;">&#x2b;</span> New Product</a>
-        </div>
-        <div th:each="product : ${user.products}"  class="column-container list-cell">
-            <a th:unless="${product.images.size() > 0}" th:href="@{/products/{productId}(productId=${product.id})}" ><img src="/filler-product.png" width="50" height="60"></img></a>
-            <a th:if="${product.images.size() > 0}" th:href="@{/products/{productId}(productId=${product.id})}" ><img th:src="${product.images[0].imagePath}" width="50" height="60"></img></a>
-            <a th:href="@{/products/{productId}(productId=${product.id})}" class="row-container" style="text-decoration: none; color: inherit;">
-                <h3 th:text="${product.name}" style="margin: 0px;"></h3>
-                <span th:text="@{${product.price} + '$'}"></span>
-                <span th:text="'Published at ' + ${#temporals.format(product.createdAt, 'dd/MM/yyyy')}"></span>
-            </a>
-            <div class="spacer"></div>
-            <a th:href="@{/products/{productId}/update(productId=${product.id})}" class="mini-button"><span>Edit</span></a>
-            <a th:href="'#delete-modal-' + ${product.id}" class="red-button">Delete</a>
-            <div th:id="'delete-modal-' + ${product.id}" class="modal">
-                <div class="modal-content">
-                    <h2 style="margin-top: 10px;">Product Deletion</h2>
-                    <p style="margin-bottom: 40px;">This action will delete your product from the system. Do you confirm?</p>
-                    <a th:href="@{/products/{productId}/delete(productId=${product.id})}" class="red-button">Confirm</a>
-                    <a href="#" class="mini-button">Back</a>
+    <main layout:fragment="content">
+        <div class="row-container list">
+            <div class="column-container list-header">
+                <h2>Your Products</h2>
+                <div class="spacer"></div>
+                <a class="mini-button" th:href="@{/products/create}"><span
+                        style="font-family: Inika-bold;">&#x2b;</span> New Product</a>
+            </div>
+            <div th:each="product : ${products}" class="column-container list-cell">
+                <a th:unless="${product.images.size() > 0}"
+                    th:href="@{/products/{productId}(productId=${product.id})}"><img src="/filler-product.png"
+                        width="50" height="60"></img></a>
+                <a th:if="${product.images.size() > 0}" th:href="@{/products/{productId}(productId=${product.id})}"><img
+                        th:src="${product.images[0].imagePath}" width="50" height="60"></img></a>
+                <a th:href="@{/products/{productId}(productId=${product.id})}" class="row-container"
+                    style="text-decoration: none; color: inherit;">
+                    <h3 th:text="${product.name}" style="margin: 0px;"></h3>
+                    <span th:text="@{${product.price} + '$'}"></span>
+                    <span th:text="'Published at ' + ${#temporals.format(product.createdAt, 'dd/MM/yyyy')}"></span>
+                </a>
+                <div class="spacer"></div>
+                <div class="row-container" style="gap: 3px; margin: auto 0">
+                    <div class="column-container" style="gap: 4px;">
+                        <img src="/review.png" width="15px" height="15px" style="margin-top: 3px;">
+                        <div class="row-container">
+                            <span th:text="@{${product.getReviews().size()} + ' Reviews'}"></span>
+                        </div>
+                    </div>
+                    <div class="column-container" style="gap: 4px;"
+                        th:with="averageScore = ${product.getAverageScore()}">
+                        <span style="color: #34514c; font-size: 18; margin: auto 0;" th:text="${averageScore}"></span>
+                        <span style="color: var(--primary-color); font-size: 18;"
+                            th:with="starCount = ${T(java.lang.Math).round(averageScore)}"
+                            th:text="${#strings.repeat('&starf;', starCount != null ? starCount : 0)} + ${#strings.repeat('&star;', starCount != null ? 5 - starCount : 5)}"></span>
+                    </div>
+                    <div class="column-container" style="gap: 4px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="20"
+                            viewBox="0,0,256,256">
+                            <g fill="#34514c" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
+                                font-family="none" font-weight="none" font-size="none" text-anchor="none"
+                                style="mix-blend-mode: normal">
+                                <g transform="scale(8,8)">
+                                    <path
+                                        d="M7,5v23l1.59375,-1.1875l7.40625,-5.5625l7.40625,5.5625l1.59375,1.1875v-23zM9,7h14v17l-6.40625,-4.8125l-0.59375,-0.4375l-0.59375,0.4375l-6.40625,4.8125z">
+                                    </path>
+                                </g>
+                            </g>
+                        </svg>
+                        <span th:text="@{'In ' + ${product.getWishCount()} + ' wishlists'}"></span>
+                    </div>
+                </div>
+                <div class="column-container" style="gap: 5px; margin-left: 5px;">
+                    <img src="/view.png" width="15px" height="15px" style="margin-top: 3px;">
+                    <div class="row-container" style="gap: 3px;">
+                        <span th:text="@{'Views this week: ' + ${product.getViewsLastWeek()}}"></span>
+                        <span th:text="@{'Views this month: ' + ${product.getViewsLastMonth()}}"></span>
+                        <span th:text="@{'All views: ' + ${product.getAllViews()}}"></span>
+                    </div>
+                </div>
+                <div class="spacer"></div>
+                <a th:href="@{/products/{productId}/update(productId=${product.id})}"
+                    class="mini-button"><span>Edit</span></a>
+                <a th:href="'#delete-modal-' + ${product.id}" class="red-button">Delete</a>
+                <div th:id="'delete-modal-' + ${product.id}" class="modal">
+                    <div class="modal-content">
+                        <h2 style="margin-top: 10px;">Product Deletion</h2>
+                        <p style="margin-bottom: 40px;">This action will delete your product from the system. Do you
+                            confirm?</p>
+                        <a th:href="@{/products/{productId}/delete(productId=${product.id})}"
+                            class="red-button">Confirm</a>
+                        <a href="#" class="mini-button">Back</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 </body>
 
 </html>
