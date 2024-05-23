@@ -238,7 +238,7 @@ public class UserController {
     private Optional<String> checkAuthentication(HttpSession session) {
         Object loggedInUsername = session.getAttribute("username");
         if (loggedInUsername == null) {
-            return Optional.of("redirect:/login");
+            return Optional.of("redirect:/login?next=/user");
         }
 
         return Optional.empty();

@@ -120,7 +120,7 @@ public class ProductController {
     @GetMapping("/create")
     public String getProductCreateForm(HttpSession session, Model model) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/products/create";
         }
 
         Optional<User> user =
@@ -128,7 +128,7 @@ public class ProductController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/products/create";
         }
 
         if (user.get().getType() != User.Type.MERCHANT) {
@@ -143,7 +143,7 @@ public class ProductController {
     public String createProduct(HttpSession session, @Valid @ModelAttribute ProductDto productDto,
                                 BindingResult bindingResult) throws IOException {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/products/create";
         }
 
         if (bindingResult.hasErrors()) {
@@ -156,7 +156,7 @@ public class ProductController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/products/create";
         }
 
         if (user.get().getType() != User.Type.MERCHANT) {
@@ -197,7 +197,7 @@ public class ProductController {
     public String getUpdateProductForm(HttpSession session, @PathVariable long productId,
                                        Model model) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId + "/update";
         }
 
         Optional<User> user =
@@ -206,7 +206,7 @@ public class ProductController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId + "/update";
         }
 
         if (product.isEmpty()) {
@@ -227,7 +227,7 @@ public class ProductController {
                                 @Valid @ModelAttribute ProductDto productDto,
                                 BindingResult bindingResult) throws IOException {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId + "/update";
         }
 
         if (bindingResult.hasErrors()) {
@@ -240,7 +240,7 @@ public class ProductController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId + "/update";
         }
 
         if (product.isEmpty()) {
@@ -287,7 +287,7 @@ public class ProductController {
     @GetMapping("/{productId}/delete")
     public String deleteProduct(HttpSession session, @PathVariable long productId) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/merchants";
         }
 
         String username = session.getAttribute("username").toString();
@@ -296,7 +296,7 @@ public class ProductController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/merchants";
         }
 
         if (product.isEmpty()) {
@@ -316,7 +316,7 @@ public class ProductController {
     public String addWish(HttpSession session, @PathVariable long productId,
                           RedirectAttributes redirectAttrs) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId;
         }
 
         String username = (String) session.getAttribute("username");
@@ -325,7 +325,7 @@ public class ProductController {
 
         if (user.isEmpty()) {
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId;
         }
 
         if (user.get().getType() != User.Type.CUSTOMER) {
@@ -350,7 +350,7 @@ public class ProductController {
     public String deleteWish(HttpSession session, @PathVariable long productId,
                              RedirectAttributes redirectAttrs) {
         if (session.getAttribute("username") == null) {
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId;
         }
 
         String username = (String) session.getAttribute("username");
@@ -358,9 +358,8 @@ public class ProductController {
         Optional<Product> product = productRepository.findById(productId);
 
         if (user.isEmpty()) {
-            System.out.println("Here-4");
             session.removeAttribute("username");
-            return "redirect:/login";
+            return "redirect:/login?next=/products/" + productId;
         }
 
         if (product.isEmpty()) {
