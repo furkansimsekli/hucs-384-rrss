@@ -6,7 +6,7 @@ import jakarta.validation.constraints.*;
 
 public class TopicDto {
     @NotNull
-    @Size(min = 1, max = 64, message = "Title can not be longer than 64 characters!")
+    @Size(min = 1, max = 64, message = "Title length must be between 1-64 characters!")
     private String title;
 
     @NotBlank(message = "Post type is required!")

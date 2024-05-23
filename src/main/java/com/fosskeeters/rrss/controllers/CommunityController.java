@@ -14,9 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -50,7 +49,7 @@ public class CommunityController {
     @GetMapping("/topics")
     public String getTopicsHandler(HttpSession session, Model model) {
         var allTopics = topicRepository.findAll();
-        Collections.sort(allTopics, Comparator.comparing(Topic::getCreatedAt));
+        Collections.sort(allTopics, Comparator.comparing(Topic::getCreatedAt).reversed());
 
         var discussions = allTopics.stream()
                                   .filter(topic -> topic.getType() == Topic.Type.DISCUSSION)
@@ -126,7 +125,8 @@ public class CommunityController {
 
     @PostMapping("/topics/create")
     public String postTopicCreate(HttpSession session, @Valid @ModelAttribute TopicDto topicDto,
-                                  BindingResult bindingResult, Model model) {
+                                  BindingResult bindingResult, RedirectAttributes redirectAttrs,
+                                  Model model) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -149,12 +149,14 @@ public class CommunityController {
 
         Topic topic = new Topic(topicDto, userOpt.get());
         topicRepository.save(topic);
-        model.addAttribute("notificationMessage", "Voila! Your post has been submitted.");
+        redirectAttrs.addFlashAttribute("notificationMessage",
+                                        "Voila! Your post has been submitted.");
         return "redirect:/community/topics";
     }
 
     @GetMapping("/topics/{topicId}/delete")
-    public String deleteTopic(HttpSession session, @PathVariable long topicId, Model model) {
+    public String deleteTopic(HttpSession session, @PathVariable long topicId,
+                              RedirectAttributes redirectAttrs) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -180,7 +182,8 @@ public class CommunityController {
         }
 
         topicRepository.delete(topic.get());
-        model.addAttribute("notificationMessage", "Oh no! Where did your post go?");
+        redirectAttrs.addFlashAttribute("notificationMessage",
+                                        "Voila! Your post has been deleted.");
         return "redirect:/community/topics";
     }
 
@@ -219,8 +222,8 @@ public class CommunityController {
 
     @PostMapping("/topics/{topicId}/update")
     public String postUpdateTopic(HttpSession session, @Valid @ModelAttribute TopicDto topicDto,
-                                  BindingResult bindingResult, Model model,
-                                  @PathVariable long topicId) {
+                                  BindingResult bindingResult, RedirectAttributes redirectAttrs,
+                                  Model model, @PathVariable long topicId) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -256,7 +259,8 @@ public class CommunityController {
 
         topic.updateFromDto(topicDto);
         topicRepository.save(topic);
-        model.addAttribute("notificationMessage", "Voila! Your post has been updated.");
+        redirectAttrs.addFlashAttribute("notificationMessage",
+                                        "Voila! Your post has been updated.");
         return "redirect:/community/topics";
     }
 
@@ -306,8 +310,9 @@ public class CommunityController {
 
     @PostMapping("/topics/{topicId}/entries/{entryId}/update")
     public String postEntryUpdate(HttpSession session, @Valid @ModelAttribute EntryDto entryDto,
-                                  BindingResult bindingResult, Model model,
-                                  @PathVariable long topicId, @PathVariable long entryId) {
+                                  BindingResult bindingResult, RedirectAttributes redirectAttrs,
+                                  Model model, @PathVariable long topicId,
+                                  @PathVariable long entryId) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -354,14 +359,14 @@ public class CommunityController {
 
         entry.setBody(entryDto.getBody());
         topicRepository.save(topic);
-        model.addAttribute("notificationMessage", "Voila! Your entry has been updated.");
+        redirectAttrs.addFlashAttribute("notificationMessage",
+                                        "Voila! Your entry has been updated.");
         return "redirect:/community/topics/" + topic.getId();
     }
 
     @GetMapping("/topics/{topicId}/entries/{entryId}/delete")
-    public String deleteEntry(HttpSession session, @Valid @ModelAttribute EntryDto entryDto,
-                              BindingResult bindingResult, Model model, @PathVariable long topicId,
-                              @PathVariable long entryId) {
+    public String deleteEntry(HttpSession session, RedirectAttributes redirectAttrs,
+                              @PathVariable long topicId, @PathVariable long entryId) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -403,14 +408,15 @@ public class CommunityController {
         topic.setEntries(entries);
         topicRepository.save(topic);
         entryRepository.delete(entry);
-        model.addAttribute("notificationMessage", "Oh no! Where did your entry go?");
+        redirectAttrs.addFlashAttribute("notificationMessage",
+                                        "Voila! Your entry has been deleted.");
         return "redirect:/community/topics/" + topic.getId();
     }
 
-    @GetMapping("/topics/{topicId}/entries/create")
+    @PostMapping("/topics/{topicId}/entries/create")
     public String createEntry(HttpSession session, @Valid @ModelAttribute EntryDto entryDto,
-                              BindingResult bindingResult, Model model,
-                              @PathVariable long topicId) {
+                              BindingResult bindingResult, RedirectAttributes redirectAttrs,
+                              Model model, @PathVariable long topicId) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login";
         }
@@ -434,7 +440,7 @@ public class CommunityController {
             model.addAttribute("hasErrors", true);
             model.addAttribute("topic", topic);
 
-            return "community/topics/" + topic.getId();
+            return "community/entries";
         }
         Entry entry = new Entry();
         entry.setAuthor(user.get());
@@ -446,7 +452,8 @@ public class CommunityController {
         topic.setEntries(entries);
 
         entryRepository.save(entry);
-        model.addAttribute("notificationMessage", "Voila! Your entry has been submitted.");
+        redirectAttrs.addFlashAttribute("notificationMessage",
+                                        "Voila! Your entry has been submitted.");
         return "redirect:/community/topics/" + topic.getId();
     }
 }

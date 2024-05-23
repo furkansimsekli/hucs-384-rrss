@@ -46,18 +46,18 @@
                                 <span th:text="${entry.author.username} + ' replied: '"
                                     style="margin-right: 20px; font-weight: 300; font-size: 15; color: rgb(58, 58, 58)"/>
                                 <span th:if="${isModOrAdmin != null || entry.author.username.equals(#ctx.session.username)}">
-                                    <a th:href="@{/community/topics/{topicId}/entries/{entryId}/update(topicId=${topic.id},entryId=${entry.id})}">
+                                    <a th:href="@{/community/topics/{topicId}/entries/{entryId}/update(topicId=${topic.id},entryId=${entry.id})}" style="text-decoration: none;">
                                         <img th:src="@{/edit.svg}" height="16" style="margin-right: 5px;" />
                                     </a>
-                                    <a th:href="'#delete-modal-entry-' + ${entry.id}">
+                                    <a th:href="'#delete-modal-entry-' + ${entry.id}" style="text-decoration: none;">
                                         <img th:src="@{/trash.svg}" height="16" />
                                     </a>
                                 </span>
                                 <div th:id="'delete-modal-entry-' + ${entry.id}" class="modal">
                                     <div class="modal-content">
-                                        <h2 style="margin-top: 10px;">Post Deletion</h2>
+                                        <h2 style="margin-top: 10px;">Entry Deletion</h2>
                                         <p style="margin-bottom: 40px;">
-                                            This action will delete this post from the system. Do you confirm?
+                                            This action will delete this entry from the system. Do you confirm?
                                         </p>
                                         <a th:href="@{/community/topics/{topicId}/entries/{entryId}/delete(topicId=${topic.id},entryId=${entry.id})}" class="red-button">Confirm</a>
                                         <a href="#" class="mini-button">Back</a>
@@ -69,9 +69,9 @@
                     </div>
                 </div>
                 <div th:unless="${#strings.isEmpty(#ctx.session.username)}" class="column-container" style="gap: 1vw;" th:if="${true}">
-                    <input type="checkbox" class="buttonish-checkbox" id="new-entry"/>
+                    <input type="checkbox" class="buttonish-checkbox" id="new-entry" th:checked="${hasErrors}"/>
                     <label class="buttonish-checkbox-label hidden-on-edit" for="new-entry">New Entry</label>
-                    <form class="row-container shown-on-edit" style="gap: 10px; width: 30em;" method="get"
+                    <form class="row-container shown-on-edit" style="gap: 10px; width: 30em;" method="post"
                         th:action="@{/community/topics/{topicId}/entries/create(topicId=${topic.id})}"
                         th:object="${entryDto}">
                         <textarea th:errorclass="error-input" name="body" style="height: 10em;" placeholder="Body"
