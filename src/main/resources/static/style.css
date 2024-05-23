@@ -372,20 +372,20 @@ nav * {
     background-color: #1d2e2b;
 }
 
-.red-button{
-    border: red 1px solid;
+.red-button {
+    border: #b3261e 1px solid;
     border-radius: 10px;
     background-color: white;
     margin: auto;
     transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
-    color:red;
+    color: #b3261e;
     text-decoration: none;
     height: fit-content;
     padding: 10px 15px;
 }
 
-.red-button:hover{
-    background-color: red;
+.red-button:hover {
+    background-color: #b3261e;
     color: white;
 }
 
