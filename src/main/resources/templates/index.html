@@ -25,9 +25,9 @@
                     <h3 th:text="${product.name}"
                         style="margin: 0px; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
                     </h3>
-                    <div class="row-container" style="padding-top: 8px; margin-left: auto;">
+                    <div class="row-container" style="padding-top: 8px; margin-left: auto;" th:with="averageScore = ${product.getAverageScore()}">
                         <span style="color: var(--primary-color); font-size: 14;"
-                            th:with="starCount = ${T(java.lang.Math).round(new java.lang.Double(#aggregates.avg(product.getReviews().![#this.getScore]) != null ? #aggregates.avg(product.getReviews().![#this.getScore]) : 0.0))}"
+                            th:with="starCount = ${T(java.lang.Math).round(averageScore)}"
                             th:text="${#strings.repeat('&starf;', starCount != null ? starCount : 0)} + ${#strings.repeat('&star;', starCount != null ? 5 - starCount : 5)}" />
                         <span style="margin-right: auto; color: gray; font-size: 12;"
                             th:text="${product.getReviews().size()} + ' reviews'" />
@@ -48,9 +48,9 @@
                     <h3 th:text="${product.name}"
                         style="margin: 0px; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
                     </h3>
-                    <div class="row-container" style="padding-top: 8px; margin-left: auto;">
+                    <div class="row-container" style="padding-top: 8px; margin-left: auto;" th:with="averageScore = ${product.getAverageScore()}">
                         <span style="color: var(--primary-color); font-size: 14;"
-                            th:with="starCount = ${T(java.lang.Math).round(new java.lang.Double(#aggregates.avg(product.getReviews().![#this.getScore]) != null ? #aggregates.avg(product.getReviews().![#this.getScore]) : 0.0))}"
+                            th:with="starCount = ${T(java.lang.Math).round(averageScore)}"
                             th:text="${#strings.repeat('&starf;', starCount != null ? starCount : 0)} + ${#strings.repeat('&star;', starCount != null ? 5 - starCount : 5)}" />
                         <span style="margin-right: auto; color: gray; font-size: 12;"
                             th:text="${product.getReviews().size()} + ' reviews'" />
