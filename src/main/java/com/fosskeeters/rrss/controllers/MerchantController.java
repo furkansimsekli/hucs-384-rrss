@@ -2,7 +2,6 @@ package com.fosskeeters.rrss.controllers;
 
 import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.User;
-import com.fosskeeters.rrss.models.Wish;
 import com.fosskeeters.rrss.repositories.BrowsingHistoryRepository;
 import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
@@ -18,8 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpSession;
@@ -58,26 +55,24 @@ public class MerchantController {
     public String getMerchantProducts(@RequestParam(required = false, defaultValue = "0") int page,
                                       HttpSession session, @PathVariable String username,
                                       Model model) {
-        if (session.getAttribute("username") == null) {
-            return "redirect:/login?next=/merchants/" + username;
-        }
-
         Optional<User> authenticatedUser =
                 userRepository.findByUsername((String) session.getAttribute("username"));
         Optional<User> targetUser = userRepository.findByUsername(username);
-
-        if (authenticatedUser.isEmpty()) {
-            session.removeAttribute("username");
-            return "redirect:/login?next=/merchants/" + username;
-        }
 
         if (targetUser.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        if (!Objects.equals(username, session.getAttribute("username"))
-            && authenticatedUser.get().getType() != User.Type.ADMIN) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (authenticatedUser.isEmpty()) {
+            session.removeAttribute("username");
+        } else { // Visitor is authenticated
+            if (authenticatedUser.get().getId() == targetUser.get().getId()) {
+                model.addAttribute("isOwner", true);
+            }
+
+            if (authenticatedUser.get().getType() == User.Type.ADMIN) {
+                model.addAttribute("isAdmin", true);
+            }
         }
 
         if (targetUser.get().getType() != User.Type.MERCHANT) {
@@ -108,7 +103,7 @@ public class MerchantController {
 
         model.addAttribute("stats", stats);
         model.addAttribute("products", userProducts);
-        model.addAttribute("merchantUsername", username);
+        model.addAttribute("owner", targetUser.get());
         return "merchants/products";
     }
 }

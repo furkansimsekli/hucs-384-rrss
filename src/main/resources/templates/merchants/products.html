@@ -4,9 +4,9 @@
     <main layout:fragment="content">
         <div class="row-container list">
             <div class="column-container list-header">
-                <h2>Your Products</h2>
+                <h2 th:text="${isOwner != null ? 'Your Products' : owner.username + '''s Products'}"></h2>
                 <div class="spacer"></div>
-                <a class="mini-button" th:href="@{/products/create}"><span
+                <a th:if="${isOwner != null}" class="mini-button" th:href="@{/products/create}"><span
                         style="font-family: Inika-bold;">&#x2b;</span> New Product</a>
             </div>
             <div th:each="product : ${products}" class="column-container list-cell">
@@ -17,14 +17,14 @@
                         th:src="${product.images[0].imagePath}" width="50" height="60"></img></a>
                 <a th:href="@{/products/{productId}(productId=${product.id})}" class="row-container"
                     style="text-decoration: none; color: inherit;">
-                    <h3
-                    th:text="${#strings.length(product.name) > 50 ? #strings.substring(product.name, 0, 50) + '...' : product.name}" style="margin: 0px;">
-                </h3>
+                    <h3 th:text="${#strings.length(product.name) > 50 ? #strings.substring(product.name, 0, 50) + '...' : product.name}"
+                        style="margin: 0px;">
+                    </h3>
                     <span th:text="@{${product.price} + '$'}"></span>
                     <span th:text="'Published at ' + ${#temporals.format(product.createdAt, 'dd/MM/yyyy')}"></span>
                 </a>
                 <div class="spacer"></div>
-                <div class="row-container" style="gap: 3px; margin: auto 0">
+                <div th:if="${isOwner != null}" class="row-container" style="gap: 3px; margin: auto 0">
                     <div class="column-container" style="gap: 4px;">
                         <img src="/review.png" width="15px" height="15px" style="margin-top: 3px;">
                         <div class="row-container">
@@ -55,7 +55,7 @@
                         <span th:text="'In ' + ${stats.get(product.id).get('wishCount')} + ' wishlists'"></span>
                     </div>
                 </div>
-                <div class="column-container" style="gap: 5px; margin-left: 15px;">
+                <div th:if="${isOwner != null}" class="column-container" style="gap: 5px; margin-left: 15px;">
                     <img src="/view.png" width="15px" height="15px" style="margin-top: 3px;">
                     <div class="row-container" style="gap: 3px;">
                         <span th:text="'Views this week: ' + ${stats.get(product.id).get('lastWeekViewCount')}"></span>
@@ -63,10 +63,10 @@
                         <span th:text="'All views: ' + ${stats.get(product.id).get('allViewCount')}"></span>
                     </div>
                 </div>
-                <a th:href="@{/products/{productId}/update(productId=${product.id})}"
+                <a th:if="${isOwner != null}" th:href="@{/products/{productId}/update(productId=${product.id})}"
                     class="mini-button"><span>Edit</span></a>
-                <a th:href="'#delete-modal-' + ${product.id}" class="red-button">Delete</a>
-                <div th:id="'delete-modal-' + ${product.id}" class="modal">
+                <a th:if="${isOwner != null || isAdmin != null}" th:href="'#delete-modal-' + ${product.id}" class="red-button">Delete</a>
+                <div th:if="${isOwner != null || isAdmin != null}" th:id="'delete-modal-' + ${product.id}" class="modal">
                     <div class="modal-content">
                         <h2 style="margin-top: 10px;">Product Deletion</h2>
                         <p style="margin-bottom: 40px;">This action will delete your product from the system. Do you
@@ -78,11 +78,11 @@
                 </div>
             </div>
             <div th:if="${!products.isEmpty()}" style="margin-left: 4%; margin-top: 2em;">
-                <a th:if="${products.hasPrevious()}" th:href="@{/merchants/{username}(username=${merchantUsername}, page=${products.number - 1})}" class="buttonish-link">Previous</a>
+                <a th:if="${products.hasPrevious()}" th:href="@{/merchants/{username}(username=${owner.username}, page=${products.number - 1})}" class="buttonish-link">Previous</a>
 
                 <span>Page <span th:text="${products.number + 1}">1</span> of <span th:text="${products.totalPages}">1</span></span>
 
-                <a th:if="${products.hasNext()}" th:href="@{/merchants/{username}(username=${merchantUsername}, page=${products.number + 1})}" class="buttonish-link">Next</a>
+                <a th:if="${products.hasNext()}" th:href="@{/merchants/{username}(username=${owner.username}, page=${products.number + 1})}" class="buttonish-link">Next</a>
             </div>
         </div>
     </main>
