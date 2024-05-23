@@ -23,6 +23,19 @@ public class MerchantController {
         this.userRepository = userRepository;
     }
 
+    @GetMapping({"", "/"})
+    public String getMerchantRedirectHandler(HttpSession session) {
+        Optional<User> authenticatedUser =
+                userRepository.findByUsername((String) session.getAttribute("username"));
+
+        if (authenticatedUser.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login?next=/merchants";
+        }
+
+        return "redirect:/merchants/" + authenticatedUser.get().getUsername();
+    }
+
     @GetMapping("/{username}")
     public String getMerchantProducts(HttpSession session, @PathVariable String username,
                                       Model model) {
