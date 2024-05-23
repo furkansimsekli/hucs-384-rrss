@@ -63,7 +63,7 @@
                         <span th:text="'All views: ' + ${stats.get(product.id).get('allViewCount')}"></span>
                     </div>
                 </div>
-                <a th:if="${isOwner != null || isAdmin != null}" th:href="@{/products/{productId}/update(productId=${product.id})}"
+                <a th:if="${isOwner != null}" th:href="@{/products/{productId}/update(productId=${product.id})}"
                     class="mini-button"><span>Edit</span></a>
                 <a th:if="${isOwner != null || isAdmin != null}" th:href="'#delete-modal-' + ${product.id}" class="red-button">Delete</a>
                 <div th:if="${isOwner != null || isAdmin != null}" th:id="'delete-modal-' + ${product.id}" class="modal">
@@ -78,11 +78,11 @@
                 </div>
             </div>
             <div th:if="${!products.isEmpty()}" style="margin-left: 4%; margin-top: 2em;">
-                <a th:if="${products.hasPrevious()}" th:href="@{/merchants/{username}(username=${merchantUsername}, page=${products.number - 1})}" class="buttonish-link">Previous</a>
+                <a th:if="${products.hasPrevious()}" th:href="@{/merchants/{username}(username=${owner.username}, page=${products.number - 1})}" class="buttonish-link">Previous</a>
 
                 <span>Page <span th:text="${products.number + 1}">1</span> of <span th:text="${products.totalPages}">1</span></span>
 
-                <a th:if="${products.hasNext()}" th:href="@{/merchants/{username}(username=${merchantUsername}, page=${products.number + 1})}" class="buttonish-link">Next</a>
+                <a th:if="${products.hasNext()}" th:href="@{/merchants/{username}(username=${owner.username}, page=${products.number + 1})}" class="buttonish-link">Next</a>
             </div>
         </div>
     </main>
