@@ -145,6 +145,14 @@ nav * {
     }
 }
 
+.search-button {
+    border: none;
+    background-color: white;
+    cursor: pointer;
+    margin: 0 auto;
+    padding: 5px 5px;
+}
+
 /* ============= FLASH NOTIFICATIONS ========== */
 
 .flash-info {
@@ -405,5 +413,24 @@ div:hover > .review-star::before {
  * cursor to be filled. */
 div:hover > .review-star:hover::before, .review-star:hover ~ .review-star::before {
     content: '\02605' !important;
+    cursor: pointer;
+}
+
+/* ============= SEARCH ============= */
+
+select {
+    background-color: white;
+    border-radius: 5px;
+    max-width: 200px;
+    height: max-content;
+    border: 1px solid gray;
+    padding: 5px 10px;
+    margin: auto 0;
+}
+
+.sort-button {
+    background-color: white;
+    height: max-content;
+    margin: auto 0;
     cursor: pointer;
 }

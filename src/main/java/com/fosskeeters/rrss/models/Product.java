@@ -143,4 +143,17 @@ public class Product {
         this.keywords.clear();
         this.keywords.addAll(keywords);
     }
+
+    public double getAverageScore() {
+        if (reviews.isEmpty()) {
+            return 0;
+        }
+
+        double total = 0;
+        for (Review review : reviews) {
+            total += review.getScore();
+        }
+        double averageScore = total / reviews.size();
+        return Math.round(averageScore * 10) / 10.0;
+    }
 }
