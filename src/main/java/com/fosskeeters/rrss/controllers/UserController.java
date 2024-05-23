@@ -97,6 +97,7 @@ public class UserController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("hasErrors", "true");
+            model.addAttribute("user", displayedUser.get());
             System.out.println(bindingResult);
             return "user/profile";
         }
