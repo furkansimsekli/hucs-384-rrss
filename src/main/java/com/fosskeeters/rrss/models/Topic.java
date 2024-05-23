@@ -1,17 +1,22 @@
 package com.fosskeeters.rrss.models;
 
+import com.fosskeeters.rrss.dtos.TopicDto;
+
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
 
 @Entity
 public class Topic {
+    public enum Type { DISCUSSION, TUTORIAL, QNA }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long topicID;
+    private long id;
 
     @Column(length = 64)
     private String title;
@@ -26,12 +31,38 @@ public class Topic {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public long getTopicID() {
-        return topicID;
+    @Column
+    private Type type;
+
+    public Topic() {
+        this.createdAt = LocalDateTime.now();
+        this.entries = new ArrayList<>();
     }
 
-    public void setTopicID(long topicID) {
-        this.topicID = topicID;
+    public Topic(TopicDto topicDto, User owner) {
+        this.title = topicDto.getTitle();
+        switch (topicDto.getTopicType()) {
+            case "discussion":
+                this.type = Type.DISCUSSION;
+                break;
+            case "tutorial":
+                this.type = Type.TUTORIAL;
+                break;
+            case "qna":
+                this.type = Type.QNA;
+                break;
+        }
+        this.entries = new ArrayList<>();
+        this.owner = owner;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -63,6 +94,30 @@ public class Topic {
     }
 
     public void setEntries(List<Entry> entries) {
-        this.entries = entries;
+        this.entries.clear();
+        this.entries.addAll(entries);
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public void updateFromDto(TopicDto topicDto) {
+        this.title = topicDto.getTitle();
+        switch (topicDto.getTopicType()) {
+            case "discussion":
+                this.type = Type.DISCUSSION;
+                break;
+            case "tutorial":
+                this.type = Type.TUTORIAL;
+                break;
+            case "qna":
+                this.type = Type.QNA;
+                break;
+        }
     }
 }
