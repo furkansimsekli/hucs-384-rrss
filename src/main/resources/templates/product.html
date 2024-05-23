@@ -7,7 +7,7 @@
             <img th:if="${product.images.size() > 0}" th:src="${product.images[0].imagePath}" width="160px" height="160px"/>
             <div class="row-container">
                 <h2 th:text="${product.getName()}" style="margin: 0; margin-top: 10px;">Product Untitled</h2>
-                <span th:text="${product.getOwner().getUsername()}" style="color: gray;">from <a href="merchant.html" style="color: grey">Merchant A</a></span>
+                <a th:href="@{/merchants/{merch}(merch=${product.owner.username})}" style="color: gray;" th:text="${product.owner.username}"></a>
                 <span th:text="${product.getPrice()} + 'TL'" style="margin-top: 10px; font-weight: 500; font-size: 20;">0</span>
                 <span th:text="${product.getDescription()}"> Product Description</span>
             </div>
