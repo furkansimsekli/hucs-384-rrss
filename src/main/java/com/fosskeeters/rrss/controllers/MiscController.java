@@ -7,7 +7,9 @@ import com.fosskeeters.rrss.repositories.ProductImageRepository;
 import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -64,45 +66,39 @@ public class MiscController {
 
     @GetMapping("/search")
     public String searchProduct(@RequestParam String query,
-                                @RequestParam(required = false) String sort, Model model) {
-        List<Product> results;
+                                @RequestParam(required = false) String sort,
+                                @RequestParam(required = false, defaultValue = "0") int page,
+                                Model model) {
+        Page<Product> results;
 
         if (sort != null && sort.equals("priceAsc")) {
             results =
                     productRepository
                             .findByNameContainingOrDescriptionContainingAllIgnoreCaseOrderByPriceAsc(
-                                    query, query);
+                                    query, query, PageRequest.of(page, 20));
         } else if (sort != null && sort.equals("priceDesc")) {
             results =
                     productRepository
                             .findByNameContainingOrDescriptionContainingAllIgnoreCaseOrderByPriceDesc(
-                                    query, query);
+                                    query, query, PageRequest.of(page, 20));
         } else if (sort != null && sort.equals("mostReviewed")) {
             results =
                     productRepository
-                            .findByNameContainingOrDescriptionContainingAllIgnoreCase(query, query)
-                            .stream()
-                            .sorted((p1, p2)
-                                            -> Integer.compare(p2.getReviews().size(),
-                                                               p1.getReviews().size()))
-                            .collect(Collectors.toList());
+                            .findByNameContainingOrDescriptionContainingAllIgnoreCaseOrderByReviewsSize(
+                                    query, query, PageRequest.of(page, 20));
         } else if (sort != null && sort.equals("mostRecent")) {
             results =
                     productRepository
                             .findByNameContainingOrDescriptionContainingAllIgnoreCaseOrderByCreatedAtDesc(
-                                    query, query);
+                                    query, query, PageRequest.of(page, 20));
         } else if (sort != null && sort.equals("bestScored")) {
             results =
                     productRepository
-                            .findByNameContainingOrDescriptionContainingAllIgnoreCase(query, query)
-                            .stream()
-                            .sorted((p1, p2)
-                                            -> Double.compare(p2.getAverageScore(),
-                                                              p1.getAverageScore()))
-                            .collect(Collectors.toList());
+                            .findByNameContainingOrDescriptionContainingAllIgnoreCaseOrderByAverageScore(
+                                    query, query, PageRequest.of(page, 20));
         } else {
             results = productRepository.findByNameContainingOrDescriptionContainingAllIgnoreCase(
-                    query, query);
+                    query, query, PageRequest.of(page, 20));
         }
 
         model.addAttribute("products", results);
