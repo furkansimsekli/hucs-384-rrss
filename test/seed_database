@@ -103,7 +103,7 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    ensure_file(f"{args.dataset}.jsonl", f"https://datarepo.eng.ucsd.edu/mcauley_group/data/amazon_2023/raw/meta_categories/{args.dataset}.jsonl.gz")
+    ensure_file(f"{args.dataset}.jsonl", f"https://datarepo.eng.ucsd.edu/mcauley_group/data/amazon_2023/raw/review_categories/{args.dataset}.jsonl.gz")
     ensure_file(f"meta_{args.dataset}.jsonl", f"https://datarepo.eng.ucsd.edu/mcauley_group/data/amazon_2023/raw/meta_categories/meta_{args.dataset}.jsonl.gz")
 
     conn = sqlite3.connect("rrss.sqlite")
