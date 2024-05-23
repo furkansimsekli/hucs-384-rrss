@@ -3,8 +3,8 @@
 <body>
     <main class="row-container" layout:fragment="content">
         <h2 style="margin-left: 5vw;">Featured Products</h2>
-        <div id="index-carousel">
-            <div th:each="product : ${trendingProducts}">
+        <div id="index-carousel" style="gap: 1em;">
+            <div th:each="product : ${trendingProducts}" id="carousel-item">
                 <input type="radio" name="carousel" th:id="radio + ${productStat.index}">
                 <label th:for="radio + ${productStat.index}"
                     th:style="'background-image: url(' + ${product.images.size() > 0 ? product.images[0].imagePath : '/filler-product.png'} + ');'"></label>
