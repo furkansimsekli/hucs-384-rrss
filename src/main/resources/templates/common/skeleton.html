@@ -23,6 +23,10 @@
                 <span th:text="${#ctx.session.username}"/>
             </a>
         </nav>
+
+        <div th:if="${notification != null}" th:class="'flash-' + ${#strings.substringBefore(notification, ':')}" th:text="${#strings.substringAfter(notification, ':')}">
+        </div>
+
         <main layout:fragment="content">
             
         </main>

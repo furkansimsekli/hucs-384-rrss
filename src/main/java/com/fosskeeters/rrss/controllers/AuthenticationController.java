@@ -64,7 +64,7 @@ public class AuthenticationController {
         userRepository.save(user);
         redirectAttrs.addFlashAttribute(
                 "notification",
-                "Sign up request has been made, please wait for the approval and thanks for the patience in advance!");
+                "success:Sign up request has been made, please wait for the approval and thanks for the patience in advance!");
         return "redirect:/";
     }
 
@@ -88,7 +88,7 @@ public class AuthenticationController {
             if (!user.get().isApproved()) {
                 redirectAttrs.addFlashAttribute(
                         "notification",
-                        "We have high volume of applications, approval might take 1-2 days!");
+                        "error:We have high volume of applications, approval might take 1-2 days!");
                 return "redirect:/login";
             }
             if (encoder.matches(password, user.get().getPassword())) {
@@ -116,8 +116,8 @@ public class AuthenticationController {
             // Don't let them know if the email exist in the system
             redirectAttrs.addFlashAttribute(
                     "notification",
-                    "After the admin approval, an email will be sent to your email address. Please check your spam folder just in case!");
-            return "redirect:/login";
+                    "info:After the admin approval, an email will be sent to your email address. Please check your spam folder just in case!");
+            return "redirect:/";
         }
 
         PasswordRecovery passwordRecovery =
@@ -126,8 +126,8 @@ public class AuthenticationController {
 
         redirectAttrs.addFlashAttribute(
                 "notification",
-                "After the admin approval, an email will be sent to your email address. Please check your spam folder just in case!");
-        return "redirect:/login";
+                "info:After the admin approval, an email will be sent to your email address. Please check your spam folder just in case!");
+        return "redirect:/";
     }
 
     @GetMapping("/new-password/{token}")

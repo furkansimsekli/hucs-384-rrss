@@ -341,8 +341,8 @@ public class ProductController {
         }
 
         wishRepository.save(new Wish(product.get(), user.get()));
-        redirectAttrs.addFlashAttribute("notification",
-                                        "This item has been successfully added to your wishlist!");
+        redirectAttrs.addFlashAttribute(
+                "notification", "success:This item has been successfully added to your wishlist!");
         return "redirect:/products/" + productId;
     }
 
@@ -375,7 +375,8 @@ public class ProductController {
 
         wishRepository.delete(wish.get());
         redirectAttrs.addFlashAttribute(
-                "notification", "This item has been successfully removed from your wishlist!");
+                "notification",
+                "success:This item has been successfully removed from your wishlist!");
         return "redirect:/products/" + productId;
     }
 }
