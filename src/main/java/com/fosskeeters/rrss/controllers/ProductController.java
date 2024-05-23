@@ -7,13 +7,11 @@ import com.fosskeeters.rrss.models.*;
 import com.fosskeeters.rrss.models.BrowsingHistory;
 import com.fosskeeters.rrss.models.Product;
 import com.fosskeeters.rrss.models.ProductImage;
-import com.fosskeeters.rrss.models.ProductKeyword;
 import com.fosskeeters.rrss.models.Review;
 import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.*;
 import com.fosskeeters.rrss.repositories.BrowsingHistoryRepository;
 import com.fosskeeters.rrss.repositories.ProductImageRepository;
-import com.fosskeeters.rrss.repositories.ProductKeywordRepository;
 import com.fosskeeters.rrss.repositories.ProductRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
@@ -44,21 +42,18 @@ import jakarta.validation.Valid;
 public class ProductController {
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
-    private final ProductKeywordRepository productKeywordRepository;
     private final UserRepository userRepository;
     private final BrowsingHistoryRepository browsingHistoryRepository;
     private final WishRepository wishRepository;
 
     public ProductController(ProductRepository productRepository,
                              ProductImageRepository productImageRepository,
-                             ProductKeywordRepository productKeywordRepository,
                              UserRepository userRepository,
                              BrowsingHistoryRepository browsingHistoryRepository,
                              WishRepository wishRepository) throws IOException {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.productImageRepository = productImageRepository;
-        this.productKeywordRepository = productKeywordRepository;
         this.browsingHistoryRepository = browsingHistoryRepository;
         this.wishRepository = wishRepository;
 

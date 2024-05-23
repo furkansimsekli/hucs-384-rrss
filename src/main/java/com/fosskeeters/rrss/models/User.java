@@ -87,7 +87,8 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.createdAt = LocalDateTime.now();
         this.address = "";
-        this.profileImagePath = "/filler-user.png";
+        int randomNumber = (int) (Math.random() * 20) + 1;
+        this.profileImagePath = "/profile-image/default-profile" + randomNumber + ".png";
         this.dateOfBirth = LocalDate.of(1970, 1, 1);
         this.isApproved = false;
     }
@@ -95,7 +96,8 @@ public class User {
     public User() {
         this.createdAt = LocalDateTime.now();
         this.address = "";
-        this.profileImagePath = "/filler-user.png";
+        int randomNumber = (int) (Math.random() * 20) + 1;
+        this.profileImagePath = "/profile-image/default-profile" + randomNumber + ".png";
         this.dateOfBirth = LocalDate.of(1970, 1, 1);
         this.isApproved = false;
     }
@@ -110,7 +112,8 @@ public class User {
         this.phoneNumber = userDto.getPhoneNumber();
         this.createdAt = LocalDateTime.now();
         this.address = "";
-        this.profileImagePath = "/filler-user.png";
+        int randomNumber = (int) (Math.random() * 20) + 1;
+        this.profileImagePath = "/profile-image/default-profile" + randomNumber + ".png";
         this.dateOfBirth = LocalDate.of(1970, 1, 1);
         this.password = encodedPassword;
         this.isApproved = false;

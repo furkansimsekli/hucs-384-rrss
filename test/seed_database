@@ -26,6 +26,8 @@ User = namedtuple("User", "username first_name last_name type")
 USERS: list[User] = [
     User("admin", "Marion", "Wheeler", "customer"), # Admin is set later in db.
 
+    User("mod", "Jack", "Bright", "customer"), # Mod is set later in db.
+
     User("user", "Emily", "Johnson", "customer"),
     User("user2", "Michael", "Williams", "customer"),
     User("user3", "Jessica", "Brown", "customer"),
@@ -94,7 +96,9 @@ def main() -> None:
 
     parser.add_argument('-d', '--dataset', default="Appliances", help="The dataset to use. Default is Appliances. See https://amazon-reviews-2023.github.io/#grouped-by-category")
     parser.add_argument('-p', '--product-count', default=20_000, help="Number of products to use. Defaults to 20000.")
-    parser.add_argument('-i', '--image-count', default=20, help="Number of images to use. Defaults to 20.")
+    parser.add_argument('-i', '--image-count', type=int, default=20, help="Number of images to use. Defaults to 20.")
+    parser.add_argument('-z', '--skip-zero-price', action="store_true", help="Skip products with 0 or null price.")
+    parser.add_argument('-e', '--skip-no-description', action="store_true", help="Skip products with no description.")
     parser.add_argument('-y', '--confirm', action='store_true', help="Confirms every prompt without waiting for user interaction.")
 
     args = parser.parse_args()
@@ -111,6 +115,7 @@ def main() -> None:
 
     if not args.confirm and input("Deleting all users, products, keywords, images. Are you sure? [y/N]").lower() != "y":
         print("Operation aborted, exiting.")
+        exit(2)
 
     print("Deleting rows from database...")
     conn.execute("DELETE FROM product;")
@@ -124,6 +129,14 @@ def main() -> None:
     products: list[dict[str, str]] = []
     with open(f"meta_{args.dataset}.jsonl") as f:
         for line in f:
+            product: dict[str, str] = json.loads(line)
+
+            if args.skip_zero_price and product["price"] is None or product["price"] == 0:
+                continue
+
+            if args.skip_no_description and not product["description"]:
+                continue
+
             products.append(json.loads(line))
     print(f"Loaded {len(products)} products, truncating to {args.product_count}.")
     random.shuffle(products)
@@ -151,6 +164,8 @@ def main() -> None:
         r.raise_for_status()
 
     print("Approving users...")
+    conn.execute("UPDATE user SET type = 2 WHERE username = 'admin';")
+    conn.execute("UPDATE user SET type = 3 WHERE username = 'mod';")
     conn.execute("UPDATE user SET is_approved = true;")
     conn.commit()
 
