@@ -6,7 +6,7 @@
             <p th:unless="${#strings.isEmpty(updatedSuccessfully)}">Profile information updated successfully!</p>
             <h2>Account</h2>
             <div class="column-container" style="margin: 0 auto; width: 90%; gap: 20px;">
-                <div class="row-container" style="gap: 5px; width: max-content;">
+                <div class="row-container" style="gap: 10px; width: max-content;">
                     <div class="column-container" style="gap: 10px; margin-bottom: 10px;">
                         <img class="profile-picture" th:src="${user.profileImagePath}" />
                         <div class="row-container" style="margin: auto 0;">
@@ -20,9 +20,9 @@
                     <input type="checkbox" class="buttonish-checkbox" id="edit" th:if="${#strings.isEmpty(hasErrors)}" />
                     <label class="buttonish-checkbox-label hidden-on-edit" for="edit">Edit</label>
                     <label class="buttonish-checkbox-label shown-on-edit" for="edit">Cancel</label>
-                    <form class="row-container shown-on-edit" style="gap: 10px;" method="post" enctype="multipart/form-data" th:object="${userUpdateDto}">
+                    <form class="row-container shown-on-edit" style="gap: 20px;" method="post" enctype="multipart/form-data" th:object="${userUpdateDto}">
                         <div class="row-container">
-                            <div class="column-container" style="gap: 10px">
+                            <div class="column-container" style="gap: 20px">
                                 <input name="firstname" type="text" placeholder="First Name"
                                     th:field="${userUpdateDto.firstName}" th:errorclass="error-input" />
                                 <input name="lastname" type="text" placeholder="Last Name"
@@ -59,7 +59,7 @@
                     <div th:switch="${user.getType().toString()}" style="font-weight: bold;">
                         <a th:case="'CUSTOMER'" class="buttonish-link" th:href="@{/user/{username}/wishlist(username=${#ctx.session.username})}" style="display: block;">View Your Wishlist</a>
                         <a th:case="'MERCHANT'" class="buttonish-link" th:href="@{/merchants/{username}(username=${#ctx.session.username})}" style="display: block;">View Your Products</a>
-                        <div class="row-container" th:case="'ADMIN'" style="gap: 5px;">
+                        <div class="row-container" th:case="'ADMIN'" style="gap: 10px;">
                             <a class="buttonish-link" th:href="@{/admin/signup-requests}" style="display: block;">View Signup Requests</a>
                             <a class="buttonish-link" th:href="@{/admin/password-recovery-requests}" style="display: block;">View Password Recovery Requests</a>
                         </div>
@@ -67,7 +67,7 @@
                     <a class="buttonish-link" style="font-weight: bold;"
                             th:href="@{/user/{username}/change-password(username=${#ctx.session.username})}"><span
                                 style="margin-right: 10px;">&#128273;</span>Change Password</a>
-                    <a class="buttonish-link" style="color: white; background-color: #FF4D4D; font-weight: bold;"
+                    <a class="buttonish-link" style="color: white; background-color: #FF4D4D; font-weight: bold; margin-top: 10px;"
                             th:href="@{/logout}"><span style="margin-right: 10px;">&#11013;</span>Log Out</a>
                     <a class="buttonish-link" href="#delete-user" style="color: white; background-color: #FF4D4D; font-weight: bold;"><span style="margin-right: 10px;">🗑</span>Delete Account</a>
                     <div id="delete-user" class="modal">
@@ -84,12 +84,17 @@
                 <div class="spacer"></div>
                 <div class="row-container" style="width: max-content;">
                     <h2>Last Reviews</h2>
-                    <div th:each="review : ${user.getReviews().subList((user.getReviews().size() > 5) ? (user.getReviews().size() - 5) : 0, user.getReviews().size())}" style="gap: 5px;">
+                    <div th:each="review : ${user.getReviews().subList((user.getReviews().size() > 5) ? (user.getReviews().size() - 5) : 0, user.getReviews().size())}" style="gap: 15px;">
                         <div class="column-container" style="gap: 20px; max-width: 70em;">
+                            <a th:unless="${review.getProduct().images.size() > 0}"
+                                th:href="@{/products/{productId}(productId=${review.getProduct().id})}"><img src="/filler-product.png"
+                                    width="50" height="60"></img></a>
+                            <a th:if="${review.getProduct().images.size() > 0}" th:href="@{/products/{productId}(productId=${review.getProduct().id})}"><img
+                                    th:src="${review.getProduct().images[0].imagePath}" width="50" height="60"></img></a>
                             <div class="row-container">
-                                <span><span style="margin-right: 0.5em; color: var(--primary-color); font-size: 20;" th:text="${#strings.repeat('&starf;', review.getScore())} + ${#strings.repeat('&star;', 5 - review.getScore())}" /><b th:text="${review.getTitle()}" /></span>
-                                <span th:text="${review.getBody()}" />
-                                <span th:text="${review.getAuthor().getUsername()}" style="color: gray; font-size: 12px;" />
+                                <span><span style="margin-right: 0.5em; color: var(--primary-color); font-size: 20;" th:text="${#strings.repeat('&starf;', review.getScore())} + ${#strings.repeat('&star;', 5 - review.getScore())}" /></span>
+                                <a th:href="@{/products/{productId}(productId=${review.getProduct().id})}" style="text-decoration: none;" th:text="${review.getTitle()}"></a>
+                                <a th:href="@{/products/{productId}(productId=${review.getProduct().id})}" style="text-decoration: none;"><span th:text="${review.getBody()}" /></a>
                             </div>
                         </div>
                     </div>
