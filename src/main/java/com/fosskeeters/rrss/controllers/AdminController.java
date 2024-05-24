@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.Optional;
 
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -235,7 +236,7 @@ public class AdminController {
     @GetMapping("/users")
     public String getUsers(@RequestParam(required = false, defaultValue = "0") int page,
                            @RequestParam(required = false, defaultValue = "all") String accountType,
-                           HttpSession session, Model model) {
+                           HttpServletRequest request, HttpSession session, Model model) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/admin/signup-requests";
         }
@@ -268,6 +269,34 @@ public class AdminController {
         }
 
         model.addAttribute("userList", userList);
+        model.addAttribute("currentUrl", request.getRequestURI() + '?' + request.getQueryString());
         return "admin/users";
+    }
+
+    @GetMapping("/users/{username}/delete")
+    public String deleteUser(@PathVariable String username,
+                             @RequestParam(required = false) String redirectUrl,
+                             HttpSession session, RedirectAttributes redirectAttrs) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login?next=/admin/users";
+        }
+
+        Optional<User> user =
+                userRepository.findByUsername(session.getAttribute("username").toString());
+
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login?next=/admin/users";
+        }
+
+        Optional<User> targetUser = userRepository.findByUsername(username);
+
+        if (targetUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        userRepository.delete(targetUser.get());
+        redirectAttrs.addFlashAttribute("notification", "success:User has been deleted!");
+        return "redirect:" + redirectUrl;
     }
 }
