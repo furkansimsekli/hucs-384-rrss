@@ -12,7 +12,10 @@
                 <span th:text="${product.getDescription()}"> Product Description</span>
             </div>
             <div class="row-container" style="padding-top: 8px; margin-left: auto;" th:with="averageScore = ${product.getAverageScore()}">
-                <span style="margin-left: auto; color: var(--primary-color); font-size: 24;" th:with="starCount = ${T(java.lang.Math).round(averageScore)}" th:text="${#strings.repeat('&starf;', starCount != null ? starCount : 0)} + ${#strings.repeat('&star;', starCount != null ? 5 - starCount : 5)}" />
+                <span style="color: var(--primary-color); margin-left: auto; font-size: 24;">
+                    <span th:text="${averageScore}"></span>
+                    <span th:with="starCount = ${T(java.lang.Math).round(averageScore)}" th:text="${#strings.repeat('&starf;', starCount != null ? starCount : 0)} + ${#strings.repeat('&star;', starCount != null ? 5 - starCount : 5)}" />
+                </span>
                 <span style="margin-left: auto; color: gray; font-size: 12;" th:text="${product.getReviews().size()} + ' reviews'" />
                 <a th:if="${isInWishlist == false}" class="buttonish-link" style="margin-top: 10px;" th:href="@{/products/{productId}/wish(productId=${product.id})}"><span class="emoji-icon">&#x1F90D; </span>Add to wishlist</a>
                 <a th:if="${isInWishlist == true}" class="buttonish-link" style="margin-top: 10px;" th:href="@{/products/{productId}/unwish(productId=${product.id})}"><span class="emoji-icon">&#x1F90D; </span>Remove from Wishlist</a>
