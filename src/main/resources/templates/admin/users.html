@@ -4,12 +4,13 @@
 <main layout:fragment="content">
     <div class="row-container list">
         <div class="column-container" style="margin: 0 auto; width: 90%;">
-            <h2 th:switch="${param.accountType.getFirst()}">
+            <h2 th:if="${param.accountType != null}" th:switch="${param.accountType.getFirst()}">
                 <h2 th:case="'customer'" th:text="'All Customers (' + ${userList.getTotalElements()} + ')'"></h2>
                 <h2 th:case="'merchant'" th:text="'All Merchants (' + ${userList.getTotalElements()} + ')'"></h2>
                 <h2 th:case="'community_mod'" th:text="'All Community Moderators (' + ${userList.getTotalElements()} + ')'"></h2>
-                <h2 th:case="*">All Users (<span th:text="${userList.getTotalElements()}"></span>)</h2>
+                <h2 th:case="*" th:text="'All Users (' + ${userList.getTotalElements()} + ')'"></h2>
             </h2>
+            <h2 th:if="${param.accountType == null}">All Users (<span th:text="${userList.getTotalElements()}"></span>)</h2>
             <div class="spacer"></div>
             <form action="#" th:action="@{/admin/users}" method="get" class="column-container" style="gap: 10px; margin: auto 0;">
                 <select name="accountType">
