@@ -6,16 +6,18 @@ import com.fosskeeters.rrss.repositories.PasswordRecoveryRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 import com.fosskeeters.rrss.services.EmailService;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
 import java.util.Optional;
 
 import jakarta.mail.MessagingException;
@@ -37,7 +39,8 @@ public class AdminController {
     }
 
     @GetMapping("/signup-requests")
-    public String signupRequests(HttpSession session, Model model) {
+    public String signupRequests(@RequestParam(required = false, defaultValue = "0") int page,
+                                 HttpSession session, Model model) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/admin/signup-requests";
         }
@@ -54,7 +57,8 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        List<User> awaitingUserList = userRepository.findAllByIsApproved(false);
+        Page<User> awaitingUserList =
+                userRepository.findAllByIsApproved(false, PageRequest.of(page, 20));
         model.addAttribute("awaitingUserList", awaitingUserList);
         return "admin/signup_requests";
     }
@@ -115,7 +119,8 @@ public class AdminController {
     }
 
     @GetMapping("/password-recovery-requests")
-    public String passwordRecoveryRequests(HttpSession session, Model model) {
+    public String passwordRecoveryRequests(@RequestParam(required = false, defaultValue = "0")
+                                           int page, HttpSession session, Model model) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/admin/password-recovery-requests";
         }
@@ -132,8 +137,9 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        List<PasswordRecovery> recoveryRequests =
-                passwordRecoveryRepository.findAllByIsEmailSentIsFalseOrderByCreatedAtAsc();
+        Page<PasswordRecovery> recoveryRequests =
+                passwordRecoveryRepository.findAllByIsEmailSentIsFalseOrderByCreatedAtAsc(
+                        PageRequest.of(page, 20));
         model.addAttribute("recoveryRequests", recoveryRequests);
         return "admin/password_recovery_requests";
     }
