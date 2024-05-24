@@ -60,15 +60,12 @@
                             <span th:text="${review.getBody()}" />
                             <span th:text="${review.getAuthor().getUsername()}" style="color: gray; font-size: 12px;" />
                         </div>
-                        <div class="row-container">
-                            <form th:action="@{/reviews/{reviewId}/vote(reviewId=${review.id})}" method="post">
-                                <input type="hidden" name="value" value="true">
-                                <button type="submit" style="color: gray;">👍 (<span th:text="${review.getLikeCount}">0</span>)</button>
-                            </form>
-                            <form th:action="@{/reviews/{reviewId}/vote(reviewId=${review.id})}" method="post">
-                                <input type="hidden" name="value" value="false">
-                                <button type="submit" style="color: gray;">👎 (<span th:text="${review.getDislikeCount}">0</span>)</button>
-                            </form>
+                        <div class="column-container" style="gap: 2px; font-size: 18; margin-top: 1.5em;" th:with="voteStatus = ${review.isVotedBy(#ctx.session.username)}">
+                            <a th:class="${voteStatus == 1 ? 'emoji-icon' : 'emoji-outline'}" emoji="👍" th:href="@{/reviews/{reviewId}/vote?value=true(reviewId=${review.id})}" style="text-decoration: none">👍</a>
+                            <span th:text="${review.getLikeCount()}">0</span>
+                            |
+                            <span th:text="${review.getDislikeCount()}">0</span>
+                            <a th:class="${voteStatus == -1 ? 'emoji-icon' : 'emoji-outline'}" emoji="👎" th:href="@{/reviews/{reviewId}/vote?value=false(reviewId=${review.id})}" style="text-decoration: none">👎</a>
                         </div>
                     </div>
                     <div th:if="${isProductOwner}" th:with="replyDto = ${reviewReplyDtoList != null ? reviewReplyDtoList[reviewStat.index] : null}">

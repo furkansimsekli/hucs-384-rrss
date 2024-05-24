@@ -195,7 +195,7 @@ public class ReviewController {
         return "redirect:/products/" + review.get().getProduct().getId();
     }
 
-    @PostMapping("/{reviewId}/vote")
+    @GetMapping("/{reviewId}/vote")
     public String voteReview(HttpSession session, @PathVariable long reviewId,
                              @RequestParam boolean value) {
         if (session.getAttribute("username") == null) {

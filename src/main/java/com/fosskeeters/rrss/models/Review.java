@@ -153,4 +153,17 @@ public class Review {
     public int getDislikeCount() {
         return votes != null ? votes.size() - getLikeCount() : 0;
     }
+
+    public int isVotedBy(String username) {
+        if (username == null) {
+            return 0;
+        }
+
+        return getVotes()
+                .stream()
+                .filter(v -> v.getUser().getUsername().equals(username))
+                .map(v -> v.getValue() ? 1 : -1)
+                .findFirst()
+                .orElse(0);
+    }
 }

@@ -449,6 +449,18 @@ div:hover > .review-star:hover::before, .review-star:hover ~ .review-star::befor
     cursor: pointer;
 }
 
+.emoji-outline {
+  color: transparent;
+  text-shadow: 0 0 2px var(--primary-color);
+  position: relative;
+}
+
+.emoji-outline::before {
+  content: attr(emoji);
+  position: absolute;
+  text-shadow: 0 0 0 #fff;
+}
+
 /* ============= SEARCH ============= */
 
 select {
