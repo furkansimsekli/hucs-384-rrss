@@ -1,76 +1,127 @@
 <html layout:decorate="~{common/skeleton}">
 
 <body>
-    <main class="row-container" style="padding: 0 10vw; gap: 15px;" layout:fragment="content">
+    <main class="row-container" layout:fragment="content">
         <div style="padding: 0 10vw;">
-            <h2>Account</h2>
             <p th:unless="${#strings.isEmpty(updatedSuccessfully)}">Profile information updated successfully!</p>
-            <div class="column-container"
-                style="margin: 0 auto; gap: 20px; flex-direction: row-reverse; align-items: flex-start; justify-content: center;">
-
-                <input type="checkbox" class="buttonish-checkbox" id="edit" th:unless="${#strings.isEmpty(hasErrors)}"
+            <h2>Account</h2>
+            <div class="column-container" style="margin: 0 auto; width: 90%; gap: 20px;">
+                <div class="row-container" style="gap: 5px; width: max-content;">
+                    <div class="column-container" style="gap: 10px; margin-bottom: 10px;">
+                        <img class="profile-picture" th:src="${user.profileImagePath}" />
+                        <div class="row-container" style="margin: auto 0;">
+                            <b th:text="${userUpdateDto.getFirstName() + ' ' + userUpdateDto.getLastName()}" />
+                            <span th:text="${userUpdateDto.getEmail()}" />
+                            <span th:text="${userUpdateDto.getAddress()}" />
+                        </div>
+                    </div>
+                    <input type="checkbox" class="buttonish-checkbox" id="edit" th:unless="${#strings.isEmpty(hasErrors)}"
                     checked />
-                <input type="checkbox" class="buttonish-checkbox" id="edit" th:if="${#strings.isEmpty(hasErrors)}" />
-
-                <label class="buttonish-checkbox-label hidden-on-edit" for="edit">Edit</label>
-                <label class="buttonish-checkbox-label shown-on-edit" for="edit">Cancel</label>
-                <div class="row-container hidden-on-edit">
-                    <b th:text="${userUpdateDto.getFirstName() + ' ' + userUpdateDto.getLastName()}" />
-                    <span th:text="${userUpdateDto.getEmail()}" />
-                    <span th:text="${userUpdateDto.getAddress()}" />
-                    <div class="row-container" style="margin-top: 15px; gap: 10px;">
-                        <div th:switch="${user.getType().toString()}" style="font-weight: bold;">
-                            <a th:case="'CUSTOMER'" class="buttonish-link" th:href="@{/user/{username}/wishlist(username=${#ctx.session.username})}" style="display: block;">View Your Wishlist</a>
-                            <a th:case="'MERCHANT'" class="buttonish-link" th:href="@{/merchants/{username}(username=${#ctx.session.username})}" style="display: block;">View Your Products</a>
-                            <div class="row-container" th:case="'ADMIN'" style="gap: 10px;">
-                                <a class="buttonish-link" th:href="@{/admin/signup-requests}" style="display: block;">View Signup Requests</a>
-                                <a class="buttonish-link" th:href="@{/admin/password-recovery-requests}" style="display: block;">View Password Recovery Requests</a>
+                    <input type="checkbox" class="buttonish-checkbox" id="edit" th:if="${#strings.isEmpty(hasErrors)}" />
+                    <label class="buttonish-checkbox-label hidden-on-edit" for="edit">Edit</label>
+                    <label class="buttonish-checkbox-label shown-on-edit" for="edit">Cancel</label>
+                    <form class="row-container shown-on-edit" style="gap: 10px;" method="post" enctype="multipart/form-data" th:object="${userUpdateDto}">
+                        <div class="row-container">
+                            <div class="column-container" style="gap: 10px">
+                                <input name="firstname" type="text" placeholder="First Name"
+                                    th:field="${userUpdateDto.firstName}" th:errorclass="error-input" />
+                                <input name="lastname" type="text" placeholder="Last Name"
+                                    th:field="${userUpdateDto.lastName}" th:errorclass="error-input" />
+                            </div>
+                            <div class="row-container">
+                                <p th:if="${#fields.hasErrors('firstName')}" class="error-text"
+                                    th:errors="${userUpdateDto.firstName}"></p>
+                                <p th:if="${#fields.hasErrors('lastName')}" class="error-text"
+                                    th:errors="${userUpdateDto.lastName}"></p>
                             </div>
                         </div>
-                        <a class="buttonish-link" style="font-weight: bold;"
+    
+                        <input name="email" type="email" placeholder="E-mail" th:field="${userUpdateDto.email}" th:errorclass="error-input" />
+                        <p th:if="${#fields.hasErrors('email')}" class="error-text" th:errors="${userUpdateDto.email}">
+                        </p>
+    
+                        <input name="phonenumber" type="tel" placeholder="Phone Number"
+                            th:field="${userUpdateDto.phoneNumber}" th:errorclass="error-input" />
+                        <p th:if="${#fields.hasErrors('phoneNumber')}" class="error-text"
+                            th:errors="${userUpdateDto.phoneNumber}"></p>
+    
+                        <input name="birthday" type="date" placeholder="Birthday" th:field="${userUpdateDto.dateOfBirth}" th:errorclass="error-input" />
+                        <p th:if="${#fields.hasErrors('dateOfBirth')}" class="error-text"
+                            th:errors="${userUpdateDto.dateOfBirth}"></p>
+    
+                        <textarea name="address" rows="4" placeholder="Address" th:field="${userUpdateDto.address}" th:errorclass="error-input" />
+                        <p th:if="${#fields.hasErrors('address')}" class="error-text"
+                            th:errors="${userUpdateDto.address}"></p>
+    
+                        <input name="profileImageFile" type="file" accept="image/*" th:field="${userUpdateDto.profileImageFile}" />
+                        <input type="submit" value="Save" style="padding: 5px;" />
+                    </form>
+                    <div th:switch="${user.getType().toString()}" style="font-weight: bold;">
+                        <a th:case="'CUSTOMER'" class="buttonish-link" th:href="@{/user/{username}/wishlist(username=${#ctx.session.username})}" style="display: block;">View Your Wishlist</a>
+                        <a th:case="'MERCHANT'" class="buttonish-link" th:href="@{/merchants/{username}(username=${#ctx.session.username})}" style="display: block;">View Your Products</a>
+                        <div class="row-container" th:case="'ADMIN'" style="gap: 5px;">
+                            <a class="buttonish-link" th:href="@{/admin/signup-requests}" style="display: block;">View Signup Requests</a>
+                            <a class="buttonish-link" th:href="@{/admin/password-recovery-requests}" style="display: block;">View Password Recovery Requests</a>
+                        </div>
+                    </div>
+                    <a class="buttonish-link" style="font-weight: bold;"
                             th:href="@{/user/{username}/change-password(username=${#ctx.session.username})}"><span
                                 style="margin-right: 10px;">&#128273;</span>Change Password</a>
-                        <a class="buttonish-link" style="color: white; background-color: #FF4D4D; font-weight: bold;"
+                    <a class="buttonish-link" style="color: white; background-color: #FF4D4D; font-weight: bold;"
                             th:href="@{/logout}"><span style="margin-right: 10px;">&#11013;</span>Log Out</a>
+                    <a class="buttonish-link" href="#delete-user" style="color: white; background-color: #FF4D4D; font-weight: bold;"><span style="margin-right: 10px;">🗑</span>Delete Account</a>
+                    <div id="delete-user" class="modal">
+                        <div class="modal-content">
+                            <h2 style="margin-top: 10px;">User Deletion</h2>
+                            <p style="margin-bottom: 40px;">This action will delete your account from the system. Do you
+                                confirm?</p>
+                            <a th:href="@{/user/{username}/delete(username=${user.getUsername()})}"
+                                class="red-button">Confirm</a>
+                            <a href="#" class="mini-button">Back</a>
+                        </div>
                     </div>
                 </div>
-                <form class="row-container shown-on-edit" style="gap: 10px;" method="post" enctype="multipart/form-data" th:object="${userUpdateDto}">
-                    <div class="row-container">
-                        <div class="column-container" style="gap: 10px">
-                            <input name="firstname" type="text" placeholder="First Name"
-                                th:field="${userUpdateDto.firstName}" th:errorclass="error-input" />
-                            <input name="lastname" type="text" placeholder="Last Name"
-                                th:field="${userUpdateDto.lastName}" th:errorclass="error-input" />
-                        </div>
-                        <div class="row-container">
-                            <p th:if="${#fields.hasErrors('firstName')}" class="error-text"
-                                th:errors="${userUpdateDto.firstName}"></p>
-                            <p th:if="${#fields.hasErrors('lastName')}" class="error-text"
-                                th:errors="${userUpdateDto.lastName}"></p>
+                <div class="spacer"></div>
+                <div class="row-container" style="width: max-content;">
+                    <h2>Last Reviews</h2>
+                    <div th:each="review : ${user.getReviews().subList((user.getReviews().size() > 5) ? (user.getReviews().size() - 5) : 0, user.getReviews().size())}" style="gap: 5px;">
+                        <div class="column-container" style="gap: 20px; max-width: 70em;">
+                            <div class="row-container">
+                                <span><span style="margin-right: 0.5em; color: var(--primary-color); font-size: 20;" th:text="${#strings.repeat('&starf;', review.getScore())} + ${#strings.repeat('&star;', 5 - review.getScore())}" /><b th:text="${review.getTitle()}" /></span>
+                                <span th:text="${review.getBody()}" />
+                                <span th:text="${review.getAuthor().getUsername()}" style="color: gray; font-size: 12px;" />
+                            </div>
                         </div>
                     </div>
-
-                    <input name="email" type="email" placeholder="E-mail" th:field="${userUpdateDto.email}" th:errorclass="error-input" />
-                    <p th:if="${#fields.hasErrors('email')}" class="error-text" th:errors="${userUpdateDto.email}">
-                    </p>
-
-                    <input name="phonenumber" type="tel" placeholder="Phone Number"
-                        th:field="${userUpdateDto.phoneNumber}" th:errorclass="error-input" />
-                    <p th:if="${#fields.hasErrors('phoneNumber')}" class="error-text"
-                        th:errors="${userUpdateDto.phoneNumber}"></p>
-
-                    <input name="birthday" type="date" placeholder="Birthday" th:field="${userUpdateDto.dateOfBirth}" th:errorclass="error-input" />
-                    <p th:if="${#fields.hasErrors('dateOfBirth')}" class="error-text"
-                        th:errors="${userUpdateDto.dateOfBirth}"></p>
-
-                    <textarea name="address" rows="4" placeholder="Address" th:field="${userUpdateDto.address}" th:errorclass="error-input" />
-                    <p th:if="${#fields.hasErrors('address')}" class="error-text"
-                        th:errors="${userUpdateDto.address}"></p>
-
-                    <input name="profileImageFile" type="file" accept="image/*" th:field="${userUpdateDto.profileImageFile}" />
-                    <input type="submit" value="Save" style="padding: 5px;" />
-                </form>
-                <img class="profile-picture-big" th:src="${user.profileImagePath}" style="margin-left: -10vw; margin-right: 5vw;" />
+                </div>
+                <div class="spacer"></div>
+                <div th:if="${user.getType().toString() == 'CUSTOMER'}" class="row-container">
+                    <h2>Last Wishes</h2>
+                    <div th:each="wish : ${user.getWishes().subList((user.getWishes().size() > 5) ? (user.getWishes().size() - 5) : 0, user.getWishes().size())}" style="gap: 5px;">
+                        <a th:unless="${wish.getProduct().images.size() > 0}" th:href="@{/products/{productId}(productId=${wish.getProduct().id})}"><img
+                                src="/filler-product.png" width="50" height="60"></img></a>
+                        <a th:if="${wish.getProduct().images.size() > 0}" th:href="@{/products/{productId}(productId=${wish.getProduct().id})}"><img
+                                th:src="${wish.getProduct().images[0].imagePath}" width="50" height="60"></img></a>
+                        <a th:href="@{/products/{productId}(productId=${wish.getProduct().id})}" class="row-container"
+                            style="text-decoration: none; color: inherit;">
+                            <h3
+                                th:text="${#strings.length(wish.getProduct().name) > 50 ? #strings.substring(wish.getProduct().name, 0, 50) + '...' : wish.getProduct().name}" style="margin: 0px;">
+                            </h3>
+                            <h3 th:text="'$' + ${wish.getProduct().price}" style="margin: 0px;"></h3>
+                        </a>
+                        <div class="row-container" style="padding-top: 8px; margin-left: auto;">
+                            <div class="column-container" style="gap: 4px;" th:with="averageScore = ${wish.getProduct().getAverageScore()}">
+                                <span style="color: #34514c; font-size: 18; margin: auto 0;" th:text="${averageScore}"></span>
+                                <span style="color: var(--primary-color); font-size: 18;"
+                                    th:with="starCount = ${T(java.lang.Math).round(averageScore)}"
+                                    th:text="${#strings.repeat('&starf;', starCount != null ? starCount : 0)} + ${#strings.repeat('&star;', starCount != null ? 5 - starCount : 5)}"></span>
+                            </div>
+                            <span style="margin-right: auto; color: gray; font-size: 14;"
+                                th:text="${wish.getProduct().getReviews().size()} + ' reviews'"></span>
+                        </div>
+                        
+                    </div>
+                </div>
             </div>
         </div>
     </main>
