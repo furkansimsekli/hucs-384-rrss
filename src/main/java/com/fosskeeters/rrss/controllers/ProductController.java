@@ -4,16 +4,7 @@ import com.fosskeeters.rrss.dtos.ProductDto;
 import com.fosskeeters.rrss.dtos.ReviewDto;
 import com.fosskeeters.rrss.dtos.ReviewReplyDto;
 import com.fosskeeters.rrss.models.*;
-import com.fosskeeters.rrss.models.BrowsingHistory;
-import com.fosskeeters.rrss.models.Product;
-import com.fosskeeters.rrss.models.ProductImage;
-import com.fosskeeters.rrss.models.Review;
-import com.fosskeeters.rrss.models.User;
 import com.fosskeeters.rrss.repositories.*;
-import com.fosskeeters.rrss.repositories.BrowsingHistoryRepository;
-import com.fosskeeters.rrss.repositories.ProductImageRepository;
-import com.fosskeeters.rrss.repositories.ProductRepository;
-import com.fosskeeters.rrss.repositories.UserRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -114,6 +105,8 @@ public class ProductController {
                 "reviewDto",
                 review != null ? new ReviewDto(review) : new ReviewDto(product.get().getId()));
         model.addAttribute("hasErrors", false);
+        model.addAttribute("title", "Product \"" + product.get().getName() + "\" - ShopSmart");
+
         return "product";
     }
 
@@ -136,18 +129,22 @@ public class ProductController {
         }
 
         model.addAttribute("productDto", new ProductDto());
+        model.addAttribute("title", "Create Product - ShopSmart");
+
         return "merchants/create_product";
     }
 
     @PostMapping("/create")
     public String createProduct(HttpSession session, @Valid @ModelAttribute ProductDto productDto,
-                                BindingResult bindingResult) throws IOException {
+                                BindingResult bindingResult, Model model) throws IOException {
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/products/create";
         }
 
         if (bindingResult.hasErrors()) {
             System.out.println(bindingResult);
+            model.addAttribute("title", "Create Product - ShopSmart");
+
             return "merchants/create_product";
         }
 
@@ -220,18 +217,22 @@ public class ProductController {
 
         ProductDto productDto = new ProductDto(product.get());
         model.addAttribute("productDto", productDto);
+        model.addAttribute("title", "Update Product - ShopSmart");
+
         return "merchants/update_product";
     }
 
     @PostMapping("/{productId}/update")
     public String updateProduct(HttpSession session, @PathVariable long productId,
                                 @Valid @ModelAttribute ProductDto productDto,
-                                BindingResult bindingResult) throws IOException {
+                                BindingResult bindingResult, Model model) 
+                                throws IOException {
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/products/" + productId + "/update";
         }
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("title", "Update Product - ShopSmart");
             return "merchants/update_product";
         }
 

@@ -125,6 +125,33 @@ input[type="submit"] {
     overflow: hidden;
 }
 
+a {
+    color: inherit;
+}
+
+.buttonish-link, .buttonish-checkbox-label {
+    transition: all 0.25s ease-in;
+}
+
+.buttonish-link:hover, .buttonish-checkbox-label:hover {
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.25s ease-in;
+    box-shadow: 0 0 3px gray;
+}
+
+.profile-picture {
+    width: 5vw;
+    height: 5vw;
+    border-radius: 50%;
+}
+
+.profile-picture-big {
+    width: 10vw;
+    height: 10vw;
+    border-radius: 50%;
+}
+
 /* ============= NAV BAR ========== */
 
 nav {
@@ -253,6 +280,12 @@ nav * {
     transition: width 0.3s ease-in;
 }
 
+#carousel-item{
+    border: 0.5px solid gray;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 15px 0 rgba(0, 0, 0, 0.19);
+}
+
 /* ============= AUTH FORM ========== */
 
 .auth-form {
@@ -339,20 +372,20 @@ nav * {
     background-color: #1d2e2b;
 }
 
-.red-button{
-    border: red 1px solid;
+.red-button {
+    border: #b3261e 1px solid;
     border-radius: 10px;
     background-color: white;
     margin: auto;
     transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
-    color:red;
+    color: #b3261e;
     text-decoration: none;
     height: fit-content;
     padding: 10px 15px;
 }
 
-.red-button:hover{
-    background-color: red;
+.red-button:hover {
+    background-color: #b3261e;
     color: white;
 }
 
@@ -414,6 +447,18 @@ div:hover > .review-star::before {
 div:hover > .review-star:hover::before, .review-star:hover ~ .review-star::before {
     content: '\02605' !important;
     cursor: pointer;
+}
+
+.emoji-outline {
+  color: transparent;
+  text-shadow: 0 0 2px var(--primary-color);
+  position: relative;
+}
+
+.emoji-outline::before {
+  content: attr(emoji);
+  position: absolute;
+  text-shadow: 0 0 0 #fff;
 }
 
 /* ============= SEARCH ============= */

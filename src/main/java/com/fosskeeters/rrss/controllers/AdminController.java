@@ -42,6 +42,8 @@ public class AdminController {
     @GetMapping("/signup-requests")
     public String signupRequests(@RequestParam(required = false, defaultValue = "0") int page,
                                  HttpSession session, Model model) {
+
+        model.addAttribute("title", "Sign Up Requests - ShopSmart");
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/admin/signup-requests";
         }
@@ -122,6 +124,7 @@ public class AdminController {
     @GetMapping("/password-recovery-requests")
     public String passwordRecoveryRequests(@RequestParam(required = false, defaultValue = "0")
                                            int page, HttpSession session, Model model) {
+        model.addAttribute("title", "Password Recovery Requests - ShopSmart");
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/admin/password-recovery-requests";
         }

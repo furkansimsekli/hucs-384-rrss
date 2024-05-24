@@ -39,6 +39,8 @@ public class AuthenticationController {
 
     @GetMapping("/signup")
     public String signupGetHandler(HttpSession session, Model model) {
+        model.addAttribute("title", "Sign Up - ShopSmart");
+
         if (session.getAttribute("username") != null) {
             return "redirect:/";
         }
@@ -51,6 +53,8 @@ public class AuthenticationController {
     public String signupPostHandler(@Valid @ModelAttribute UserDto userDto,
                                     BindingResult bindingResult, Model model,
                                     RedirectAttributes redirectAttrs) {
+        model.addAttribute("title", "Sign Up - ShopSmart");
+
         validateSignup(userDto, bindingResult);
         model.addAttribute("userDto", userDto);
 
@@ -70,6 +74,8 @@ public class AuthenticationController {
 
     @GetMapping("/login")
     public String loginGetHandler(HttpSession session, Model model) {
+        model.addAttribute("title", "Log In - ShopSmart");
+
         if (session.getAttribute("username") != null) {
             return "redirect:/";
         }
@@ -82,6 +88,8 @@ public class AuthenticationController {
     public String loginPostHandler(@RequestParam String username, @RequestParam String password,
                                    @RequestParam(required = false) String next, HttpSession session,
                                    Model model, RedirectAttributes redirectAttrs) {
+        model.addAttribute("title", "Log In - ShopSmart");
+
         Optional<User> user = userRepository.findByUsername(username.trim().toLowerCase());
 
         if (user.isPresent()) {
@@ -135,6 +143,8 @@ public class AuthenticationController {
 
     @GetMapping("/new-password/{token}")
     public String newPasswordGetHandler(@PathVariable String token, Model model) {
+        model.addAttribute("title", "New Password - ShopSmart");
+
         Optional<PasswordRecovery> passwordRecovery = passwordRecoveryRepository.findByToken(token);
 
         if (passwordRecovery.isEmpty()) {
@@ -149,7 +159,9 @@ public class AuthenticationController {
     public String newPasswordPostHandler(@PathVariable String token,
                                          @Valid
                                          @ModelAttribute PasswordRecoveryDto passwordRecoveryDto,
-                                         BindingResult bindingResult) {
+                                         BindingResult bindingResult, Model model) {
+        model.addAttribute("title", "New Password - ShopSmart");
+
         Optional<PasswordRecovery> passwordRecovery = passwordRecoveryRepository.findByToken(token);
 
         if (passwordRecovery.isEmpty()) {

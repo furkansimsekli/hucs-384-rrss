@@ -12,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -73,6 +72,8 @@ public class UserController {
         UserUpdateDto userUpdateDto = new UserUpdateDto(displayedUser.get());
         model.addAttribute("userUpdateDto", userUpdateDto);
         model.addAttribute("user", displayedUser.get());
+        model.addAttribute("title", "Your Profile - ShopSmart");
+
         return "user/profile";
     }
 
@@ -97,7 +98,10 @@ public class UserController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("hasErrors", "true");
+            model.addAttribute("user", displayedUser.get());
             System.out.println(bindingResult);
+            model.addAttribute("title", "Your Profile - ShopSmart");
+
             return "user/profile";
         }
 
@@ -137,6 +141,8 @@ public class UserController {
 
         ChangePasswordDto dto = new ChangePasswordDto();
         model.addAttribute("changePasswordDto", dto);
+        model.addAttribute("title", "Change Password - ShopSmart");
+
         return "user/change_password";
     }
 
@@ -161,6 +167,8 @@ public class UserController {
 
         if (bindingResult.hasErrors()) {
             System.out.println(bindingResult);
+            model.addAttribute("title", "Change Password - ShopSmart");
+
             return "user/change_password";
         }
 
