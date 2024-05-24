@@ -26,6 +26,13 @@
                 </div>
             </div>
         </div>
+        <div th:if="${!awaitingUserList.isEmpty()}" style="margin-left: 4%; margin-top: 2em;">
+            <a th:if="${awaitingUserList.hasPrevious()}" th:href="@{/admin/signup-requests(page=${awaitingUserList.number - 1})}" class="buttonish-link">Previous</a>
+
+            <span>Page <span th:text="${awaitingUserList.number + 1}">1</span> of <span th:text="${awaitingUserList.totalPages}">1</span></span>
+
+            <a th:if="${awaitingUserList.hasNext()}" th:href="@{/admin/signup-requests(page=${awaitingUserList.number + 1})}" class="buttonish-link">Next</a>
+        </div>
     </div>
 </main>
 </body>
