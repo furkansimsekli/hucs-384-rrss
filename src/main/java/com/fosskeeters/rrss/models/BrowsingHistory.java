@@ -23,6 +23,8 @@ public class BrowsingHistory {
     @CreatedDate
     LocalDateTime viewedAt;
 
+    public BrowsingHistory() {}
+
     public BrowsingHistory(Product product, User owner) {
         this.product = product;
         this.owner = owner;
