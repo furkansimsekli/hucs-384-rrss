@@ -42,8 +42,8 @@ public class AdminController {
     @GetMapping("/signup-requests")
     public String signupRequests(@RequestParam(required = false, defaultValue = "0") int page,
                                  HttpSession session, Model model) {
-
         model.addAttribute("title", "Sign Up Requests - ShopSmart");
+
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/admin/signup-requests";
         }
@@ -240,6 +240,8 @@ public class AdminController {
     public String getUsers(@RequestParam(required = false, defaultValue = "0") int page,
                            @RequestParam(required = false, defaultValue = "all") String accountType,
                            HttpServletRequest request, HttpSession session, Model model) {
+        model.addAttribute("title", "Manage Accounts - ShopSmart");
+
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/admin/signup-requests";
         }
