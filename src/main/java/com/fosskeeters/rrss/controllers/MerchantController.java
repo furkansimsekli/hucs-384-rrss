@@ -104,7 +104,8 @@ public class MerchantController {
         model.addAttribute("stats", stats);
         model.addAttribute("products", userProducts);
         model.addAttribute("owner", targetUser.get());
-        model.addAttribute("title", "Products of " + targetUser.get().getUsername() + " - ShopSmart");
+        model.addAttribute("title",
+                           "Products of " + targetUser.get().getUsername() + " - ShopSmart");
 
         return "merchants/products";
     }

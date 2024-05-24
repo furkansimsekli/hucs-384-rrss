@@ -225,8 +225,7 @@ public class ProductController {
     @PostMapping("/{productId}/update")
     public String updateProduct(HttpSession session, @PathVariable long productId,
                                 @Valid @ModelAttribute ProductDto productDto,
-                                BindingResult bindingResult, Model model) 
-                                throws IOException {
+                                BindingResult bindingResult, Model model) throws IOException {
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/products/" + productId + "/update";
         }
