@@ -125,6 +125,21 @@ input[type="submit"] {
     overflow: hidden;
 }
 
+a {
+    color: inherit;
+}
+
+.buttonish-link, .buttonish-checkbox-label {
+    transition: all 0.25s ease-in;
+}
+
+.buttonish-link:hover, .buttonish-checkbox-label:hover {
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.25s ease-in;
+    box-shadow: 0 0 3px gray;
+}
+
 /* ============= NAV BAR ========== */
 
 nav {

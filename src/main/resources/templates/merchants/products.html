@@ -16,7 +16,7 @@
                 <a th:if="${product.images.size() > 0}" th:href="@{/products/{productId}(productId=${product.id})}"><img
                         th:src="${product.images[0].imagePath}" width="50" height="60"></img></a>
                 <a th:href="@{/products/{productId}(productId=${product.id})}" class="row-container"
-                    style="text-decoration: none; color: inherit;">
+                    style="text-decoration: none;">
                     <h3 th:text="${#strings.length(product.name) > 50 ? #strings.substring(product.name, 0, 50) + '...' : product.name}"
                         style="margin: 0px;">
                     </h3>

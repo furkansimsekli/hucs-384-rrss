@@ -26,13 +26,13 @@
                     <div th:each="topic : ${item.value}" class="list-cell">
                         <div class="column-container" style="gap: 10px;">
                             <a th:href="@{/community/topics/{topicId}(topicId=${topic.id})}"
-                                style="text-decoration: none; color: inherit; margin-right: 10px;">
+                                style="text-decoration: none; margin-right: 10px;">
                                 <img th:src="@{{path}(path=${topic.owner.profileImagePath})}" width="50"
                                     height="50"></img>
                             </a>
                             <div class="row-container">
                                 <a th:href="@{/community/topics/{topicId}(topicId=${topic.id})}"
-                                    style="text-decoration: none; color: inherit;">
+                                    style="text-decoration: none;">
                                     <h3 th:text="${topic.title}" class="truncate-one-line" style="margin: 0px;"></h3>
                                 </a>
                                 <div style="color: gray;" class="column-container">

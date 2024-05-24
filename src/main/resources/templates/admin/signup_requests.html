@@ -8,8 +8,8 @@
             <div class="spacer"></div>
         </div>
         <div th:each="awaitingUser : ${awaitingUserList}"  class="column-container list-cell">
-            <a th:href="@{/users/{username}(username=${username})}" ><img src="/filler-user.png" width="50" height="60"></img></a> <!-- To be changed after profile picture implementation -->
-            <a th:href="@{/users/{username}(username=${username})}" class="row-container" style="text-decoration: none; color: inherit;">
+            <a th:href="@{/users/{username}(username=${awaitingUser.username})}" ><img th:src="${awaitingUser.profileImagePath}" width="50" height="60"></a>
+            <a th:href="@{/users/{username}(username=${awaitingUser.username})}" class="row-container" style="text-decoration: none;">
                 <h3 th:text="@{${awaitingUser.firstName} + ' ' + ${awaitingUser.lastName}}" style="margin: 0px;"></h3>
                 <span th:text="@{'@' + ${awaitingUser.username}}"></span>
                 <span th:text="'Signed up at ' + ${#temporals.format(awaitingUser.createdAt, 'dd/MM/yyyy')}"></span>
@@ -25,6 +25,13 @@
                     <a href="#" class="mini-button">Back</a>
                 </div>
             </div>
+        </div>
+        <div th:if="${!awaitingUserList.isEmpty()}" style="margin-left: 4%; margin-top: 2em;">
+            <a th:if="${awaitingUserList.hasPrevious()}" th:href="@{/admin/signup-requests(page=${awaitingUserList.number - 1})}" class="buttonish-link">Previous</a>
+
+            <span>Page <span th:text="${awaitingUserList.number + 1}">1</span> of <span th:text="${awaitingUserList.totalPages}">1</span></span>
+
+            <a th:if="${awaitingUserList.hasNext()}" th:href="@{/admin/signup-requests(page=${awaitingUserList.number + 1})}" class="buttonish-link">Next</a>
         </div>
     </div>
 </main>
