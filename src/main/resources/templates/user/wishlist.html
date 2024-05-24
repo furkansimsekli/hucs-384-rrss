@@ -1,0 +1,22 @@
+<html layout:decorate="~{common/skeleton}">
+    <body>
+        <main class="row-container" style="padding: 0 10vw; gap: 15px;" layout:fragment="content">
+            <h2>Your Wishlist</h2>
+            <div th:each="wish : ${wishes}" class="column-container list-cell" style="gap: 5px;">
+                <a th:unless="${wish.getProduct().images.size() > 0}" th:href="@{/products/{productId}(productId=${wish.getProduct().id})}"><img
+                        src="/filler-product.png" width="50" height="60"></img></a>
+                <a th:if="${wish.getProduct().images.size() > 0}" th:href="@{/products/{productId}(productId=${wish.getProduct().id})}"><img
+                        th:src="${wish.getProduct().images[0].imagePath}" width="50" height="60"></img></a>
+                <a th:href="@{/products/{productId}(productId=${wish.getProduct().id})}" class="row-container"
+                    style="text-decoration: none; color: inherit;">
+                    <h3
+                        th:text="${#strings.length(wish.getProduct().name) > 50 ? #strings.substring(wish.getProduct().name, 0, 50) + '...' : wish.getProduct().name}" style="margin: 0px;">
+                    </h3>
+                    <h3 th:text="'$' + ${wish.getProduct().price}" style="margin: 0px;"></h3>
+                </a>
+                <a class="buttonish-link" style="margin-left: auto; margin-top: auto; margin-bottom: auto;" th:href="@{/products/{productId}/unwish(productId=${wish.getProduct().id})}"><span class="emoji-icon">&#x1F90D; </span>Remove from Wishlist</a>
+                
+            </div>
+        </main>
+    </body>
+</html>

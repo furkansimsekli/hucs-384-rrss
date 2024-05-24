@@ -3,6 +3,7 @@ package com.fosskeeters.rrss.controllers;
 import com.fosskeeters.rrss.dtos.ChangePasswordDto;
 import com.fosskeeters.rrss.dtos.UserUpdateDto;
 import com.fosskeeters.rrss.models.User;
+import com.fosskeeters.rrss.models.Wish;
 import com.fosskeeters.rrss.repositories.UserRepository;
 
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -208,6 +210,20 @@ public class UserController {
         session.removeAttribute("username");
         redirectAttrs.addFlashAttribute("notification", "success:Sorry to see you leaving...");
         return "redirect:/";
+    }
+
+    @GetMapping("/{username}/wishlist")
+    public String wishlistHandler(@PathVariable String username, Model model) {
+        Optional<User> currentUser = userRepository.findByUsername(username);
+
+        if (currentUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        List<Wish> wishes = currentUser.get().getWishes();
+
+        model.addAttribute("wishes", wishes);
+        return "user/wishlist";
     }
 
     /**
