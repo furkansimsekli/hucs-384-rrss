@@ -231,4 +231,43 @@ public class AdminController {
         redirectAttrs.addFlashAttribute("notification", "success:Request has been rejected!");
         return "redirect:/admin/password-recovery-requests";
     }
+
+    @GetMapping("/users")
+    public String getUsers(@RequestParam(required = false, defaultValue = "0") int page,
+                           @RequestParam(required = false, defaultValue = "all") String accountType,
+                           HttpSession session, Model model) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login?next=/admin/signup-requests";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login?next=/admin/signup-requests";
+        }
+
+        if (user.get().getType() != User.Type.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        Page<User> userList;
+
+        if (accountType.equals("customer")) {
+            userList = userRepository.findAllByTypeAndIsApproved(
+                    User.Type.CUSTOMER, /*isApproved=*/true, PageRequest.of(page, 20));
+        } else if (accountType.equals("merchant")) {
+            userList = userRepository.findAllByTypeAndIsApproved(
+                    User.Type.MERCHANT, /*isApproved=*/true, PageRequest.of(page, 20));
+        } else if (accountType.equals("community_mod")) {
+            userList = userRepository.findAllByTypeAndIsApproved(
+                    User.Type.COMMUNITY_MOD, /*isApproved=*/true, PageRequest.of(page, 20));
+        } else {
+            userList = userRepository.findAllByIsApproved(true, PageRequest.of(page, 20));
+        }
+
+        model.addAttribute("userList", userList);
+        return "admin/users";
+    }
 }

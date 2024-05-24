@@ -22,4 +22,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByPhoneNumber(String phoneNumber);
 
     Page<User> findAllByIsApproved(boolean isApproved, Pageable pageable);
+
+    Page<User> findAllByTypeAndIsApproved(User.Type type, boolean isApproved, Pageable pageable);
 }
