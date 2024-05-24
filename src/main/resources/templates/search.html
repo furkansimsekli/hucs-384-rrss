@@ -18,6 +18,7 @@
                 <button class="buttonish-link sort-button" type="submit">Sort</button>
             </form>
         </div>
+        <span th:if="${products.isEmpty()}" style="margin-left: 6%;">No results found.</span>
         <div th:each="product : ${products}" class="column-container list-cell" style="margin-bottom: 10px;">
             <a th:unless="${product.images.size() > 0}" th:href="@{/products/{productId}(productId=${product.id})}"><img
                     src="/filler-product.png" width="50" height="60"></img></a>
@@ -28,7 +29,7 @@
                 <h3
                     th:text="${#strings.length(product.name) > 50 ? #strings.substring(product.name, 0, 50) + '...' : product.name}" style="margin: 0px;">
                 </h3>
-                <h3 th:text="@{${product.price} + '$'}" style="margin: 0px;"></h3>
+                <h3 th:text="'$' + ${product.price}" style="margin: 0px;"></h3>
             </a>
             <div class="row-container" style="padding-top: 8px; margin-left: auto;">
                 <div class="column-container" style="gap: 4px;" th:with="averageScore = ${product.getAverageScore()}">
