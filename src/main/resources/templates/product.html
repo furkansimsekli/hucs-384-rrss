@@ -9,7 +9,7 @@
                 <h2 th:text="${product.getName()}" style="margin: 0; margin-top: 10px;">Product Untitled</h2>
                 <a th:href="@{/merchants/{merch}(merch=${product.owner.username})}" style="color: gray;" th:text="${product.owner.username}"></a>
                 <span th:text="'$' + ${product.getPrice()}" style="margin-top: 10px; font-weight: 500; font-size: 20;">0</span>
-                <span th:text="${product.getDescription()}"> Product Description</span>
+                <span th:text="${product.getDescription()}" style="max-width: 70em; margin-top: 1em;"> Product Description</span>
             </div>
             <div class="row-container" style="padding-top: 8px; margin-left: auto;" th:with="averageScore = ${product.getAverageScore()}">
                 <span style="color: var(--primary-color); margin-left: auto; font-size: 24;">
@@ -53,7 +53,7 @@
             </div>
             <div class="row-container" style="gap: 30px;">
                 <div th:each="review : ${product.getReviews()}" class="row-container" style="gap: 20px;">
-                    <div class="column-container" style="gap: 20px;">
+                    <div class="column-container" style="gap: 20px; max-width: 70em;">
                         <img class="profile-picture" th:src="${review.author.profileImagePath}" />
                         <div class="row-container">
                             <span><span style="margin-right: 0.5em; color: var(--primary-color); font-size: 20;" th:text="${#strings.repeat('&starf;', review.getScore())} + ${#strings.repeat('&star;', 5 - review.getScore())}" /><b th:text="${review.getTitle()}" /></span>
@@ -68,7 +68,7 @@
                             <a th:class="${voteStatus == -1 ? 'emoji-icon' : 'emoji-outline'}" emoji="👎" th:href="@{/reviews/{reviewId}/vote?value=false(reviewId=${review.id})}" style="text-decoration: none">👎</a>
                         </div>
                     </div>
-                    <div th:if="${isProductOwner}" th:with="replyDto = ${reviewReplyDtoList != null ? reviewReplyDtoList[reviewStat.index] : null}">
+                    <div th:if="${isProductOwner}" th:with="replyDto = ${reviewReplyDtoList != null ? reviewReplyDtoList[reviewStat.index] : null}" style="max-width: 70em;">
                         <input type="checkbox" class="buttonish-checkbox" th:id="reply-review- + ${review.getId()}" th:checked="${erroredReviewId == review.getId()}"/>
                         <label class="buttonish-checkbox-label hidden-on-edit" th:for="reply-review- + ${review.getId()}" th:text="${review.getMerchantReplyBody() == null ? 'Reply' : 'Update Reply'}" />
                         <form class="shown-on-edit row-container" th:action="${review.getMerchantReplyBody() == null} ? @{/reviews/{reviewId}/reply(reviewId=${review.getId()})} : @{/reviews/{reviewId}/update-reply(reviewId=${review.getId()})}" method="POST" style="width: fit-content;">
