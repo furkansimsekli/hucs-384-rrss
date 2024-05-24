@@ -10,6 +10,17 @@
                 <h2 th:case="'community_mod'" th:text="'All Community Moderators (' + ${userList.getTotalElements()} + ')'"></h2>
                 <h2 th:case="*">All Users (<span th:text="${userList.getTotalElements()}"></span>)</h2>
             </h2>
+            <div class="spacer"></div>
+            <form action="#" th:action="@{/admin/users}" method="get" class="column-container" style="gap: 10px; margin: auto 0;">
+                <select name="accountType">
+                    <option value="">Filter By</option>
+                    <option value="all">All</option>
+                    <option value="customer">Customer</option>
+                    <option value="merchant">Merchant</option>
+                    <option value="community_mod">Community Mod</option>
+                </select>
+                <button class="buttonish-link sort-button" type="submit">Filter</button>
+            </form>
         </div>
         <div th:each="user : ${userList}"  class="column-container list-cell">
             <a th:href="@{/users/{username}(username=${user.username})}" ><img th:src="${user.profileImagePath}" width="50" height="60"></a>
