@@ -6,19 +6,22 @@ import com.fosskeeters.rrss.repositories.PasswordRecoveryRepository;
 import com.fosskeeters.rrss.repositories.UserRepository;
 import com.fosskeeters.rrss.services.EmailService;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
 import java.util.Optional;
 
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -37,7 +40,8 @@ public class AdminController {
     }
 
     @GetMapping("/signup-requests")
-    public String signupRequests(HttpSession session, Model model) {
+    public String signupRequests(@RequestParam(required = false, defaultValue = "0") int page,
+                                 HttpSession session, Model model) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/admin/signup-requests";
         }
@@ -54,7 +58,8 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        List<User> awaitingUserList = userRepository.findAllByIsApproved(false);
+        Page<User> awaitingUserList =
+                userRepository.findAllByIsApproved(false, PageRequest.of(page, 20));
         model.addAttribute("awaitingUserList", awaitingUserList);
         return "admin/signup_requests";
     }
@@ -115,7 +120,8 @@ public class AdminController {
     }
 
     @GetMapping("/password-recovery-requests")
-    public String passwordRecoveryRequests(HttpSession session, Model model) {
+    public String passwordRecoveryRequests(@RequestParam(required = false, defaultValue = "0")
+                                           int page, HttpSession session, Model model) {
         if (session.getAttribute("username") == null) {
             return "redirect:/login?next=/admin/password-recovery-requests";
         }
@@ -132,8 +138,9 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        List<PasswordRecovery> recoveryRequests =
-                passwordRecoveryRepository.findAllByIsEmailSentIsFalseOrderByCreatedAtAsc();
+        Page<PasswordRecovery> recoveryRequests =
+                passwordRecoveryRepository.findAllByIsEmailSentIsFalseOrderByCreatedAtAsc(
+                        PageRequest.of(page, 20));
         model.addAttribute("recoveryRequests", recoveryRequests);
         return "admin/password_recovery_requests";
     }
@@ -224,5 +231,72 @@ public class AdminController {
         passwordRecoveryRepository.delete(awaitingRequests.get());
         redirectAttrs.addFlashAttribute("notification", "success:Request has been rejected!");
         return "redirect:/admin/password-recovery-requests";
+    }
+
+    @GetMapping("/users")
+    public String getUsers(@RequestParam(required = false, defaultValue = "0") int page,
+                           @RequestParam(required = false, defaultValue = "all") String accountType,
+                           HttpServletRequest request, HttpSession session, Model model) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login?next=/admin/signup-requests";
+        }
+
+        String username = session.getAttribute("username").toString();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login?next=/admin/signup-requests";
+        }
+
+        if (user.get().getType() != User.Type.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        Page<User> userList;
+
+        if (accountType.equals("customer")) {
+            userList = userRepository.findAllByTypeAndIsApproved(
+                    User.Type.CUSTOMER, /*isApproved=*/true, PageRequest.of(page, 20));
+        } else if (accountType.equals("merchant")) {
+            userList = userRepository.findAllByTypeAndIsApproved(
+                    User.Type.MERCHANT, /*isApproved=*/true, PageRequest.of(page, 20));
+        } else if (accountType.equals("community_mod")) {
+            userList = userRepository.findAllByTypeAndIsApproved(
+                    User.Type.COMMUNITY_MOD, /*isApproved=*/true, PageRequest.of(page, 20));
+        } else {
+            userList = userRepository.findAllByIsApproved(true, PageRequest.of(page, 20));
+        }
+
+        model.addAttribute("userList", userList);
+        model.addAttribute("currentUrl", request.getRequestURI() + '?' + request.getQueryString());
+        return "admin/users";
+    }
+
+    @GetMapping("/users/{username}/delete")
+    public String deleteUser(@PathVariable String username,
+                             @RequestParam(required = false) String redirectUrl,
+                             HttpSession session, RedirectAttributes redirectAttrs) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login?next=/admin/users";
+        }
+
+        Optional<User> user =
+                userRepository.findByUsername(session.getAttribute("username").toString());
+
+        if (user.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login?next=/admin/users";
+        }
+
+        Optional<User> targetUser = userRepository.findByUsername(username);
+
+        if (targetUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        userRepository.delete(targetUser.get());
+        redirectAttrs.addFlashAttribute("notification", "success:User has been deleted!");
+        return "redirect:" + redirectUrl;
     }
 }

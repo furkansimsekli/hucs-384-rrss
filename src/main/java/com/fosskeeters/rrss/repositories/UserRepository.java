@@ -2,9 +2,10 @@ package com.fosskeeters.rrss.repositories;
 
 import com.fosskeeters.rrss.models.User;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -20,5 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Boolean existsByPhoneNumber(String phoneNumber);
 
-    List<User> findAllByIsApproved(boolean isApproved);
+    Page<User> findAllByIsApproved(boolean isApproved, Pageable pageable);
+
+    Page<User> findAllByTypeAndIsApproved(User.Type type, boolean isApproved, Pageable pageable);
 }

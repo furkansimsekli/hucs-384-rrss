@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -167,6 +168,38 @@ public class UserController {
         userRepository.save(displayedUser.get());
         model.addAttribute("updatedSuccessfully", "true");
         return "user/change_password";
+    }
+
+    @GetMapping("/{username}/delete")
+    public String deleteUserHandler(@PathVariable String username, HttpSession session,
+                                    RedirectAttributes redirectAttrs) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/login?next=/user/" + username + "/delete";
+        }
+
+        Optional<User> authenticatedUser =
+                userRepository.findByUsername((String) session.getAttribute("username"));
+
+        if (authenticatedUser.isEmpty()) {
+            session.removeAttribute("username");
+            return "redirect:/login?next=/user/" + username + "/delete";
+        }
+
+        Optional<User> targetUser = userRepository.findByUsername(username);
+
+        if (targetUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        if (targetUser.get().getId() != authenticatedUser.get().getId()
+            && authenticatedUser.get().getType() != User.Type.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        userRepository.delete(targetUser.get());
+        session.removeAttribute("username");
+        redirectAttrs.addFlashAttribute("notification", "success:Sorry to see you leaving...");
+        return "redirect:/";
     }
 
     /**
