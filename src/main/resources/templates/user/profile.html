@@ -19,6 +19,14 @@
                     <span th:text="${userUpdateDto.getEmail()}" />
                     <span th:text="${userUpdateDto.getAddress()}" />
                     <div class="row-container" style="margin-top: 15px; gap: 10px;">
+                        <div th:switch="${user.getType().toString()}" style="font-weight: bold;">
+                            <a th:case="'CUSTOMER'" class="buttonish-link" th:href="@{/user/{username}/wishlist(username=${#ctx.session.username})}" style="display: block;">View Your Wishlist</a>
+                            <a th:case="'MERCHANT'" class="buttonish-link" th:href="@{/merchants/{username}(username=${#ctx.session.username})}" style="display: block;">View Your Products</a>
+                            <div class="row-container" th:case="'ADMIN'" style="gap: 10px;">
+                                <a class="buttonish-link" th:href="@{/admin/signup-requests}" style="display: block;">View Signup Requests</a>
+                                <a class="buttonish-link" th:href="@{/admin/password-recovery-requests}" style="display: block;">View Password Recovery Requests</a>
+                            </div>
+                        </div>
                         <a class="buttonish-link" style="font-weight: bold;"
                             th:href="@{/user/{username}/change-password(username=${#ctx.session.username})}"><span
                                 style="margin-right: 10px;">&#128273;</span>Change Password</a>
