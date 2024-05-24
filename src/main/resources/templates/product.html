@@ -8,7 +8,7 @@
             <div class="row-container">
                 <h2 th:text="${product.getName()}" style="margin: 0; margin-top: 10px;">Product Untitled</h2>
                 <a th:href="@{/merchants/{merch}(merch=${product.owner.username})}" style="color: gray;" th:text="${product.owner.username}"></a>
-                <span th:text="${product.getPrice()} + 'TL'" style="margin-top: 10px; font-weight: 500; font-size: 20;">0</span>
+                <span th:text="'$' + ${product.getPrice()}" style="margin-top: 10px; font-weight: 500; font-size: 20;">0</span>
                 <span th:text="${product.getDescription()}"> Product Description</span>
             </div>
             <div class="row-container" style="padding-top: 8px; margin-left: auto;" th:with="averageScore = ${product.getAverageScore()}">

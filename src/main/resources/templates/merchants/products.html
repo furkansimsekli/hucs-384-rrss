@@ -20,7 +20,7 @@
                     <h3 th:text="${#strings.length(product.name) > 50 ? #strings.substring(product.name, 0, 50) + '...' : product.name}"
                         style="margin: 0px;">
                     </h3>
-                    <span th:text="@{${product.price} + '$'}"></span>
+                    <span th:text="'$' + ${product.price}"></span>
                     <span th:text="'Published at ' + ${#temporals.format(product.createdAt, 'dd/MM/yyyy')}"></span>
                 </a>
                 <div class="spacer"></div>
