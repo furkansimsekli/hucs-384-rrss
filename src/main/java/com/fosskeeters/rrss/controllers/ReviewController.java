@@ -93,6 +93,7 @@ public class ReviewController {
             // on.
             assert user.get().getType() == User.Type.CUSTOMER;
             model.addAttribute("isCustomer", true);
+            model.addAttribute("title", "Product \"" + product.get().getName() + "\" - ShopSmart");
 
             return "product";
         }
@@ -149,6 +150,8 @@ public class ReviewController {
             model.addAttribute("isCustomer", true);
             model.addAttribute("isProductOwner", false);
             model.addAttribute("reviewReplyDtoList", null);
+            model.addAttribute("title", "Product \"" + product.getName() + "\" - ShopSmart");
+
             return "product";
         }
 
@@ -284,6 +287,8 @@ public class ReviewController {
             model.addAttribute("isProductOwner", true);
             model.addAttribute("reviewReplyDtoList", reviewReplyDtoList);
             model.addAttribute("erroredReviewId", reviewId);
+            model.addAttribute("title", "Product \"" + product.getName() + "\" - ShopSmart");
+
             return "product";
         }
 
@@ -339,6 +344,8 @@ public class ReviewController {
             model.addAttribute("isProductOwner", true);
             model.addAttribute("reviewReplyDtoList", reviewReplyDtoList);
             model.addAttribute("erroredReviewId", reviewId);
+            model.addAttribute("title", "Product \"" + product.getName() + "\" - ShopSmart");
+
             return "product";
         }
 

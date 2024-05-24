@@ -61,6 +61,7 @@ public class MiscController {
                                        LocalDateTime.now().minusDays(7), PageRequest.of(0, 30)));
         }
 
+        model.addAttribute("title", "Home - ShopSmart");
         return "index";
     }
 
@@ -102,6 +103,8 @@ public class MiscController {
         }
 
         model.addAttribute("products", results);
+        model.addAttribute("title", "Search - ShopSmart");
+
         return "search";
     }
 }

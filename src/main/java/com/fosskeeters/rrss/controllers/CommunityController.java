@@ -48,6 +48,8 @@ public class CommunityController {
 
     @GetMapping("/topics")
     public String getTopicsHandler(HttpSession session, Model model) {
+        model.addAttribute("title", "Community Posts - ShopSmart");
+
         var allTopics = topicRepository.findAll();
         Collections.sort(allTopics, Comparator.comparing(Topic::getCreatedAt).reversed());
 
@@ -100,6 +102,7 @@ public class CommunityController {
             }
         }
 
+        model.addAttribute("title", "\"" + topic.get().getTitle() + "\" - ShopSmart");
         return "community/entries";
     }
 
@@ -120,6 +123,7 @@ public class CommunityController {
         model.addAttribute("topicDto", new TopicDto());
         model.addAttribute("newTopic", true);
 
+        model.addAttribute("title", "Create Post - ShopSmart");
         return "community/update_topic";
     }
 
@@ -143,6 +147,7 @@ public class CommunityController {
             model.addAttribute("topicDto", topicDto);
             model.addAttribute("hasErrors", true);
             model.addAttribute("newTopic", true);
+            model.addAttribute("title", "Create Post - ShopSmart");
 
             return "community/update_topic";
         }
@@ -216,6 +221,7 @@ public class CommunityController {
         TopicDto topicDto = new TopicDto(topic.get());
         model.addAttribute("topicDto", topicDto);
         model.addAttribute("newTopic", false);
+        model.addAttribute("title", "Update Post - ShopSmart");
 
         return "community/update_topic";
     }
@@ -253,6 +259,7 @@ public class CommunityController {
             model.addAttribute("topicDto", topicDto);
             model.addAttribute("hasErrors", true);
             model.addAttribute("newTopic", false);
+            model.addAttribute("title", "Update Post - ShopSmart");
 
             return "community/update_topic";
         }
@@ -307,6 +314,7 @@ public class CommunityController {
         model.addAttribute("entryDto", entryDto);
         model.addAttribute("topic", topic.get());
 
+        model.addAttribute("title", "Update Entry - ShopSmart");
         return "community/update_entry";
     }
 
@@ -357,6 +365,7 @@ public class CommunityController {
             model.addAttribute("entryDto", entryDto);
             model.addAttribute("hasErrors", true);
             model.addAttribute("topic", topic);
+            model.addAttribute("title", "Update Entry - ShopSmart");
 
             return "community/update_entry";
         }
@@ -443,6 +452,7 @@ public class CommunityController {
             model.addAttribute("entryDto", entryDto);
             model.addAttribute("hasErrors", true);
             model.addAttribute("topic", topic);
+            model.addAttribute("title", "Create Entry - ShopSmart");
 
             return "community/entries";
         }
