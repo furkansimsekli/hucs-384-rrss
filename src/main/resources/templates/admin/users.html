@@ -24,8 +24,8 @@
             </form>
         </div>
         <div th:each="user : ${userList}"  class="column-container list-cell">
-            <a th:href="@{/users/{username}(username=${user.username})}" ><img th:src="${user.profileImagePath}" width="50" height="60"></a>
-            <a th:href="@{/users/{username}(username=${user.username})}" class="row-container" style="text-decoration: none; color: inherit;">
+            <a th:href="@{/user/{username}(username=${user.username})}" ><img th:src="${user.profileImagePath}" width="50" height="60"></a>
+            <a th:href="@{/user/{username}(username=${user.username})}" class="row-container" style="text-decoration: none; color: inherit;">
                 <h3 th:text="@{${user.firstName} + ' ' + ${user.lastName}}" style="margin: 0px;"></h3>
                 <span th:text="@{'@' + ${user.username}}"></span>
                 <span th:text="'Signed up at ' + ${#temporals.format(user.createdAt, 'dd/MM/yyyy')}"></span>

@@ -57,11 +57,12 @@
                         <input type="submit" value="Save" style="padding: 5px;" />
                     </form>
                     <div th:switch="${user.getType().toString()}" style="font-weight: bold;">
-                        <a th:case="'CUSTOMER'" class="buttonish-link" th:href="@{/user/{username}/wishlist(username=${#ctx.session.username})}" style="display: block;">View Your Wishlist</a>
-                        <a th:case="'MERCHANT'" class="buttonish-link" th:href="@{/merchants/{username}(username=${#ctx.session.username})}" style="display: block;">View Your Products</a>
+                        <a th:case="'CUSTOMER'" class="buttonish-link" th:href="@{/user/{username}/wishlist(username=${user.getUsername()})}" style="display: block;">View Your Wishlist</a>
+                        <a th:case="'MERCHANT'" class="buttonish-link" th:href="@{/merchants/{username}(username=${user.getUsername()})}" style="display: block;">View Your Products</a>
                         <div class="row-container" th:case="'ADMIN'" style="gap: 10px;">
                             <a class="buttonish-link" th:href="@{/admin/signup-requests}" style="display: block;">View Signup Requests</a>
                             <a class="buttonish-link" th:href="@{/admin/password-recovery-requests}" style="display: block;">View Password Recovery Requests</a>
+                            <a class="buttonish-link" th:href="@{/admin/users}" style="display: block;">Manage Accounts</a>
                         </div>
                     </div>
                     <a class="buttonish-link" style="font-weight: bold;"
