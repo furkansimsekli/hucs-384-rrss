@@ -1,0 +1,43 @@
+<html layout:decorate="~{common/skeleton}">
+
+<body>
+<main layout:fragment="content">
+    <div class="row-container list">
+        <div class="column-container" style="margin: 0 auto; width: 90%;">
+            <h2 th:switch="${param.accountType.getFirst()}">
+                <h2 th:case="'customer'" th:text="'All Customers (' + ${userList.getTotalElements()} + ')'"></h2>
+                <h2 th:case="'merchant'" th:text="'All Merchants (' + ${userList.getTotalElements()} + ')'"></h2>
+                <h2 th:case="'community_mod'" th:text="'All Community Moderators (' + ${userList.getTotalElements()} + ')'"></h2>
+                <h2 th:case="*">All Users (<span th:text="${userList.getTotalElements()}"></span>)</h2>
+            </h2>
+        </div>
+        <div th:each="user : ${userList}"  class="column-container list-cell">
+            <a th:href="@{/users/{username}(username=${user.username})}" ><img th:src="${user.profileImagePath}" width="50" height="60"></a>
+            <a th:href="@{/users/{username}(username=${user.username})}" class="row-container" style="text-decoration: none; color: inherit;">
+                <h3 th:text="@{${user.firstName} + ' ' + ${user.lastName}}" style="margin: 0px;"></h3>
+                <span th:text="@{'@' + ${user.username}}"></span>
+                <span th:text="'Signed up at ' + ${#temporals.format(user.createdAt, 'dd/MM/yyyy')}"></span>
+            </a>
+            <div class="spacer"></div>
+            <a th:href="'#delete-modal-' + ${user.username}" class="red-button">Delete</a>
+            <div th:id="'delete-modal-' + ${user.username}" class="modal">
+                <div class="modal-content">
+                    <h2 style="margin-top: 10px;">Delete User</h2>
+                    <p style="margin-bottom: 40px;">Are you sure you want to delete this user? This can not be undone!</p>
+                    <a th:href="@{/users/{username}/delete(username=${user.username})}" class="red-button">Confirm</a>
+                    <a href="#" class="mini-button">Back</a>
+                </div>
+            </div>
+        </div>
+        <div th:if="${!userList.isEmpty()}" style="margin-left: 4%; margin-top: 2em;">
+            <a th:if="${userList.hasPrevious()}" th:href="@{/admin/users(page=${userList.number - 1}, accountType=${param.accountType})}" class="buttonish-link">Previous</a>
+
+            <span>Page <span th:text="${userList.number + 1}">1</span> of <span th:text="${userList.totalPages}">1</span></span>
+
+            <a th:if="${userList.hasNext()}" th:href="@{/admin/users(page=${userList.number + 1}, accountType=${param.accountType})}" class="buttonish-link">Next</a>
+        </div>
+    </div>
+</main>
+</body>
+
+</html>
