@@ -96,8 +96,8 @@ public class AuthenticationController {
             if (!user.get().isApproved()) {
                 redirectAttrs.addFlashAttribute(
                         "notification",
-                        "error:We have high volume of applications, approval might take 1-2 days!");
-                return "redirect:/login";
+                        "warn:We have high volume of applications, approval might take 1-2 days!");
+                return "redirect:/";
             }
             if (encoder.matches(password, user.get().getPassword())) {
                 session.setAttribute("username", user.get().getUsername());
